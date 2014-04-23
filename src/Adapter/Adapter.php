@@ -7,18 +7,17 @@
 
 namespace Thorr\OAuth\Adapter;
 
-use OAuth2\Storage\AuthorizationCodeInterface;
-use OAuth2\Storage\ClientCredentialsInterface;
-use OAuth2\Storage\UserCredentialsInterface;
+use OAuth2\Storage;
 use Thorr\OAuth\Repository\UserRepositoryAwareInterface;
 use Thorr\OAuth\Repository\UserRepositoryAwareTrait;
 use Thorr\OAuth\Repository\UserRepositoryInterface;
 use ZF\OAuth2\Adapter\BcryptTrait;
 
 class Adapter implements
-    AuthorizationCodeInterface,
-    ClientCredentialsInterface,
-    UserCredentialsInterface,
+    Storage\AuthorizationCodeInterface,
+    Storage\ClientCredentialsInterface,
+    Storage\UserCredentialsInterface,
+    Storage\RefreshTokenInterface,
     UserRepositoryAwareInterface
 {
     use BcryptTrait;
@@ -124,5 +123,29 @@ class Adapter implements
     public function checkRestrictedGrantType($client_id, $grant_type)
     {
         // TODO: Implement checkRestrictedGrantType() method.
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getRefreshToken($refresh_token)
+    {
+        // TODO: Implement getRefreshToken() method.
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setRefreshToken($refresh_token, $client_id, $user_id, $expires, $scope = null)
+    {
+        // TODO: Implement setRefreshToken() method.
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function unsetRefreshToken($refresh_token)
+    {
+        // TODO: Implement unsetRefreshToken() method.
     }
 }
