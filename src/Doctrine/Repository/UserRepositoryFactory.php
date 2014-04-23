@@ -5,7 +5,7 @@
  * ************************************************
  */
 
-namespace Thorr\OAuth\Repository\Doctrine;
+namespace Thorr\OAuth\Doctrine\Repository;
 
 use Thorr\OAuth\Options\ModuleOptions;
 use Zend\ServiceManager\FactoryInterface;

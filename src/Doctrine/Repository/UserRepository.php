@@ -5,20 +5,12 @@
  * ************************************************
  */
 
-namespace Thorr\OAuth\Repository\Doctrine;
+namespace Thorr\OAuth\Doctrine\Repository;
 
-use Thorr\OAuth\Entity\UserInterface;
 use Thorr\OAuth\Repository\UserRepositoryInterface;
 use Thorr\Persistence\Doctrine\Repository\EntityRepository;
 
 class UserRepository extends EntityRepository implements UserRepositoryInterface
 {
-    /**
-     * @param  string $username
-     * @return UserInterface|null
-     */
-    public function findOneByUsername($username)
-    {
-        return parent::findOneBy(['username' => $username]);
-    }
+
 }

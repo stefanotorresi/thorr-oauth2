@@ -7,13 +7,7 @@
 
 namespace Thorr\OAuth\Repository;
 
-use Thorr\OAuth\Entity\UserInterface;
-
-interface UserRepositoryInterface
+interface AccessTokenRepositoryInterface
 {
-    /**
-     * @param  string $username
-     * @return UserInterface|null
-     */
-    public function find($username);
+
 }
