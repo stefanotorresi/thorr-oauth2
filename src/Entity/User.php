@@ -7,17 +7,15 @@
 
 namespace Thorr\OAuth\Entity;
 
-use Thorr\Persistence\Entity\AbstractEntity;
+use Thorr\Persistence\Entity\IdProviderTrait;
 
-class User extends AbstractEntity implements UserInterface
+class User implements UserInterface
 {
     use UserTrait;
 
-    public function __construct($username = null, $password = null)
+    public function __construct($id, $password = null)
     {
-        if ($username) {
-            $this->setUsername($username);
-        }
+        $this->setId($id);
 
         if ($password) {
             $this->setPassword($password);

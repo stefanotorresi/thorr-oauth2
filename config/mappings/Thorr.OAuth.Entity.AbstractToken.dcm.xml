@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <mapped-superclass name="Thorr\OAuth\Entity\AbstractToken">
+        <id name="token" type="string" length="32" />
+        <field name="expirationDate" type="datetime" />
+        <many-to-one field="client" target-entity="Thorr\OAuth\Entity\Client" />
+        <many-to-one field="user" target-entity="Thorr\OAuth\Entity\User" fetch="EAGER">
+            <join-column on-delete="CASCADE" />
+        </many-to-one>
+    </mapped-superclass>
+
+</doctrine-mapping>

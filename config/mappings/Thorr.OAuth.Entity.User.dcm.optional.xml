@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                                      http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+
+    <entity name="Thorr\OAuth\Entity\User"
+            table="thorr_oauth_users"
+            repository-class="Thorr\OAuth\Doctrine\Repository\UserRepository">
+
+        <id name="id" type="string" length="255" />
+        <field name="password" type="string" length="60" nullable="true" />
+
+    </entity>
+
+</doctrine-mapping>

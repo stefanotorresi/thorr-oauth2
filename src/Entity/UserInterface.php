@@ -7,23 +7,10 @@
 
 namespace Thorr\OAuth\Entity;
 
-interface UserInterface
+use Thorr\Persistence\Entity\IdProviderInterface;
+
+interface UserInterface extends IdProviderInterface
 {
-    /**
-     * Get username.
-     *
-     * @return string
-     */
-    public function getUsername();
-
-    /**
-     * Set username.
-     *
-     * @param string $username
-     * @return UserInterface
-     */
-    public function setUsername($username);
-
     /**
      * Get password.
      *

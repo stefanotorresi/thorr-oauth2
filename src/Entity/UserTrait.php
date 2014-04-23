@@ -7,40 +7,16 @@
 
 namespace Thorr\OAuth\Entity;
 
+use Thorr\Persistence\Entity\IdProviderTrait;
+
 trait UserTrait
 {
-    /**
-     * @var string
-     */
-    protected $username;
+    use IdProviderTrait;
 
     /**
      * @var string
      */
     protected $password;
-
-    /**
-     * Get username.
-     *
-     * @return string
-     */
-    public function getUsername()
-    {
-        return $this->username;
-    }
-
-    /**
-     * Set username.
-     *
-     * @param string $username
-     * @return UserInterface
-     */
-    public function setUsername($username)
-    {
-        $this->username = $username;
-
-        return $this;
-    }
 
     /**
      * Get password.

@@ -7,11 +7,19 @@
 
 return [
 
+    'thorr_oauth' => [
+//        'user_class_name' => 'Thorr\OAuth\Entity\User'
+//        'bcrypt_cost' => 10,
+    ],
+
     'service_manager' => [
         'factories' => [
-            'Thorr\OAuth\Options\ModuleOptions' => 'Thorr\OAuth\Options\ModuleOptionsFactory',
-            'Thorr\OAuth\Adapter\Adapter' => 'Thorr\OAuth\Adapter\AdapterFactory',
-            'Thorr\OAuth\Repository\UserRepository' => 'Thorr\OAuth\Repository\Doctrine\UserRepositoryFactory',
+            'Thorr\OAuth\Options\ModuleOptions'     => 'Thorr\OAuth\Options\ModuleOptionsFactory',
+            'Thorr\OAuth\Storage\DataMapperAdapter' => 'Thorr\OAuth\Storage\DataMapperAdapterFactory',
+            'Thorr\OAuth\Repository\UserRepository' => 'Thorr\OAuth\Doctrine\Repository\UserRepositoryFactory',
+        ],
+        'abstract_factories' => [
+            'Thorr\OAuth\Doctrine\Repository\AbstractRepositoryFactory'
         ],
     ],
 
@@ -25,12 +33,8 @@ return [
         ],
     ],
 
-    'thorr_oauth' => [
-//        'user_class_name' => 'Thorr\OAuth\Entity\User'
-    ],
-
     'zf-oauth2' => [
-        'storage' => 'Thorr\\OAuth\\Adapter\\Adapter',
+        'storage' => 'Thorr\OAuth\Storage\DataMapperAdapter',
     ],
 
     'doctrine' => [
@@ -41,7 +45,12 @@ return [
             ],
             'orm_default' =>[
                 'drivers' => [
-                    'Thorr\OAuth\Entity' => 'Thorr\OAuth',
+                    'Thorr\OAuth\Entity\AbstractToken'     => 'Thorr\OAuth',
+                    'Thorr\OAuth\Entity\AccessToken'       => 'Thorr\OAuth',
+                    'Thorr\OAuth\Entity\AuthorizationCode' => 'Thorr\OAuth',
+                    'Thorr\OAuth\Entity\Client'            => 'Thorr\OAuth',
+                    'Thorr\OAuth\Entity\RefreshToken'      => 'Thorr\OAuth',
+                    'Thorr\OAuth\Entity\Scope'             => 'Thorr\OAuth',
                 ]
             ]
         ]
