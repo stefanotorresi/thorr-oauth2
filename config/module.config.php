@@ -10,6 +10,7 @@ return [
     'thorr_oauth' => [
 //        'user_class_name' => 'Thorr\OAuth\Entity\User'
 //        'bcrypt_cost' => 10,
+//        'default_user_mapping_enabled' => true,
     ],
 
     'service_manager' => [
