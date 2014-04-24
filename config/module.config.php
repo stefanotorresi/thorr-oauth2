@@ -17,10 +17,19 @@ return [
         'factories' => [
             'Thorr\OAuth\Options\ModuleOptions'     => 'Thorr\OAuth\Options\ModuleOptionsFactory',
             'Thorr\OAuth\Storage\DataMapperAdapter' => 'Thorr\OAuth\Storage\DataMapperAdapterFactory',
+        ],
+    ],
+
+    'repository_manager' => [
+        'factories' => [
             'Thorr\OAuth\Repository\UserRepository' => 'Thorr\OAuth\Doctrine\Repository\UserRepositoryFactory',
         ],
-        'abstract_factories' => [
-            'Thorr\OAuth\Doctrine\Repository\AbstractRepositoryFactory'
+        'repositories' => [
+            'Thorr\OAuth\Entity\AccessToken'       => 'Thorr\OAuth\Repository\AccessTokenRepository',
+            'Thorr\OAuth\Entity\AuthorizationCode' => 'Thorr\OAuth\Repository\AuthorizationCodeRepository',
+            'Thorr\OAuth\Entity\Client'            => 'Thorr\OAuth\Repository\ClientRepository',
+            'Thorr\OAuth\Entity\RefreshToken'      => 'Thorr\OAuth\Repository\RefreshTokenRepository',
+            'Thorr\OAuth\Entity\Scope'             => 'Thorr\OAuth\Repository\ScopeRepository',
         ],
     ],
 

@@ -7,15 +7,19 @@
 
 namespace Thorr\OAuth\Repository;
 
-use Thorr\OAuth\Entity\AccessToken;
 use Thorr\Persistence\Repository\RepositoryInterface;
+use Traversable;
 
-/**
- * Interface AccessTokenRepositoryInterface
- * @package Thorr\OAuth\Repository
- * @method AccessToken|null find($token)
- */
-interface AccessTokenRepositoryInterface extends RepositoryInterface
+interface ScopeRepositoryInterface extends RepositoryInterface
 {
+    /**
+     * @param array|Traversable $scopes
+     * @return array
+     */
+    public function findScopes($scopes);
 
+    /**
+     * @return array
+     */
+    public function findDefaultScopes();
 }

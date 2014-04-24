@@ -7,7 +7,6 @@
     <entity name="Thorr\OAuth\Entity\AccessToken"
             table="thorr_oauth_access_tokens"
             repository-class="Thorr\OAuth\Doctrine\Repository\AccessTokenRepository"
-            read-only="true"
             >
 
         <many-to-many field="scopes" target-entity="Thorr\OAuth\Entity\Scope">

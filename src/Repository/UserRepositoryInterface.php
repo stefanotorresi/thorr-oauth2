@@ -8,12 +8,14 @@
 namespace Thorr\OAuth\Repository;
 
 use Thorr\OAuth\Entity\UserInterface;
+use Thorr\Persistence\Repository\RepositoryInterface;
 
-interface UserRepositoryInterface
+/**
+ * Interface UserRepositoryInterface
+ * @package Thorr\OAuth\Repository
+ * @method UserInterface|null find($username)
+ */
+interface UserRepositoryInterface extends RepositoryInterface
 {
-    /**
-     * @param  string $username
-     * @return UserInterface|null
-     */
-    public function find($username);
+
 }

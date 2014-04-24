@@ -25,11 +25,23 @@ trait ScopesProviderTrait
     }
 
     /**
-     * @param  Collections\Collection $scopes
+     * @return string
+     */
+    public function getScopesString()
+    {
+        return implode(' ', $this->getScopes()->toArray());
+    }
+
+    /**
+     * @param  Collections\Collection|array $scopes
      * @return self
      */
-    public function setScopes(Collections\Collection $scopes)
+    public function setScopes($scopes)
     {
+        if (! $scopes instanceof Collections\Collection) {
+            $scopes = new Collections\ArrayCollection($scopes);
+        }
+
         $this->scopes = $scopes;
 
         return $this;

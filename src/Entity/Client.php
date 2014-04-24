@@ -59,6 +59,14 @@ class Client implements IdProviderInterface
     }
 
     /**
+     * @return bool
+     */
+    public function isPublic()
+    {
+        return empty($this->secret);
+    }
+
+    /**
      * @return UserInterface
      */
     public function getUser()

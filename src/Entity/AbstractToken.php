@@ -85,7 +85,7 @@ abstract class AbstractToken
      */
     public function isExpired()
     {
-        return $this->expirationDate < new DateTime();
+        return $this->expirationDate !== null && $this->expirationDate < new DateTime();
     }
 
     /**

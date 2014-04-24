@@ -7,15 +7,15 @@
 
 namespace Thorr\OAuth\Repository;
 
-use Thorr\OAuth\Entity\AccessToken;
+use Thorr\OAuth\Entity\AuthorizationCode;
 use Thorr\Persistence\Repository\RepositoryInterface;
 
 /**
- * Interface AccessTokenRepositoryInterface
+ * Interface AuthorizationCodeRepositoryInterface
  * @package Thorr\OAuth\Repository
- * @method AccessToken|null find($token)
+ * @method AuthorizationCode|null find($code)
  */
-interface AccessTokenRepositoryInterface extends RepositoryInterface
+interface AuthorizationCodeRepositoryInterface extends RepositoryInterface
 {
 
 }

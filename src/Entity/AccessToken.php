@@ -9,11 +9,5 @@ namespace Thorr\OAuth\Entity;
 
 class AccessToken extends AbstractToken
 {
-    /**
-     * {@inheritDoc}
-     */
-    public function isExpired()
-    {
-        return $this->expirationDate !== null && parent::isExpired();
-    }
+
 }

@@ -7,7 +7,6 @@
     <entity name="Thorr\OAuth\Entity\AuthorizationCode"
             table="thorr_oauth_auth_codes"
             repository-class="Thorr\OAuth\Doctrine\Repository\AuthorizationCodeRepository"
-            read-only="true"
             >
 
         <field name="redirectUri" type="string" length="2000" />

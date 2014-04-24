@@ -7,10 +7,8 @@
     <entity name="Thorr\OAuth\Entity\RefreshToken"
             table="thorr_oauth_refresh_tokens"
             repository-class="Thorr\OAuth\Doctrine\Repository\RefreshTokenRepository"
-            read-only="true"
             >
 
-<!--
         <many-to-many field="scopes" target-entity="Thorr\OAuth\Entity\Scope">
             <join-table name="thorr_oauth_refresh_tokens_scopes">
                 <join-columns>
@@ -21,7 +19,6 @@
                 </inverse-join-columns>
             </join-table>
         </many-to-many>
--->
 
     </entity>
 
