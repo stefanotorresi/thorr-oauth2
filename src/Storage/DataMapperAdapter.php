@@ -16,6 +16,7 @@ use Thorr\Persistence\Repository\Manager\RepositoryManagerAwareTrait;
 use Zend\Crypt\Password\Bcrypt;
 
 class DataMapperAdapter implements
+    ThirdPartyProviderInterface,
     Storage\AuthorizationCodeInterface,
     Storage\AccessTokenInterface,
     Storage\ClientCredentialsInterface,
@@ -353,6 +354,11 @@ class DataMapperAdapter implements
         return [
             'user_id' => $user->getId(),
         ];
+    }
+
+    public function createUser()
+    {
+        // TODO: Implement createUser() method.
     }
 
     /**

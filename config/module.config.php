@@ -18,6 +18,11 @@ return [
             'Thorr\OAuth\Options\ModuleOptions'     => 'Thorr\OAuth\Options\ModuleOptionsFactory',
             'Thorr\OAuth\Storage\DataMapperAdapter' => 'Thorr\OAuth\Storage\DataMapperAdapterFactory',
         ],
+        'delegators' => [
+            'ZF\OAuth2\Service\OAuth2Server' => [
+                'Thorr\OAuth\Server\ServerDecorator',
+            ],
+        ],
     ],
 
     'repository_manager' => [
