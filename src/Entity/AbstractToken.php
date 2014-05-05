@@ -8,6 +8,7 @@
 namespace Thorr\OAuth\Entity;
 
 use DateTime;
+use DateTimeZone;
 use Doctrine\Common\Collections;
 
 abstract class AbstractToken
@@ -67,6 +68,10 @@ abstract class AbstractToken
      */
     public function setExpirationDate($expirationDate)
     {
+        if ($expirationDate instanceof DateTime) {
+            $expirationDate->setTimezone(new DateTimeZone(date_default_timezone_get()));
+        }
+
         $this->expirationDate = $expirationDate;
 
         return $this;
@@ -85,7 +90,26 @@ abstract class AbstractToken
      */
     public function isExpired()
     {
-        return $this->expirationDate !== null && $this->expirationDate < new DateTime();
+        return $this->expirationDate !== null && $this->expirationDate < new DateTime('now');
+    }
+
+    /**
+     * @return int
+     */
+    public function getExpirationUTCTimestamp()
+    {
+        if (! $this->expirationDate) {
+            return 0;
+        }
+
+        if ($this->expirationDate->getTimezone()->getOffset($this->expirationDate) === 0) {
+            return $this->expirationDate->getTimestamp();
+        }
+
+        $utcDate = clone $this->expirationDate;
+        $utcDate->setTimezone(new DateTimeZone('UTC'));
+
+        return $utcDate->getTimestamp();
     }
 
     /**

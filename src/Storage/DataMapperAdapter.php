@@ -7,13 +7,14 @@
 
 namespace Thorr\OAuth\Storage;
 
+use DateTimeZone;
 use OAuth2\Storage;
 use Thorr\OAuth\Entity;
 use Thorr\OAuth\Repository\RepositoryManagerWrapperTrait;
 use Thorr\Persistence\Repository\Manager\RepositoryManager;
 use Thorr\Persistence\Repository\Manager\RepositoryManagerAwareInterface;
 use Thorr\Persistence\Repository\Manager\RepositoryManagerAwareTrait;
-use Zend\Crypt\Password\Bcrypt;
+use Zend\Crypt\Password\PasswordInterface;
 
 class DataMapperAdapter implements
     ThirdPartyProviderInterface,
@@ -28,17 +29,17 @@ class DataMapperAdapter implements
     use RepositoryManagerWrapperTrait;
 
     /**
-     * @var Bcrypt
+     * @var PasswordInterface
      */
-    protected $bcrypt;
+    protected $password;
 
     /**
-     * @param Bcrypt            $bcrypt
+     * @param PasswordInterface $password
      * @param RepositoryManager $repositoryManager
      */
-    public function __construct(Bcrypt $bcrypt, RepositoryManager $repositoryManager)
+    public function __construct(PasswordInterface $password, RepositoryManager $repositoryManager)
     {
-        $this->setBcrypt($bcrypt);
+        $this->setPassword($password);
         $this->setRepositoryManager($repositoryManager);
     }
 
@@ -54,7 +55,7 @@ class DataMapperAdapter implements
         }
 
         return [
-            'expires'   => $token->getExpirationDate() ? $token->getExpirationDate()->getTimestamp() : 0,
+            'expires'   => $token->getExpirationUTCTimestamp(),
             'client_id' => $token->getClient()->getId(),
             'user_id'   => $token->getUser()->getId(),
             'scope'     => $token->getScopesString(),
@@ -104,8 +105,7 @@ class DataMapperAdapter implements
         }
 
         return [
-            'expires'      => $authorizationCode->getExpirationDate()
-                                ? $authorizationCode->getExpirationDate()->getTimestamp() : 0,
+            'expires'      => $authorizationCode->getExpirationUTCTimestamp(),
             'client_id'    => $authorizationCode->getClient()->getId(),
             'user_id'      => $authorizationCode->getUser()->getId(),
             'redirect_uri' => $authorizationCode->getRedirectUri(),
@@ -167,7 +167,7 @@ class DataMapperAdapter implements
             return false;
         }
 
-        return $this->bcrypt->verify($clientSecret, $client->getSecret());
+        return $this->password->verify($clientSecret, $client->getSecret());
     }
 
     /**
@@ -229,7 +229,13 @@ class DataMapperAdapter implements
             return false;
         }
 
-        return in_array($grantType, $client->getGrantTypes());
+        $grantTypes = $client->getGrantTypes();
+
+        if (empty($grantTypes)) {
+            return true;
+        }
+
+        return in_array($grantType, $grantTypes);
     }
 
     /**
@@ -247,7 +253,7 @@ class DataMapperAdapter implements
             'refresh_token' => $token->getToken(),
             'client_id'     => $token->getClient()->getId(),
             'user_id'       => $token->getUser()->getId(),
-            'expires'       => $token->getExpirationDate() ? $token->getExpirationDate()->getTimestamp() : 0,
+            'expires'       => $token->getExpirationUTCTimestamp(),
             'scope'         => $token->getScopesString(),
         ];
     }
@@ -337,7 +343,7 @@ class DataMapperAdapter implements
             return false;
         }
 
-        return $this->bcrypt->verify($password, $user->getPassword());
+        return $this->password->verify($password, $user->getPassword());
     }
 
     /**
@@ -362,18 +368,18 @@ class DataMapperAdapter implements
     }
 
     /**
-     * @return Bcrypt
+     * @return PasswordInterface
      */
-    public function getBcrypt()
+    public function getPassword()
     {
-        return $this->bcrypt;
+        return $this->password;
     }
 
     /**
-     * @param Bcrypt $bcrypt
+     * @param PasswordInterface $password
      */
-    public function setBcrypt(Bcrypt $bcrypt)
+    public function setPassword(PasswordInterface $password)
     {
-        $this->bcrypt = $bcrypt;
+        $this->password = $password;
     }
 }

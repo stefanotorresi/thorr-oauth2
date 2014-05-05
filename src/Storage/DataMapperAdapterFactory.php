@@ -7,7 +7,6 @@
 
 namespace Thorr\OAuth\Storage;
 
-use Thorr\OAuth\Options\ModuleOptions;
 use Thorr\OAuth\Repository;
 use Thorr\Persistence\Repository\Manager\RepositoryManager;
 use Zend\Crypt\Password\Bcrypt;
@@ -27,14 +26,10 @@ class DataMapperAdapterFactory implements FactoryInterface
         /** @var RepositoryManager $repositoryManager */
         $repositoryManager = $serviceLocator->get('Thorr\Persistence\Repository\Manager\RepositoryManager');
 
-        /** @var ModuleOptions $moduleOptions */
-        $moduleOptions = $serviceLocator->get('Thorr\OAuth\Options\ModuleOptions');
+        /** @var Bcrypt $bcrypt */
+        $password = $serviceLocator->get('Thorr\OAuth\Password\Bcrypt');
 
-        $bcrypt = new Bcrypt([
-           'cost' => $moduleOptions->getBcryptCost()
-        ]);
-
-        $adapter = new DataMapperAdapter($bcrypt, $repositoryManager);
+        $adapter = new DataMapperAdapter($password, $repositoryManager);
 
         return $adapter;
     }

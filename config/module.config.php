@@ -17,6 +17,7 @@ return [
         'factories' => [
             'Thorr\OAuth\Options\ModuleOptions'     => 'Thorr\OAuth\Options\ModuleOptionsFactory',
             'Thorr\OAuth\Storage\DataMapperAdapter' => 'Thorr\OAuth\Storage\DataMapperAdapterFactory',
+            'Thorr\OAuth\Password\Bcrypt'           => 'Thorr\OAuth\Password\BcryptFactory',
         ],
         'delegators' => [
             'ZF\OAuth2\Service\OAuth2Server' => [
@@ -42,7 +43,7 @@ return [
         'routes' => [
             'oauth' => [
                 'options' => [
-                    'route' => '/oauth',
+                    'route' => '/api/oauth',
                 ],
             ],
         ],

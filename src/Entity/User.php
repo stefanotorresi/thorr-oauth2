@@ -13,9 +13,11 @@ class User implements UserInterface
 {
     use UserTrait;
 
-    public function __construct($id, $password = null)
+    public function __construct($id = null, $password = null)
     {
-        $this->setId($id);
+        if ($id) {
+            $this->setId($id);
+        }
 
         if ($password) {
             $this->setPassword($password);

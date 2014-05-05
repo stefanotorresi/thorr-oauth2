@@ -5,7 +5,7 @@
                                       http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
 
     <mapped-superclass name="Thorr\OAuth\Entity\AbstractToken">
-        <id name="token" type="string" length="32" />
+        <id name="token" type="string" length="40" />
         <field name="expirationDate" type="datetime" nullable="true" />
         <many-to-one field="client" target-entity="Thorr\OAuth\Entity\Client" />
         <many-to-one field="user" target-entity="Thorr\OAuth\Entity\User" fetch="EAGER">
