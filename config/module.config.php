@@ -8,7 +8,7 @@
 return [
 
     'thorr_oauth' => [
-//        'user_class_name' => 'Thorr\OAuth\Entity\User'
+//        'user_entity_class_name' => 'Thorr\OAuth\Entity\User',
 //        'bcrypt_cost' => 10,
 //        'default_user_mapping_enabled' => true,
     ],
@@ -62,6 +62,7 @@ return [
             'orm_default' =>[
                 'drivers' => [
                     'Thorr\OAuth\Entity\AbstractToken'     => 'Thorr\OAuth',
+                    'Thorr\OAuth\Entity\AbstractUser'      => 'Thorr\OAuth',
                     'Thorr\OAuth\Entity\AccessToken'       => 'Thorr\OAuth',
                     'Thorr\OAuth\Entity\AuthorizationCode' => 'Thorr\OAuth',
                     'Thorr\OAuth\Entity\Client'            => 'Thorr\OAuth',
