@@ -7,7 +7,7 @@
 
 namespace Thorr\OAuth\Storage;
 
-interface ThirdPartyProviderInterface
+interface ThirdPartyStorageInterface
 {
     public function createUser();
 }

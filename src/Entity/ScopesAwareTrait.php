@@ -9,7 +9,7 @@ namespace Thorr\OAuth\Entity;
 
 use Doctrine\Common\Collections;
 
-trait ScopesProviderTrait
+trait ScopesAwareTrait
 {
     /**
      * @var Collections\Collection
