@@ -9,7 +9,7 @@ namespace Thorr\OAuth\Server;
 
 use OAuth2\Server as OAuth2Server;
 use Thorr\OAuth\GrantType\ThirdParty;
-use Thorr\OAuth\Storage\ThirdPartyProviderInterface;
+use Thorr\OAuth\Options\ModuleOptions;
 use Zend\ServiceManager\DelegatorFactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
@@ -29,24 +29,21 @@ class ServerDecorator implements DelegatorFactoryInterface
      */
     public function createDelegatorWithName(ServiceLocatorInterface $serviceLocator, $name, $requestedName, $callback)
     {
-        $config   = $serviceLocator->get('Config');
-
-        if (!isset($config['zf-oauth2']['storage']) || empty($config['zf-oauth2']['storage'])) {
-            throw new \RuntimeException(
-                'The storage configuration [\'zf-oauth2\'][\'storage\'] for OAuth2 is missing'
-            );
-        }
-
-        $storage = $serviceLocator->get($config['zf-oauth2']['storage']);
 
         /** @var OAuth2Server $oauth2Server */
         $oauth2Server = $callback();
 
-        if (! $storage instanceof ThirdPartyProviderInterface) {
-            return $oauth2Server;
-        }
+        /** @var ModuleOptions $moduleOptions */
+        $moduleOptions = $serviceLocator->get('Thorr\OAuth\Options\ModuleOptions');
 
-        $oauth2Server->addGrantType(new ThirdParty($storage));
+        $thirdPartyProviders = $moduleOptions->getThirdPartyProviders();
+
+        if ($moduleOptions->isThirdPartyGrantTypeEnabled() && ! empty($thirdPartyProviders)) {
+            /** @var ThirdParty $thirdParty */
+            $thirdParty = $serviceLocator->get('Thorr\OAuth\GrantType\ThirdParty');
+
+            $oauth2Server->addGrantType($thirdParty);
+        }
 
         return $oauth2Server;
     }

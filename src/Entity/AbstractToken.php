@@ -11,9 +11,10 @@ use DateTime;
 use DateTimeZone;
 use Doctrine\Common\Collections;
 
-abstract class AbstractToken
+abstract class AbstractToken implements ScopesProviderInterface
 {
     use ScopesProviderTrait;
+    use ExpiryDateProviderTrait;
 
     /**
      * @var string
@@ -29,11 +30,6 @@ abstract class AbstractToken
      * @var UserInterface
      */
     protected $user;
-
-    /**
-     * @var DateTime
-     */
-    protected $expirationDate;
 
     /**
      *
@@ -60,56 +56,6 @@ abstract class AbstractToken
     public function getClient()
     {
         return $this->client;
-    }
-
-    /**
-     * @param DateTime $expirationDate
-     * @return self
-     */
-    public function setExpirationDate($expirationDate)
-    {
-        if ($expirationDate instanceof DateTime) {
-            $expirationDate->setTimezone(new DateTimeZone(date_default_timezone_get()));
-        }
-
-        $this->expirationDate = $expirationDate;
-
-        return $this;
-    }
-
-    /**
-     * @return DateTime
-     */
-    public function getExpirationDate()
-    {
-        return $this->expirationDate;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isExpired()
-    {
-        return $this->expirationDate !== null && $this->expirationDate < new DateTime('now');
-    }
-
-    /**
-     * @return int
-     */
-    public function getExpirationUTCTimestamp()
-    {
-        if (! $this->expirationDate) {
-            return 0;
-        }
-
-        if ($this->expirationDate->getTimezone()->getOffset($this->expirationDate) === 0) {
-            return $this->expirationDate->getTimestamp();
-        }
-
-        $utcDate = clone $this->expirationDate;
-        $utcDate->setTimezone(new DateTimeZone('UTC'));
-
-        return $utcDate->getTimestamp();
     }
 
     /**

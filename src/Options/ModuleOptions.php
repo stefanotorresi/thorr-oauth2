@@ -27,6 +27,16 @@ class ModuleOptions extends AbstractOptions
     protected $defaultUserMappingEnabled = true;
 
     /**
+     * @var bool
+     */
+    protected $thirdPartyGrantTypeEnabled = false;
+
+    /**
+     * @var array
+     */
+    protected $thirdPartyProviders = [];
+
+    /**
      * @return string
      */
     public function getUserEntityClassName()
@@ -72,5 +82,37 @@ class ModuleOptions extends AbstractOptions
     public function setDefaultUserMappingEnabled($loadDefaultUserMapping)
     {
         $this->defaultUserMappingEnabled = (bool) $loadDefaultUserMapping;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function isThirdPartyGrantTypeEnabled()
+    {
+        return $this->thirdPartyGrantTypeEnabled;
+    }
+
+    /**
+     * @param boolean $thirdPartyProvidersEnabled
+     */
+    public function setThirdPartyGrantTypeEnabled($thirdPartyProvidersEnabled)
+    {
+        $this->thirdPartyGrantTypeEnabled = $thirdPartyProvidersEnabled;
+    }
+
+    /**
+     * @return array
+     */
+    public function getThirdPartyProviders()
+    {
+        return $this->thirdPartyProviders;
+    }
+
+    /**
+     * @param array $thirdPartyProviders
+     */
+    public function setThirdPartyProviders($thirdPartyProviders)
+    {
+        $this->thirdPartyProviders = $thirdPartyProviders;
     }
 }

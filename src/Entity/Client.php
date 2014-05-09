@@ -10,7 +10,9 @@ namespace Thorr\OAuth\Entity;
 use Thorr\Persistence\Entity\IdProviderInterface;
 use Thorr\Persistence\Entity\IdProviderTrait;
 
-class Client implements IdProviderInterface
+class Client implements
+    IdProviderInterface,
+    ScopesProviderInterface
 {
     use IdProviderTrait;
     use RedirectUriProviderTrait;

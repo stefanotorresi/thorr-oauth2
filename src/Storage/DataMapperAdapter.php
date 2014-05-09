@@ -10,6 +10,7 @@ namespace Thorr\OAuth\Storage;
 use DateTimeZone;
 use OAuth2\Storage;
 use Thorr\OAuth\Entity;
+use Thorr\OAuth\Entity\UserInterface;
 use Thorr\OAuth\Repository\RepositoryManagerWrapperTrait;
 use Thorr\Persistence\Repository\Manager\RepositoryManager;
 use Thorr\Persistence\Repository\Manager\RepositoryManagerAwareInterface;
@@ -17,7 +18,7 @@ use Thorr\Persistence\Repository\Manager\RepositoryManagerAwareTrait;
 use Zend\Crypt\Password\PasswordInterface;
 
 class DataMapperAdapter implements
-    ThirdPartyProviderInterface,
+    ThirdPartyStorageInterface,
     Storage\AuthorizationCodeInterface,
     Storage\AccessTokenInterface,
     Storage\ClientCredentialsInterface,
@@ -27,6 +28,7 @@ class DataMapperAdapter implements
     RepositoryManagerAwareInterface
 {
     use RepositoryManagerWrapperTrait;
+    use ThirdPartyStorageTrait;
 
     /**
      * @var PasswordInterface
@@ -55,7 +57,7 @@ class DataMapperAdapter implements
         }
 
         return [
-            'expires'   => $token->getExpirationUTCTimestamp(),
+            'expires'   => $token->getExpiryUTCTimestamp(),
             'client_id' => $token->getClient()->getId(),
             'user_id'   => $token->getUser()->getId(),
             'scope'     => $token->getScopesString(),
@@ -83,7 +85,7 @@ class DataMapperAdapter implements
             ->setToken($oauthToken)
             ->setClient($client)
             ->setUser($user)
-            ->setExpirationDate(new \DateTime('@' . $expires))
+            ->setExpiryDate(new \DateTime('@' . $expires))
         ;
 
         if ($scope) {
@@ -105,7 +107,7 @@ class DataMapperAdapter implements
         }
 
         return [
-            'expires'      => $authorizationCode->getExpirationUTCTimestamp(),
+            'expires'      => $authorizationCode->getExpiryUTCTimestamp(),
             'client_id'    => $authorizationCode->getClient()->getId(),
             'user_id'      => $authorizationCode->getUser()->getId(),
             'redirect_uri' => $authorizationCode->getRedirectUri(),
@@ -135,7 +137,7 @@ class DataMapperAdapter implements
             ->setToken($code)
             ->setClient($client)
             ->setUser($user)
-            ->setExpirationDate(new \DateTime('@' . $expires))
+            ->setExpiryDate(new \DateTime('@' . $expires))
         ;
         $authorizationCode->setRedirectUri($redirectUri);
 
@@ -253,7 +255,7 @@ class DataMapperAdapter implements
             'refresh_token' => $token->getToken(),
             'client_id'     => $token->getClient()->getId(),
             'user_id'       => $token->getUser()->getId(),
-            'expires'       => $token->getExpirationUTCTimestamp(),
+            'expires'       => $token->getExpiryUTCTimestamp(),
             'scope'         => $token->getScopesString(),
         ];
     }
@@ -279,7 +281,7 @@ class DataMapperAdapter implements
             ->setToken($refreshToken)
             ->setClient($client)
             ->setUser($user)
-            ->setExpirationDate(new \DateTime('@' . $expires))
+            ->setExpiryDate(new \DateTime('@' . $expires))
         ;
 
         if ($scope) {
@@ -359,12 +361,8 @@ class DataMapperAdapter implements
 
         return [
             'user_id' => $user->getId(),
+            'scope' => $user instanceof Entity\ScopesProviderInterface ? $user->getScopesString() : null
         ];
-    }
-
-    public function createUser()
-    {
-        // TODO: Implement createUser() method.
     }
 
     /**

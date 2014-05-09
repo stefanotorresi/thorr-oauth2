@@ -13,7 +13,7 @@ use Thorr\Persistence\Repository\RepositoryInterface;
 /**
  * Interface UserRepositoryInterface
  * @package Thorr\OAuth\Repository
- * @method UserInterface|null find($username)
+ * @method UserInterface|null find($userId)
  */
 interface UserRepositoryInterface extends RepositoryInterface
 {
