@@ -52,9 +52,18 @@ trait ProviderTrait
 
     /**
      * @param callable $userFactory
+     * @throws Exception\InvalidArgumentException
      */
-    public function setUserFactory(callable $userFactory)
+    public function setUserFactory($userFactory)
     {
+        if (is_string($userFactory) && class_exists($userFactory)) {
+            $userFactory = new $userFactory;
+        }
+
+        if (! is_callable($userFactory)) {
+            throw new Exception\InvalidArgumentException('"user_factory" option must be a callable');
+        }
+
         $this->userFactory = $userFactory;
     }
 
