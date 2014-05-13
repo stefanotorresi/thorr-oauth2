@@ -67,7 +67,7 @@ class ThirdParty implements GrantTypeInterface
             $response->setError(
                 400,
                 'invalid_request',
-                'Missing parameters: "username" and "provider" and "provider_access_token" required'
+                'Missing parameters: "username", "provider" and "provider_access_token" are required'
             );
 
             return false;
