@@ -130,7 +130,7 @@ class FacebookProvider implements
 
         $tokenInfo = Json::decode($batchBody[0]->body);
 
-        if (! isset($tokenInfo->error)) {
+        if (isset($tokenInfo->error)) {
             throw new Exception\ClientException($tokenInfo->error->message, 400);
         }
 
