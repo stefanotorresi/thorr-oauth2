@@ -105,7 +105,7 @@ class FacebookProvider implements
      * @return bool
      * @throws Exception\ClientException
      */
-    public function validate($userId, $accessToken)
+    public function validate($userId, $accessToken, &$errorMessage = null)
     {
         $client = new Client($this->uri, $this->clientOptions);
         $client->setMethod('POST');
@@ -138,7 +138,13 @@ class FacebookProvider implements
             throw new Exception\ClientException("Invalid data returned by provider", 400);
         }
 
-        if ($tokenInfo->data->app_id !== $this->appId || $tokenInfo->data->user_id !== $userId) {
+        if ($tokenInfo->data->app_id !== $this->appId) {
+            $errorMessage = 'app_id mismatch';
+            return false;
+        }
+
+        if ($tokenInfo->data->user_id !== $userId) {
+            $errorMessage = 'user_id mismatch';
             return false;
         }
 

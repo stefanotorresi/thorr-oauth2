@@ -83,8 +83,9 @@ class ThirdParty implements GrantTypeInterface
         $provider = $this->providers[$providerName];
 
         try {
-            if (! $provider->validate($userId, $providerAccessToken)) {
-                $response->setError(401, 'invalid_grant', 'Invalid third party credentials');
+            $errorMessage = '';
+            if (! $provider->validate($userId, $providerAccessToken, $errorMessage)) {
+                $response->setError(401, 'invalid_grant', 'Invalid third party credentials: '.$errorMessage);
 
                 return false;
             }
