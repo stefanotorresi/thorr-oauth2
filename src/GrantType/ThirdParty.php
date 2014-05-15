@@ -90,7 +90,11 @@ class ThirdParty implements GrantTypeInterface
                 return false;
             }
         } catch (ClientException $e) {
-            $response->setError($e->getCode(), 'provider_error', $e->getMessage());
+            $response->setError($e->getCode(), 'provider_client_error', $e->getMessage());
+
+            return false;
+        } catch (\Exception $e) {
+            $response->setError(500, 'provider_error', $e->getMessage());
 
             return false;
         }
