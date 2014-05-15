@@ -130,8 +130,12 @@ class FacebookProvider implements
 
         $tokenInfo = Json::decode($batchBody[0]->body);
 
+        if (! isset($tokenInfo->error)) {
+            throw new Exception\ClientException($tokenInfo->error->message, 400);
+        }
+
         if (! isset($tokenInfo->data->app_id) || ! isset($tokenInfo->data->user_id)) {
-            throw new Exception\ClientException("Invalid data returned by provider", 417);
+            throw new Exception\ClientException("Invalid data returned by provider", 400);
         }
 
         if ($tokenInfo->data->app_id !== $this->appId || $tokenInfo->data->user_id !== $userId) {
