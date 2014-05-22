@@ -26,6 +26,9 @@ class FacebookProvider implements
      */
     protected $appId;
 
+    /**
+     * @var array
+     */
     protected $clientOptions;
 
     /**
@@ -72,7 +75,7 @@ class FacebookProvider implements
      */
     public function setUri($uri)
     {
-        $this->uri = $uri;
+        $this->uri = rtrim($uri, '/');
     }
 
     /**
@@ -102,53 +105,32 @@ class FacebookProvider implements
     /**
      * @param $userId
      * @param $accessToken
-     * @return bool
+     * @param null $errorMessage
      * @throws Exception\ClientException
+     * @return bool
      */
     public function validate($userId, $accessToken, &$errorMessage = null)
     {
-        $client = new Client($this->uri, $this->clientOptions);
+        $client = new Client($this->uri . '/me', $this->clientOptions);
         $client->setMethod('POST');
-        $client->setParameterPost([
-            'access_token' => $accessToken,
-            'batch' => Json::encode([
-                [
-                    'method' => 'GET',
-                    'relative_url' => 'debug_token?' . http_build_query([
-                        'access_token' => $accessToken,
-                        'input_token' => $accessToken,
-                    ])
-                ],
-                [
-                    'method' => 'GET',
-                    'relative_url' => 'me'
-                ]
-            ]),
-        ]);
+        $client->setParameterPost(['access_token' => $accessToken]);
 
-        $batchBody = $this->decodeBody($client->send());
+        $responseBody = $this->decodeBody($client->send());
 
-        $tokenInfo = Json::decode($batchBody[0]->body);
-
-        if (isset($tokenInfo->error)) {
-            throw new Exception\ClientException($tokenInfo->error->message, 400);
+        if (isset($responseBody->error)) {
+            throw new Exception\ClientException($responseBody->error->message, 400);
         }
 
-        if (! isset($tokenInfo->data->app_id) || ! isset($tokenInfo->data->user_id)) {
+        if (! isset($responseBody->user_id)) {
             throw new Exception\ClientException("Invalid data returned by provider", 400);
         }
 
-        if ($tokenInfo->data->app_id !== $this->appId) {
-            $errorMessage = 'app_id mismatch';
-            return false;
-        }
-
-        if ($tokenInfo->data->user_id !== $userId) {
+        if ($responseBody->id !== $userId) {
             $errorMessage = 'user_id mismatch';
             return false;
         }
 
-        $this->userData = Json::decode($batchBody[1]->body);
+        $this->userData = Json::decode($responseBody);
 
         return true;
     }
