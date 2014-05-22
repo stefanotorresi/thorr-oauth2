@@ -112,8 +112,8 @@ class FacebookProvider implements
     public function validate($userId, $accessToken, &$errorMessage = null)
     {
         $client = new Client($this->uri . '/me', $this->clientOptions);
-        $client->setMethod('POST');
-        $client->setParameterPost(['access_token' => $accessToken]);
+        $client->setMethod('GET');
+        $client->setParameterGet(['access_token' => $accessToken]);
 
         $userData = $this->decodeBody($client->send());
 
