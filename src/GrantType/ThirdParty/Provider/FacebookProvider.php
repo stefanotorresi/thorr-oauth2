@@ -115,22 +115,22 @@ class FacebookProvider implements
         $client->setMethod('POST');
         $client->setParameterPost(['access_token' => $accessToken]);
 
-        $responseBody = $this->decodeBody($client->send());
+        $userData = $this->decodeBody($client->send());
 
-        if (isset($responseBody->error)) {
-            throw new Exception\ClientException($responseBody->error->message, 400);
+        if (isset($userData->error)) {
+            throw new Exception\ClientException($userData->error->message, 400);
         }
 
-        if (! isset($responseBody->user_id)) {
+        if (! isset($userData->id)) {
             throw new Exception\ClientException("Invalid data returned by provider", 400);
         }
 
-        if ($responseBody->id !== $userId) {
+        if ($userData->id !== $userId) {
             $errorMessage = 'user_id mismatch';
             return false;
         }
 
-        $this->userData = Json::decode($responseBody);
+        $this->userData = $userData;
 
         return true;
     }
