@@ -10,7 +10,7 @@
             >
 
         <many-to-many field="scopes" target-entity="Thorr\OAuth\Entity\Scope">
-            <join-table name="thorr_oauth_tokens_scopes">
+            <join-table name="thorr_oauth_access_tokens_scopes">
                 <join-columns>
                     <join-column name="token" referenced-column-name="token" />
                 </join-columns>
