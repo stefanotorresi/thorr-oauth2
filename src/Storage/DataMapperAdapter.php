@@ -201,7 +201,7 @@ class DataMapperAdapter implements
             'redirect_uri' => $client->getRedirectUri(),
             'client_id'    => $client->getId(),
             'grant_types'  => $client->getGrantTypes(),
-            'user_id'      => $client->getUser()->getId(),
+            'user_id'      => $client->getUser() ? $client->getUser()->getId() : null,
             'scope'        => $client->getScopesString(),
         ];
     }
