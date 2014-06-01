@@ -69,15 +69,11 @@ class DataMapperAdapter implements
      */
     public function setAccessToken($oauthToken, $clientId, $userId, $expires, $scope = null)
     {
-        $client = $this->getClientRepository()->find($clientId);
-
-        if (! $client) {
+        if (! $clientId || ! $client = $this->getClientRepository()->find($clientId)) {
             throw new \InvalidArgumentException('Invalid clientId provided');
         }
 
-        $user = $this->getUserRepository()->find($userId);
-
-        if (! $user) {
+        if (! $userId || ! $user = $this->getUserRepository()->find($userId)) {
             throw new \InvalidArgumentException('Invalid userId provided');
         }
 
