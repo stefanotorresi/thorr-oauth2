@@ -7,16 +7,12 @@
 
 namespace Thorr\OAuth\GrantType\ThirdParty\Provider;
 
-use DomainException;
 use LogicException;
-use Thorr\OAuth\Entity\UserInterface;
+use Zend\Stdlib\Guard\EmptyGuardTrait;
 
 trait ProviderTrait
 {
-    /**
-     * @var callable
-     */
-    protected $userFactory;
+    use EmptyGuardTrait;
 
     /**
      * @var mixed
@@ -25,46 +21,16 @@ trait ProviderTrait
 
     /**
      * @throws LogicException
-     * @return UserInterface
+     * @return array
      */
-    public function getUser()
+    public function getUserData()
     {
-        if (! $this->userData) {
-            throw new LogicException('User validation didn\'t occur or pass');
+        $this->guardAgainstEmpty($this->userData);
+
+        if (! isset($this->userData['id'])) {
+            throw new LogicException('Third party user data array must have an "id" key');
         }
 
-        $user = call_user_func($this->userFactory, $this->userData);
-
-        if (! $user instanceof UserInterface) {
-            throw new DomainException('the UserFactory callable must return a UserInterface');
-        }
-
-        return $user;
+        return $this->userData;
     }
-
-    /**
-     * @return callable
-     */
-    public function getUserFactory()
-    {
-        return $this->userFactory;
-    }
-
-    /**
-     * @param callable $userFactory
-     * @throws Exception\InvalidArgumentException
-     */
-    public function setUserFactory($userFactory)
-    {
-        if (is_string($userFactory) && class_exists($userFactory)) {
-            $userFactory = new $userFactory;
-        }
-
-        if (! is_callable($userFactory)) {
-            throw new Exception\InvalidArgumentException('"user_factory" option must be a callable');
-        }
-
-        $this->userFactory = $userFactory;
-    }
-
 }

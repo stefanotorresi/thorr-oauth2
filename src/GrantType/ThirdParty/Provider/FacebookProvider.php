@@ -7,7 +7,6 @@
 
 namespace Thorr\OAuth\GrantType\ThirdParty\Provider;
 
-use Thorr\OAuth\Entity\User;
 use Zend\Http\Client;
 use Zend\Http\Response;
 use Zend\Json\Json;
@@ -48,14 +47,6 @@ class FacebookProvider implements
         }
 
         $this->setUri($options['uri']);
-
-        if (! isset($options['user_factory'])) {
-            $options['user_factory'] = function ($data) {
-                return new User($data->id);
-            };
-        }
-
-        $this->setUserFactory($options['user_factory']);
 
         if (isset($options['client_options'])) {
             $this->clientOptions = $options['client_options'];
@@ -130,7 +121,7 @@ class FacebookProvider implements
             return false;
         }
 
-        $this->userData = $userData;
+        $this->userData = (array) $userData;
 
         return true;
     }

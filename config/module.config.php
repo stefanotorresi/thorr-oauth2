@@ -48,6 +48,7 @@ return [
             'Thorr\OAuth\Entity\Client'            => 'Thorr\OAuth\Repository\ClientRepository',
             'Thorr\OAuth\Entity\RefreshToken'      => 'Thorr\OAuth\Repository\RefreshTokenRepository',
             'Thorr\OAuth\Entity\Scope'             => 'Thorr\OAuth\Repository\ScopeRepository',
+            'Thorr\OAuth\Entity\ThirdPartyUser'    => 'Thorr\OAuth\Repository\ThirdPartyUserRepository',
         ],
     ],
 
@@ -80,6 +81,7 @@ return [
                     'Thorr\OAuth\Entity\Client'            => 'Thorr\OAuth',
                     'Thorr\OAuth\Entity\RefreshToken'      => 'Thorr\OAuth',
                     'Thorr\OAuth\Entity\Scope'             => 'Thorr\OAuth',
+                    'Thorr\OAuth\Entity\ThirdPartyUser'    => 'Thorr\OAuth',
                 ]
             ]
         ]

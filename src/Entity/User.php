@@ -7,6 +7,7 @@
 
 namespace Thorr\OAuth\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Thorr\Persistence\Entity\IdProviderTrait;
 
 class User implements UserInterface
@@ -22,5 +23,7 @@ class User implements UserInterface
         if ($password) {
             $this->setPassword($password);
         }
+
+        $this->thirdPartyUsers = new ArrayCollection();
     }
 }

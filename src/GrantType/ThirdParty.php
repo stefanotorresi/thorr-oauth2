@@ -13,6 +13,8 @@ use OAuth2\RequestInterface;
 use OAuth2\ResponseInterface;
 use OAuth2\ResponseType\AccessTokenInterface;
 use Thorr\OAuth\Entity\ScopesProviderInterface;
+use Thorr\OAuth\Entity\ThirdPartyUser;
+use Thorr\OAuth\Entity\User;
 use Thorr\OAuth\Entity\UserInterface;
 use Thorr\OAuth\GrantType\ThirdParty\Provider\Exception\ClientException;
 use Thorr\OAuth\GrantType\ThirdParty\Provider\ProviderInterface;
@@ -59,15 +61,15 @@ class ThirdParty implements GrantTypeInterface
 
     public function validateRequest(RequestInterface $request, ResponseInterface $response)
     {
-        $userId              = $request->request("user_id");
         $providerName        = $request->request("provider");
+        $providerUserId      = $request->request("provider_user_id");
         $providerAccessToken = $request->request("provider_access_token");
 
-        if (! $userId || ! $providerName || ! $providerAccessToken) {
+        if (! $providerName || ! $providerUserId || ! $providerAccessToken) {
             $response->setError(
                 400,
                 'invalid_request',
-                'Missing parameters: "username", "provider" and "provider_access_token" are required'
+                'One or more missing parameter: "provider", "provider_user_id" and "provider_access_token" are required'
             );
 
             return false;
@@ -84,7 +86,7 @@ class ThirdParty implements GrantTypeInterface
 
         try {
             $errorMessage = '';
-            if (! $provider->validate($userId, $providerAccessToken, $errorMessage)) {
+            if (! $provider->validate($providerUserId, $providerAccessToken, $errorMessage)) {
                 $response->setError(401, 'invalid_grant', 'Invalid third party credentials: '.$errorMessage);
 
                 return false;
@@ -99,11 +101,15 @@ class ThirdParty implements GrantTypeInterface
             return false;
         }
 
-        $this->user = $provider->getUser();
+        $thirdPartyUserData = $provider->getUserData();
+        $thirdPartyUser = $this->storage->findThirdPartyUser($thirdPartyUserData['id'], $provider->getIdentifier()) ?
+            : new ThirdPartyUser($thirdPartyUserData['id'], $provider->getIdentifier(), $thirdPartyUserData);
 
-        if (! $this->storage->hasUser($this->user)) {
-            $this->storage->saveUser($this->user);
-        }
+        $this->user = $this->storage->findUserByThirdParty($thirdPartyUser) ?
+            : new User($thirdPartyUser->getId().'@'.$thirdPartyUser->getProvider());
+
+        $this->user->addThirdPartyUser($thirdPartyUser);
+        $this->storage->saveUser($this->user);
 
         return true;
     }

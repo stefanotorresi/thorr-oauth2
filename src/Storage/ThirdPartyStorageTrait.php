@@ -7,22 +7,30 @@
 
 namespace Thorr\OAuth\Storage;
 
+use Thorr\OAuth\Entity\ThirdPartyUserInterface;
 use Thorr\OAuth\Entity\UserInterface;
+use Thorr\OAuth\Repository\ThirdPartyUserRepositoryInterface;
 use Thorr\OAuth\Repository\UserRepositoryInterface;
 
 trait ThirdPartyStorageTrait
 {
     /**
-     * @param UserInterface|mixed $user
-     * @return bool
+     * @param ThirdPartyUserInterface $thirdPartyUser
+     * @return UserInterface|null
      */
-    public function hasUser($user)
+    public function findUserByThirdParty(ThirdPartyUserInterface $thirdPartyUser)
     {
-        $userId = $user instanceof UserInterface ? $user->getId() : $user;
+        return $this->getUserRepository()->findUserByThirdParty($thirdPartyUser);
+    }
 
-        $persistentUser = $this->getUserRepository()->find($userId);
-
-        return $persistentUser instanceof UserInterface;
+    /**
+     * @param  string $id
+     * @param  string $provider
+     * @return mixed
+     */
+    public function findThirdPartyUser($id, $provider)
+    {
+        return $this->getThirdPartyUserRepository()->find([ 'id' => $id, 'provider' => $provider]);
     }
 
     /**
@@ -37,4 +45,9 @@ trait ThirdPartyStorageTrait
      * @return UserRepositoryInterface
      */
     abstract public function getUserRepository();
+
+    /**
+     * @return ThirdPartyUserRepositoryInterface
+     */
+    abstract public function getThirdPartyUserRepository();
 }

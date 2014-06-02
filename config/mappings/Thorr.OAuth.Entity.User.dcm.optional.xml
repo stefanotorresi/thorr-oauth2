@@ -11,6 +11,22 @@
         <id name="id" type="string" length="255" />
         <field name="password" type="string" length="60" nullable="true" />
 
+        <many-to-many field="thirdPartyUsers" target-entity="Thorr\OAuth\Entity\ThirdPartyUser" fetch="EAGER">
+            <cascade>
+                <cascade-persist/>
+                <cascade-remove/>
+            </cascade>
+            <join-table name="thorr_oauth_users_3rdpartyusers">
+                <join-columns>
+                    <join-column name="userId" referenced-column-name="id" on-delete="CASCADE" />
+                </join-columns>
+                <inverse-join-columns>
+                    <join-column name="thirdPartyUserId" referenced-column-name="id" />
+                    <join-column name="thirdPartyUserProvider" referenced-column-name="provider" />
+                </inverse-join-columns>
+            </join-table>
+        </many-to-many>
+
     </entity>
 
 </doctrine-mapping>

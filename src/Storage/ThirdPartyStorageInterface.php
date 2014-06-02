@@ -7,15 +7,23 @@
 
 namespace Thorr\OAuth\Storage;
 
+use Thorr\OAuth\Entity\ThirdPartyUserInterface;
 use Thorr\OAuth\Entity\UserInterface;
 
 interface ThirdPartyStorageInterface
 {
     /**
-     * @param UserInterface|mixed $user
-     * @return bool
+     * @param  ThirdPartyUserInterface $thirdPartyUser
+     * @return UserInterface|null
      */
-    public function hasUser($user);
+    public function findUserByThirdParty(ThirdPartyUserInterface $thirdPartyUser);
+
+    /**
+     * @param  string $id
+     * @param  string $provider
+     * @return mixed
+     */
+    public function findThirdPartyUser($id, $provider);
 
     /**
      * @param UserInterface $user

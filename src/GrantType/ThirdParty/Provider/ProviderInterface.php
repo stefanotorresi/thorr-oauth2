@@ -7,8 +7,6 @@
 
 namespace Thorr\OAuth\GrantType\ThirdParty\Provider;
 
-use Thorr\OAuth\Entity\UserInterface;
-
 interface ProviderInterface
 {
     /**
@@ -23,8 +21,8 @@ interface ProviderInterface
      */
     public function getIdentifier();
 
-    /**
-     * @return UserInterface
+    /***
+     * @return array
      */
-    public function getUser();
+    public function getUserData();
 }

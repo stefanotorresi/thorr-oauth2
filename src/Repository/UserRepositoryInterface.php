@@ -7,6 +7,7 @@
 
 namespace Thorr\OAuth\Repository;
 
+use Thorr\OAuth\Entity\ThirdPartyUserInterface;
 use Thorr\OAuth\Entity\UserInterface;
 use Thorr\Persistence\Repository\RepositoryInterface;
 
@@ -17,5 +18,9 @@ use Thorr\Persistence\Repository\RepositoryInterface;
  */
 interface UserRepositoryInterface extends RepositoryInterface
 {
-
+    /**
+     * @param ThirdPartyUserInterface $thirdPartyUser
+     * @return UserInterface|null
+     */
+    public function findUserByThirdParty(ThirdPartyUserInterface $thirdPartyUser);
 }

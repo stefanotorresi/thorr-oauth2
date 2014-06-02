@@ -40,6 +40,9 @@ class ServiceFactory implements FactoryInterface
         /** @var ModuleOptions $moduleOptions */
         $moduleOptions = $serviceLocator->get('Thorr\OAuth\Options\ModuleOptions');
 
+        /** @var RepositoryManager $repositoryManager */
+        $repositoryManager = $serviceLocator->get('Thorr\Persistence\Repository\Manager\RepositoryManager');
+
         foreach ($moduleOptions->getThirdPartyProviders() as $providerConfig) {
             $provider = Provider\ProviderFactory::createProvider($providerConfig);
             $grantType->addProvider($provider);

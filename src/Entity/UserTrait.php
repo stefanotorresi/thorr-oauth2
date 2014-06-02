@@ -7,6 +7,7 @@
 
 namespace Thorr\OAuth\Entity;
 
+use Doctrine\Common\Collections\Collection;
 use Thorr\Persistence\Entity\IdProviderTrait;
 
 trait UserTrait
@@ -17,6 +18,11 @@ trait UserTrait
      * @var string
      */
     protected $password;
+
+    /**
+     * @var Collection
+     */
+    protected $thirdPartyUsers;
 
     /**
      * Get password.
@@ -39,5 +45,42 @@ trait UserTrait
         $this->password = $password;
 
         return $this;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getThirdPartyUsers()
+    {
+        return $this->thirdPartyUsers;
+    }
+
+    /**
+     * @param Collection $thirdPartyUsers
+     */
+    public function setThirdPartyUsers(Collection $thirdPartyUsers)
+    {
+        $this->thirdPartyUsers = $thirdPartyUsers;
+    }
+
+    /**
+     * @param ThirdPartyUserInterface $thirdPartyUser
+     * @return bool
+     */
+    public function addThirdPartyUser(ThirdPartyUserInterface $thirdPartyUser)
+    {
+        if ($this->thirdPartyUsers->contains($thirdPartyUser)) {
+            return false;
+        }
+        return $this->thirdPartyUsers->add($thirdPartyUser);
+    }
+
+    /**
+     * @param ThirdPartyUserInterface $thirdPartyUser
+     * @return bool
+     */
+    public function removeThirdPartyUser(ThirdPartyUserInterface $thirdPartyUser)
+    {
+        return (bool) $this->thirdPartyUsers->remove($thirdPartyUser);
     }
 }

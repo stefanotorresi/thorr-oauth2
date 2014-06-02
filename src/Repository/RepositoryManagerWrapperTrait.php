@@ -60,4 +60,12 @@ trait RepositoryManagerWrapperTrait
     {
         return $this->getRepositoryManager()->get('Thorr\OAuth\Repository\UserRepository');
     }
+
+    /**
+     * @return ThirdPartyUserRepositoryInterface
+     */
+    public function getThirdPartyUserRepository()
+    {
+        return $this->getRepositoryManager()->get('Thorr\OAuth\Repository\ThirdPartyUserRepository');
+    }
 }
