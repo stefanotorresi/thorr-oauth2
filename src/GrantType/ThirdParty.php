@@ -116,7 +116,13 @@ class ThirdParty implements GrantTypeInterface
 
         $thirdPartyUser->setData($provider->getUserData());
 
-        $this->user = $this->storage->findUserByThirdParty($thirdPartyUser);
+        if ($request->request("user_id")) {
+            $this->user = $this->storage->findUser($request->request("user_id"));
+        }
+
+        if (! $this->user) {
+            $this->user = $this->storage->findUserByThirdParty($thirdPartyUser);
+        }
 
         if (! $this->user) {
             $userClass = $this->moduleOptions->getUserEntityClassName();

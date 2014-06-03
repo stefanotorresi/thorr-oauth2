@@ -11,8 +11,7 @@ use Zend\Http\Client;
 use Zend\Http\Response;
 use Zend\Json\Json;
 
-class FacebookProvider implements
-    ProviderInterface
+class InstagramProvider implements ProviderInterface
 {
     use ProviderTrait;
 
@@ -24,7 +23,7 @@ class FacebookProvider implements
     /**
      * @var string
      */
-    protected $appId;
+    protected $clientId;
 
     /**
      * @var array
@@ -37,11 +36,11 @@ class FacebookProvider implements
      */
     public function __construct($options)
     {
-        if (! isset($options['app_id'])) {
-            throw new Exception\InvalidArgumentException('Missing "app_id" option');
+        if (! isset($options['client_id'])) {
+            throw new Exception\InvalidArgumentException('Missing "client_id" option');
         }
 
-        $this->setAppId($options['app_id']);
+        $this->setClientId($options['client_id']);
 
         if (! isset($options['uri'])) {
             throw new Exception\InvalidArgumentException('Missing "uri" option');
@@ -57,53 +56,21 @@ class FacebookProvider implements
     /**
      * @return string
      */
-    public function getUri()
-    {
-        return $this->uri;
-    }
-
-    /**
-     * @param string $uri
-     */
-    public function setUri($uri)
-    {
-        $this->uri = rtrim($uri, '/');
-    }
-
-    /**
-     * @return string
-     */
-    public function getAppId()
-    {
-        return $this->appId;
-    }
-
-    /**
-     * @param string $appId
-     */
-    public function setAppId($appId)
-    {
-        $this->appId = $appId;
-    }
-
-    /**
-     * @return string
-     */
     public function getIdentifier()
     {
-        return 'facebook';
+        return 'instagram';
     }
 
     /**
      * @param $userId
      * @param $accessToken
-     * @param null $errorMessage
+     * @param $errorMessage
      * @throws Exception\ClientException
-     * @return bool
+     * @return boolean
      */
     public function validate($userId, $accessToken, &$errorMessage = null)
     {
-        $client = new Client($this->uri . '/me', $this->clientOptions);
+        $client = new Client($this->uri . '/users/self', $this->clientOptions);
         $client->setMethod('GET');
         $client->setParameterGet(['access_token' => $accessToken]);
 
@@ -150,9 +117,57 @@ class FacebookProvider implements
         $body = Json::decode($response->getBody());
 
         if ($response->isClientError()) {
-            throw new Exception\ClientException($body->error->message, $response->getStatusCode());
+            throw new Exception\ClientException($body->meta->error_message, $response->getStatusCode());
         }
 
-        return $body;
+        return $body->data;
+    }
+
+    /**
+     * @param string $clientId
+     */
+    public function setClientId($clientId)
+    {
+        $this->clientId = $clientId;
+    }
+
+    /**
+     * @return string
+     */
+    public function getClientId()
+    {
+        return $this->clientId;
+    }
+
+    /**
+     * @param array $clientOptions
+     */
+    public function setClientOptions($clientOptions)
+    {
+        $this->clientOptions = $clientOptions;
+    }
+
+    /**
+     * @return array
+     */
+    public function getClientOptions()
+    {
+        return $this->clientOptions;
+    }
+
+    /**
+     * @param string $uri
+     */
+    public function setUri($uri)
+    {
+        $this->uri = $uri;
+    }
+
+    /**
+     * @return string
+     */
+    public function getUri()
+    {
+        return $this->uri;
     }
 }

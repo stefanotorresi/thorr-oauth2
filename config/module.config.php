@@ -21,6 +21,13 @@ return [
                     'uri' => 'https://graph.facebook.com/v2.0'
                 ],
             ],
+            'instagram' => [
+                'class' => 'Thorr\OAuth\GrantType\ThirdParty\Provider\InstagramProvider',
+                'options' => [
+                    'client_id' => null,
+                    'uri' => 'https://api.instagram.com/v1'
+                ],
+            ],
         ],
     ],
 
