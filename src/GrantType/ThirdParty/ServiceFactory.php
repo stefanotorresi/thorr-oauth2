@@ -10,6 +10,9 @@ namespace Thorr\OAuth\GrantType\ThirdParty;
 use RuntimeException;
 use Thorr\OAuth\GrantType\ThirdParty;
 use Thorr\OAuth\Options\ModuleOptions;
+use Thorr\OAuth\Repository\AccessTokenRepositoryInterface;
+use Thorr\OAuth\Repository\ThirdPartyUserRepositoryInterface;
+use Thorr\OAuth\Repository\UserRepositoryInterface;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
@@ -25,20 +28,26 @@ class ServiceFactory implements FactoryInterface
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        $config   = $serviceLocator->get('Config');
+        $repositoryManager = $serviceLocator->get('Thorr\Persistence\Repository\Manager\RepositoryManager');
 
-        if (!isset($config['zf-oauth2']['storage']) || empty($config['zf-oauth2']['storage'])) {
-            throw new RuntimeException(
-                'The storage configuration [\'zf-oauth2\'][\'storage\'] for OAuth2 is missing'
-            );
-        }
+        /** @var UserRepositoryInterface            $userRepository */
+        $userRepository           = $repositoryManager->get('Thorr\OAuth\Repository\UserRepository');
 
-        $storage = $serviceLocator->get($config['zf-oauth2']['storage']);
+        /** @var ThirdPartyUserRepositoryInterface  $thirdPartyUserRepository */
+        $thirdPartyUserRepository = $repositoryManager->get('Thorr\OAuth\Repository\ThirdPartyUserRepository');
+
+        /** @var AccessTokenRepositoryInterface     $accessTokenRepository */
+        $accessTokenRepository    = $repositoryManager->get('Thorr\OAuth\Repository\AccessTokenRepository');
 
         /** @var ModuleOptions $moduleOptions */
         $moduleOptions = $serviceLocator->get('Thorr\OAuth\Options\ModuleOptions');
 
-        $grantType = new ThirdParty($storage, $moduleOptions);
+        $grantType = new ThirdParty(
+            $userRepository,
+            $thirdPartyUserRepository,
+            $accessTokenRepository,
+            $moduleOptions
+        );
 
         return $grantType;
     }

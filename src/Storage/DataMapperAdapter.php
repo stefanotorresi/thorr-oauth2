@@ -18,7 +18,6 @@ use Thorr\Persistence\Repository\Manager\RepositoryManagerAwareTrait;
 use Zend\Crypt\Password\PasswordInterface;
 
 class DataMapperAdapter implements
-    ThirdPartyStorageInterface,
     Storage\AuthorizationCodeInterface,
     Storage\AccessTokenInterface,
     Storage\ClientCredentialsInterface,
@@ -28,7 +27,6 @@ class DataMapperAdapter implements
     RepositoryManagerAwareInterface
 {
     use RepositoryManagerWrapperTrait;
-    use ThirdPartyStorageTrait;
 
     /**
      * @var PasswordInterface

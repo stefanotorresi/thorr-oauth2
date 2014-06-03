@@ -13,10 +13,13 @@ use OAuth2\RequestInterface;
 use OAuth2\ResponseInterface;
 use OAuth2\ResponseType\AccessTokenInterface;
 use Thorr\OAuth\Entity;
+use Thorr\OAuth\Entity\UserInterface;
 use Thorr\OAuth\GrantType\ThirdParty\Provider\Exception\ClientException;
 use Thorr\OAuth\GrantType\ThirdParty\Provider\ProviderInterface;
 use Thorr\OAuth\Options\ModuleOptions;
-use Thorr\OAuth\Storage\ThirdPartyStorageInterface;
+use Thorr\OAuth\Repository\AccessTokenRepositoryInterface;
+use Thorr\OAuth\Repository\ThirdPartyUserRepositoryInterface;
+use Thorr\OAuth\Repository\UserRepositoryInterface;
 use Traversable;
 use Zend\Stdlib\Guard\ArrayOrTraversableGuardTrait;
 
@@ -25,9 +28,19 @@ class ThirdParty implements GrantTypeInterface
     use ArrayOrTraversableGuardTrait;
 
     /**
-     * @var ThirdPartyStorageInterface
+     * @var UserRepositoryInterface
      */
-    protected $storage;
+    protected $userRepository;
+
+    /**
+     * @var ThirdPartyUserRepositoryInterface
+     */
+    protected $thirdPartyUserRepository;
+
+    /**
+     * @var AccessTokenRepositoryInterface
+     */
+    protected $accessTokenRepository;
 
     /**
      * @var ModuleOptions
@@ -45,13 +58,21 @@ class ThirdParty implements GrantTypeInterface
     protected $providers;
 
     /**
-     * @param ThirdPartyStorageInterface $storage
-     * @param ModuleOptions              $moduleOptions
-     * @param array|Traversable          $providers
+     * @param UserRepositoryInterface $userRepository
+     * @param ThirdPartyUserRepositoryInterface $thirdPartyUserRepository
+     * @param ModuleOptions $moduleOptions
+     * @param array|Traversable $providers
      */
-    public function __construct(ThirdPartyStorageInterface $storage, ModuleOptions $moduleOptions, $providers = [])
-    {
-        $this->storage = $storage;
+    public function __construct(
+        UserRepositoryInterface $userRepository,
+        ThirdPartyUserRepositoryInterface $thirdPartyUserRepository,
+        AccessTokenRepositoryInterface $accessTokenRepository,
+        ModuleOptions $moduleOptions,
+        $providers = []
+    ) {
+        $this->userRepository = $userRepository;
+        $this->thirdPartyUserRepository = $thirdPartyUserRepository;
+        $this->accessTokenRepository = $accessTokenRepository;
         $this->moduleOptions = $moduleOptions;
 
         if (empty($providers)) {
@@ -71,6 +92,7 @@ class ThirdParty implements GrantTypeInterface
 
     public function validateRequest(RequestInterface $request, ResponseInterface $response)
     {
+        $token         = $request->request("access_token");
         $providerName        = $request->request("provider");
         $providerUserId      = $request->request("provider_user_id");
         $providerAccessToken = $request->request("provider_access_token");
@@ -111,26 +133,39 @@ class ThirdParty implements GrantTypeInterface
             return false;
         }
 
-        $thirdPartyUser = $this->storage->findThirdPartyUser($provider->getUserId(), $provider->getIdentifier()) ?
-            : new Entity\ThirdPartyUser($provider->getUserId(), $provider->getIdentifier());
+        $thirdPartyUser =
+            $this->thirdPartyUserRepository->find([
+                'id' => $provider->getUserId(),
+                'provider' => $provider->getIdentifier()
+            ]) ?: new Entity\ThirdPartyUser($provider->getUserId(), $provider->getIdentifier());
 
         $thirdPartyUser->setData($provider->getUserData());
 
-        if ($request->request("user_id")) {
-            $this->user = $this->storage->findUser($request->request("user_id"));
+        if ($token) {
+            $accessToken = $this->accessTokenRepository->find($token);
+
+            if ($accessToken && $accessToken->isExpired()) {
+                $response->setError(401, 'invalid_grant', 'Access token is expired');
+                return false;
+            }
+
+            $user = $accessToken->getUser();
         }
 
-        if (! $this->user) {
-            $this->user = $this->storage->findUserByThirdParty($thirdPartyUser);
+        if (! isset($user)) {
+            $user = $this->userRepository->findUserByThirdParty($thirdPartyUser);
         }
 
-        if (! $this->user) {
+        if (! isset($user)) {
             $userClass = $this->moduleOptions->getUserEntityClassName();
-            $this->user = new $userClass($thirdPartyUser->getId().'@'.$thirdPartyUser->getProvider());
+            $user = new $userClass($thirdPartyUser->getId().'@'.$thirdPartyUser->getProvider());
         }
 
-        $this->user->addThirdPartyUser($thirdPartyUser);
-        $this->storage->saveUser($this->user);
+        /** @var UserInterface $user */
+
+        $user->addThirdPartyUser($thirdPartyUser);
+        $this->userRepository->save($user);
+        $this->user = $user;
 
         return true;
     }

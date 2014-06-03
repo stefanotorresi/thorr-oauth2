@@ -25,4 +25,10 @@ interface UserInterface extends IdProviderInterface
      * @return UserInterface
      */
     public function setPassword($password);
+
+    /**
+     * @param ThirdPartyUserInterface $thirdPartyUser
+     * @return boolean
+     */
+    public function addThirdPartyUser(ThirdPartyUserInterface $thirdPartyUser);
 }
