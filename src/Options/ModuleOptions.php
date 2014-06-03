@@ -7,6 +7,7 @@
 
 namespace Thorr\OAuth\Options;
 
+use InvalidArgumentException;
 use Zend\Stdlib\AbstractOptions;
 
 class ModuleOptions extends AbstractOptions
@@ -46,9 +47,14 @@ class ModuleOptions extends AbstractOptions
 
     /**
      * @param string $userClassName
+     * @throws InvalidArgumentException
      */
     public function setUserEntityClassName($userClassName)
     {
+        if (! class_exists($userClassName)) {
+            throw new InvalidArgumentException('User class does not exist');
+        }
+
         $this->userEntityClassName = (string) $userClassName;
     }
 

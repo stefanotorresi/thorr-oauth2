@@ -35,18 +35,10 @@ class ServiceFactory implements FactoryInterface
 
         $storage = $serviceLocator->get($config['zf-oauth2']['storage']);
 
-        $grantType = new ThirdParty($storage);
-
         /** @var ModuleOptions $moduleOptions */
         $moduleOptions = $serviceLocator->get('Thorr\OAuth\Options\ModuleOptions');
 
-        /** @var RepositoryManager $repositoryManager */
-        $repositoryManager = $serviceLocator->get('Thorr\Persistence\Repository\Manager\RepositoryManager');
-
-        foreach ($moduleOptions->getThirdPartyProviders() as $providerConfig) {
-            $provider = Provider\ProviderFactory::createProvider($providerConfig);
-            $grantType->addProvider($provider);
-        }
+        $grantType = new ThirdParty($storage, $moduleOptions);
 
         return $grantType;
     }

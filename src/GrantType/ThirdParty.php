@@ -12,12 +12,10 @@ use OAuth2\GrantType\GrantTypeInterface;
 use OAuth2\RequestInterface;
 use OAuth2\ResponseInterface;
 use OAuth2\ResponseType\AccessTokenInterface;
-use Thorr\OAuth\Entity\ScopesProviderInterface;
-use Thorr\OAuth\Entity\ThirdPartyUser;
-use Thorr\OAuth\Entity\User;
-use Thorr\OAuth\Entity\UserInterface;
+use Thorr\OAuth\Entity;
 use Thorr\OAuth\GrantType\ThirdParty\Provider\Exception\ClientException;
 use Thorr\OAuth\GrantType\ThirdParty\Provider\ProviderInterface;
+use Thorr\OAuth\Options\ModuleOptions;
 use Thorr\OAuth\Storage\ThirdPartyStorageInterface;
 use Traversable;
 use Zend\Stdlib\Guard\ArrayOrTraversableGuardTrait;
@@ -32,7 +30,12 @@ class ThirdParty implements GrantTypeInterface
     protected $storage;
 
     /**
-     * @var UserInterface
+     * @var ModuleOptions
+     */
+    protected $moduleOptions;
+
+    /**
+     * @var Entity\UserInterface
      */
     protected $user;
 
@@ -43,13 +46,20 @@ class ThirdParty implements GrantTypeInterface
 
     /**
      * @param ThirdPartyStorageInterface $storage
-     * @param array|Traversable $providers
+     * @param ModuleOptions              $moduleOptions
+     * @param array|Traversable          $providers
      */
-    public function __construct(ThirdPartyStorageInterface $storage, $providers = [])
+    public function __construct(ThirdPartyStorageInterface $storage, ModuleOptions $moduleOptions, $providers = [])
     {
         $this->storage = $storage;
+        $this->moduleOptions = $moduleOptions;
 
-        if (! empty($providers)) {
+        if (empty($providers)) {
+            foreach ($moduleOptions->getThirdPartyProviders() as $providerConfig) {
+                $provider = ThirdParty\Provider\ProviderFactory::createProvider($providerConfig);
+                $this->addProvider($provider);
+            }
+        } else {
             $this->setProviders($providers);
         }
     }
@@ -101,12 +111,17 @@ class ThirdParty implements GrantTypeInterface
             return false;
         }
 
-        $thirdPartyUserData = $provider->getUserData();
-        $thirdPartyUser = $this->storage->findThirdPartyUser($thirdPartyUserData['id'], $provider->getIdentifier()) ?
-            : new ThirdPartyUser($thirdPartyUserData['id'], $provider->getIdentifier(), $thirdPartyUserData);
+        $thirdPartyUser = $this->storage->findThirdPartyUser($provider->getUserId(), $provider->getIdentifier()) ?
+            : new Entity\ThirdPartyUser($provider->getUserId(), $provider->getIdentifier());
 
-        $this->user = $this->storage->findUserByThirdParty($thirdPartyUser) ?
-            : new User($thirdPartyUser->getId().'@'.$thirdPartyUser->getProvider());
+        $thirdPartyUser->setData($provider->getUserData());
+
+        $this->user = $this->storage->findUserByThirdParty($thirdPartyUser);
+
+        if (! $this->user) {
+            $userClass = $this->moduleOptions->getUserEntityClassName();
+            $this->user = new $userClass($thirdPartyUser->getId().'@'.$thirdPartyUser->getProvider());
+        }
 
         $this->user->addThirdPartyUser($thirdPartyUser);
         $this->storage->saveUser($this->user);
@@ -137,7 +152,7 @@ class ThirdParty implements GrantTypeInterface
 
     public function getScope()
     {
-        return $this->user instanceof ScopesProviderInterface ? $this->user->getScopesString() : null;
+        return $this->user instanceof Entity\ScopesProviderInterface ? $this->user->getScopesString() : null;
     }
 
     /**

@@ -7,6 +7,7 @@
 
 namespace Thorr\OAuth\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Thorr\Persistence\Entity\IdProviderTrait;
 
@@ -48,18 +49,21 @@ trait UserTrait
     }
 
     /**
-     * @return Collection
+     * @return array
      */
     public function getThirdPartyUsers()
     {
-        return $this->thirdPartyUsers;
+        return $this->thirdPartyUsers->toArray();
     }
 
     /**
-     * @param Collection $thirdPartyUsers
+     * @param array|Collection $thirdPartyUsers
      */
-    public function setThirdPartyUsers(Collection $thirdPartyUsers)
+    public function setThirdPartyUsers($thirdPartyUsers)
     {
+        if (! $thirdPartyUsers instanceof Collection) {
+            $thirdPartyUsers = new ArrayCollection($thirdPartyUsers);
+        }
         $this->thirdPartyUsers = $thirdPartyUsers;
     }
 

@@ -21,6 +21,11 @@ interface ProviderInterface
      */
     public function getIdentifier();
 
+    /**
+     * @return mixed
+     */
+    public function getUserId();
+
     /***
      * @return array
      */

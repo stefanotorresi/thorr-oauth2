@@ -7,7 +7,6 @@
 
 namespace Thorr\OAuth\GrantType\ThirdParty\Provider;
 
-use LogicException;
 use Zend\Stdlib\Guard\EmptyGuardTrait;
 
 trait ProviderTrait
@@ -17,19 +16,29 @@ trait ProviderTrait
     /**
      * @var mixed
      */
+    protected $userId;
+
+    /**
+     * @var mixed
+     */
     protected $userData;
 
     /**
-     * @throws LogicException
+     * @return mixed
+     */
+    public function getUserId()
+    {
+        $this->guardAgainstEmpty($this->userId);
+
+        return $this->userId;
+    }
+
+    /**
      * @return array
      */
     public function getUserData()
     {
         $this->guardAgainstEmpty($this->userData);
-
-        if (! isset($this->userData['id'])) {
-            throw new LogicException('Third party user data array must have an "id" key');
-        }
 
         return $this->userData;
     }
