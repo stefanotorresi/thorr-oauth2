@@ -16,7 +16,7 @@
                 <cascade-persist/>
                 <cascade-remove/>
             </cascade>
-            <join-table name="thorr_oauth_users_3rdpartyusers">
+            <join-table name="thorr_oauth_3rdpartyusers_users">
                 <join-columns>
                     <join-column name="userId" referenced-column-name="id" on-delete="CASCADE" />
                 </join-columns>
