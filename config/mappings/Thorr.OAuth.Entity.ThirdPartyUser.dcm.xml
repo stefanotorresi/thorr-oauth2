@@ -12,6 +12,11 @@
         <id name="provider" type="string" length="255" />
         <field name="data" type="json_array" nullable="true" />
 
+        <many-to-one target-entity="Thorr\OAuth\Entity\User"
+                     field="user"
+                     inversed-by="thirdPartyUsers"
+                     orphan-removal="true" />
+
     </entity>
 
 </doctrine-mapping>

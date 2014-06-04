@@ -11,21 +11,12 @@
         <id name="id" type="string" length="255" />
         <field name="password" type="string" length="60" nullable="true" />
 
-        <many-to-many field="thirdPartyUsers" target-entity="Thorr\OAuth\Entity\ThirdPartyUser" fetch="EAGER">
+        <one-to-many target-entity="Thorr\OAuth\Entity\ThirdPartyUser" field="thirdPartyUsers" mapped-by="user">
             <cascade>
                 <cascade-persist/>
                 <cascade-remove/>
             </cascade>
-            <join-table name="thorr_oauth_3rdpartyusers_users">
-                <join-columns>
-                    <join-column name="userId" referenced-column-name="id" on-delete="CASCADE" />
-                </join-columns>
-                <inverse-join-columns>
-                    <join-column name="thirdPartyUserId" referenced-column-name="id" />
-                    <join-column name="thirdPartyUserProvider" referenced-column-name="provider" />
-                </inverse-join-columns>
-            </join-table>
-        </many-to-many>
+        </one-to-many>
 
     </entity>
 

@@ -164,6 +164,7 @@ class ThirdParty implements GrantTypeInterface
         /** @var UserInterface $user */
 
         $user->addThirdPartyUser($thirdPartyUser);
+        $thirdPartyUser->setUser($user);
         $this->userRepository->save($user);
         $this->user = $user;
 

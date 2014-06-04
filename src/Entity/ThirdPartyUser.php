@@ -25,6 +25,11 @@ class ThirdPartyUser implements ThirdPartyUserInterface
     protected $data;
 
     /**
+     * @var UserInterface
+     */
+    protected $user;
+
+    /**
      * @param string $id
      * @param string $provider
      * @param array $data
@@ -82,5 +87,21 @@ class ThirdPartyUser implements ThirdPartyUserInterface
     public function getData()
     {
         return $this->data;
+    }
+
+    /**
+     * @return UserInterface
+     */
+    public function getUser()
+    {
+        return $this->user;
+    }
+
+    /**
+     * @param UserInterface $user
+     */
+    public function setUser(UserInterface $user)
+    {
+        $this->user = $user;
     }
 }

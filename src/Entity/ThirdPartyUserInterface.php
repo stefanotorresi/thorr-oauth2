@@ -36,4 +36,14 @@ interface ThirdPartyUserInterface
      * @param array $data
      */
     public function setData($data);
+
+    /**
+     * @return UserInterface
+     */
+    public function getUser();
+
+    /**
+     * @param UserInterface $user
+     */
+    public function setUser(UserInterface $user);
 }

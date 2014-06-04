@@ -91,7 +91,6 @@ class InstagramProvider implements ProviderInterface
 
         $this->userId = $userData->id;
         unset($userData->id);
-        $userData->token = $accessToken;
 
         $this->userData = (array) $userData;
 
