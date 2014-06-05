@@ -57,7 +57,7 @@ class DataMapperAdapter implements
         return [
             'expires'   => $token->getExpiryUTCTimestamp(),
             'client_id' => $token->getClient()->getId(),
-            'user_id'   => $token->getUser()->getId(),
+            'user_id'   => $token->getUser() ? $token->getUser()->getId() : null,
             'scope'     => $token->getScopesString(),
         ];
     }
@@ -67,23 +67,25 @@ class DataMapperAdapter implements
      */
     public function setAccessToken($oauthToken, $clientId, $userId, $expires, $scope = null)
     {
-        if (! $clientId || ! $client = $this->getClientRepository()->find($clientId)) {
-            throw new \InvalidArgumentException('Invalid clientId provided');
+        if (! $token = $this->getAccessTokenRepository()->find($oauthToken)) {
+            $token = new Entity\AccessToken();
         }
 
-        if (! $userId || ! $user = $this->getUserRepository()->find($userId)) {
-            throw new \InvalidArgumentException('Invalid userId provided');
+        $client = $this->getClientRepository()->find($clientId);
+
+        if ($userId && $user = $this->getUserRepository()->find($userId)) {
+            $token->setUser($user);
         }
 
-        $token = (new Entity\AccessToken())
+        $token
             ->setToken($oauthToken)
             ->setClient($client)
-            ->setUser($user)
             ->setExpiryDate(new \DateTime('@' . $expires))
         ;
 
         if ($scope) {
-            $token->setScopes(explode(' ', $scope));
+            $scopes = $this->getScopeRepository()->findScopes(explode(' ', $scope));
+            $token->setScopes($scopes);
         }
 
         $this->getAccessTokenRepository()->save($token);
@@ -114,6 +116,10 @@ class DataMapperAdapter implements
      */
     public function setAuthorizationCode($code, $clientId, $userId, $redirectUri, $expires, $scope = null)
     {
+        if (! $authorizationCode = $this->getAuthorizationCodeRepository()->find($code)) {
+            $authorizationCode = new Entity\AuthorizationCode();
+        }
+
         $client = $this->getClientRepository()->find($clientId);
 
         if (! $client) {
@@ -126,7 +132,6 @@ class DataMapperAdapter implements
             throw new \InvalidArgumentException('Invalid userId provided');
         }
 
-        $authorizationCode = new Entity\AuthorizationCode();
         $authorizationCode
             ->setToken($code)
             ->setClient($client)
@@ -136,7 +141,8 @@ class DataMapperAdapter implements
         $authorizationCode->setRedirectUri($redirectUri);
 
         if ($scope) {
-            $authorizationCode->setScopes(explode(' ', $scope));
+            $scopes = $this->getScopeRepository()->findScopes(explode(' ', $scope));
+            $authorizationCode->setScopes($scopes);
         }
 
         $this->getAuthorizationCodeRepository()->save($authorizationCode);
@@ -259,27 +265,25 @@ class DataMapperAdapter implements
      */
     public function setRefreshToken($refreshToken, $clientId, $userId, $expires, $scope = null)
     {
+        if (! $token = $this->getRefreshTokenRepository()->find($refreshToken)) {
+            $token = new Entity\RefreshToken();
+        }
+
         $client = $this->getClientRepository()->find($clientId);
 
-        if (! $client) {
-            throw new \InvalidArgumentException('Invalid clientId provided');
+        if ($userId && $user = $this->getUserRepository()->find($userId)) {
+            $token->setUser($user);
         }
 
-        $user = $this->getUserRepository()->find($userId);
-
-        if (! $user) {
-            throw new \InvalidArgumentException('Invalid userId provided');
-        }
-
-        $token = (new Entity\RefreshToken())
+        $token
             ->setToken($refreshToken)
             ->setClient($client)
-            ->setUser($user)
             ->setExpiryDate(new \DateTime('@' . $expires))
         ;
 
         if ($scope) {
-            $token->setScopes(explode(' ', $scope));
+            $scopes = $this->getScopeRepository()->findScopes(explode(' ', $scope));
+            $token->setScopes($scopes);
         }
 
         $this->getRefreshTokenRepository()->save($token);

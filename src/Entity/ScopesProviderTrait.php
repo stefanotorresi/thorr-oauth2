@@ -17,11 +17,11 @@ trait ScopesProviderTrait
     protected $scopes;
 
     /**
-     * @return Collections\Collection
+     * @return array
      */
     public function getScopes()
     {
-        return $this->scopes;
+        return $this->scopes->toArray();
     }
 
     /**
@@ -29,7 +29,7 @@ trait ScopesProviderTrait
      */
     public function getScopesString()
     {
-        return implode(' ', $this->getScopes()->toArray());
+        return implode(' ', $this->getScopes());
     }
 
     /**

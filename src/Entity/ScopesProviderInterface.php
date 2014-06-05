@@ -12,7 +12,7 @@ use Doctrine\Common\Collections\Collection;
 interface ScopesProviderInterface
 {
     /**
-     * @return Collection
+     * @return array
      */
     public function getScopes();
 
