@@ -17,8 +17,8 @@ return [
                 'class' => 'Thorr\OAuth\GrantType\ThirdParty\Provider\FacebookProvider',
                 'options' => [
                     'app_id' => null,
-                    'user_factory' => null,
-                    'uri' => 'https://graph.facebook.com/v2.0'
+                    'uri' => 'https://graph.facebook.com/v2.0',
+                    'endpoint_params' => [],
                 ],
             ],
             'instagram' => [

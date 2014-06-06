@@ -10,6 +10,7 @@ namespace Thorr\OAuth\GrantType\ThirdParty\Provider;
 use Zend\Http\Client;
 use Zend\Http\Response;
 use Zend\Json\Json;
+use Zend\Stdlib\ArrayUtils;
 
 class FacebookProvider implements
     ProviderInterface
@@ -32,6 +33,11 @@ class FacebookProvider implements
     protected $clientOptions;
 
     /**
+     * @var array
+     */
+    protected $endpointParams = [];
+
+    /**
      * @param $options
      * @throws Exception\InvalidArgumentException
      */
@@ -41,49 +47,21 @@ class FacebookProvider implements
             throw new Exception\InvalidArgumentException('Missing "app_id" option');
         }
 
-        $this->setAppId($options['app_id']);
+        $this->appId = $options['app_id'];
 
         if (! isset($options['uri'])) {
             throw new Exception\InvalidArgumentException('Missing "uri" option');
         }
 
-        $this->setUri($options['uri']);
+        $this->uri = rtrim($options['uri'], '/');
 
         if (isset($options['client_options'])) {
             $this->clientOptions = $options['client_options'];
         }
-    }
 
-    /**
-     * @return string
-     */
-    public function getUri()
-    {
-        return $this->uri;
-    }
-
-    /**
-     * @param string $uri
-     */
-    public function setUri($uri)
-    {
-        $this->uri = rtrim($uri, '/');
-    }
-
-    /**
-     * @return string
-     */
-    public function getAppId()
-    {
-        return $this->appId;
-    }
-
-    /**
-     * @param string $appId
-     */
-    public function setAppId($appId)
-    {
-        $this->appId = $appId;
+        if (isset($options['endpoint_params']) && is_array($options['endpoint_params'])) {
+            $this->endpointParams = $options['endpoint_params'];
+        }
     }
 
     /**
@@ -105,7 +83,8 @@ class FacebookProvider implements
     {
         $client = new Client($this->uri . '/me', $this->clientOptions);
         $client->setMethod('GET');
-        $client->setParameterGet(['access_token' => $accessToken]);
+        $params = ArrayUtils::merge($this->endpointParams, [ 'access_token' => $accessToken ]);
+        $client->setParameterGet($params);
 
         $userData = $this->decodeBody($client->send());
 
