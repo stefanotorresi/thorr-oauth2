@@ -18,9 +18,5 @@ use Thorr\Persistence\Repository\RepositoryInterface;
  */
 interface UserRepositoryInterface extends RepositoryInterface
 {
-    /**
-     * @param ThirdPartyUserInterface $thirdPartyUser
-     * @return UserInterface|null
-     */
-    public function findUserByThirdParty(ThirdPartyUserInterface $thirdPartyUser);
+
 }

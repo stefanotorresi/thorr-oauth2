@@ -29,7 +29,7 @@ class Module extends AbstractModule
             $doctrineDriverChain = $serviceManager->get('doctrine.driver.orm_default');
             $doctrineDriverChain->addDriver(
                 new XmlDriver(__DIR__ . '/../config/mappings', '.dcm.optional.xml'),
-                'Thorr\OAuth\Entity\User'
+                'Thorr\OAuth\Entity'
             );
         }
     }

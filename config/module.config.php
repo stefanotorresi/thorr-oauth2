@@ -81,14 +81,10 @@ return [
             ],
             'orm_default' =>[
                 'drivers' => [
-                    'Thorr\OAuth\Entity\AbstractToken'     => 'Thorr\OAuth',
-                    'Thorr\OAuth\Entity\AbstractUser'      => 'Thorr\OAuth',
                     'Thorr\OAuth\Entity\AccessToken'       => 'Thorr\OAuth',
                     'Thorr\OAuth\Entity\AuthorizationCode' => 'Thorr\OAuth',
-                    'Thorr\OAuth\Entity\Client'            => 'Thorr\OAuth',
                     'Thorr\OAuth\Entity\RefreshToken'      => 'Thorr\OAuth',
                     'Thorr\OAuth\Entity\Scope'             => 'Thorr\OAuth',
-                    'Thorr\OAuth\Entity\ThirdPartyUser'    => 'Thorr\OAuth',
                 ]
             ]
         ]
