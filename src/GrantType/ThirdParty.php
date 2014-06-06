@@ -60,6 +60,7 @@ class ThirdParty implements GrantTypeInterface
     /**
      * @param UserRepositoryInterface $userRepository
      * @param ThirdPartyUserRepositoryInterface $thirdPartyUserRepository
+     * @param AccessTokenRepositoryInterface $accessTokenRepository
      * @param ModuleOptions $moduleOptions
      * @param array|Traversable $providers
      */
@@ -85,14 +86,21 @@ class ThirdParty implements GrantTypeInterface
         }
     }
 
+    /**
+     * @return string
+     */
     public function getQuerystringIdentifier()
     {
         return 'third_party';
     }
 
+    /**
+     * @param RequestInterface $request
+     * @param ResponseInterface $response
+     * @return bool
+     */
     public function validateRequest(RequestInterface $request, ResponseInterface $response)
     {
-        $token         = $request->request("access_token");
         $providerName        = $request->request("provider");
         $providerUserId      = $request->request("provider_user_id");
         $providerAccessToken = $request->request("provider_access_token");
@@ -133,40 +141,15 @@ class ThirdParty implements GrantTypeInterface
             return false;
         }
 
-        $thirdPartyUser =
-            $this->thirdPartyUserRepository->find([
-                'id' => $provider->getUserId(),
-                'provider' => $provider->getIdentifier()
-            ]) ?: new Entity\ThirdPartyUser($provider->getUserId(), $provider->getIdentifier());
+        $accessToken = ($token = $request->request("access_token")) ? $this->accessTokenRepository->find($token) : null;
 
-        $thirdPartyUser->setData($provider->getUserData());
-
-        if ($token) {
-            $accessToken = $this->accessTokenRepository->find($token);
-
-            if ($accessToken && $accessToken->isExpired()) {
-                $response->setError(401, 'invalid_grant', 'Access token is expired');
-                return false;
-            }
-
-            $user = $accessToken->getUser();
+        if ($accessToken && $accessToken->isExpired()) {
+            $response->setError(401, 'invalid_grant', 'Access token is expired');
+            return false;
         }
 
-        if (! isset($user)) {
-            $user = $this->userRepository->findUserByThirdParty($thirdPartyUser);
-        }
-
-        if (! isset($user)) {
-            $userClass = $this->moduleOptions->getUserEntityClassName();
-            $user = new $userClass($thirdPartyUser->getId().'@'.$thirdPartyUser->getProvider());
-        }
-
-        /** @var UserInterface $user */
-
-        $user->addThirdPartyUser($thirdPartyUser);
-        $thirdPartyUser->setUser($user);
-        $this->userRepository->save($user);
-        $this->user = $user;
+        $this->user = $this->loadUser($provider, $accessToken);
+        $this->userRepository->save($this->user);
 
         return true;
     }
@@ -192,6 +175,9 @@ class ThirdParty implements GrantTypeInterface
         return $this->user->getId();
     }
 
+    /**
+     * @return null|string
+     */
     public function getScope()
     {
         return $this->user instanceof Entity\ScopesProviderInterface ? $this->user->getScopesString() : null;
@@ -236,5 +222,57 @@ class ThirdParty implements GrantTypeInterface
     public function addProvider(ProviderInterface $provider)
     {
         $this->providers[$provider->getIdentifier()] = $provider;
+    }
+
+    /**
+     * @param ProviderInterface $provider
+     * @param Entity\AccessToken $accessToken
+     * @return null|UserInterface
+     */
+    protected function loadUser(ProviderInterface $provider, Entity\AccessToken $accessToken = null)
+    {
+        $thirdPartyUser = $this->loadThirdPartyUser($provider);
+
+        $userClass = $this->moduleOptions->getUserEntityClassName();
+
+        // got access token? grab user form it
+        if ($accessToken && ($user = $accessToken->getUser()) instanceof $userClass) {
+            // reload the user entity from the proper repository because the relation class may have been overridden
+            $user = $this->userRepository->find($user->getId());
+        }
+
+        // no user from token? search for existent third party credentials
+        if (! isset($user)) {
+            $user = $this->userRepository->findUserByThirdParty($thirdPartyUser);
+        }
+
+        // still no user? create a new one with the third party credentials
+        if (! isset($user)) {
+            $user = new $userClass($thirdPartyUser->getId().'@'.$thirdPartyUser->getProvider());
+        }
+
+        /** @var UserInterface $user */
+
+        $user->addThirdPartyUser($thirdPartyUser);
+        $thirdPartyUser->setUser($user);
+
+        return $user;
+    }
+
+    /**
+     * @param ProviderInterface $provider
+     * @return Entity\ThirdPartyUser
+     */
+    protected function loadThirdPartyUser(ProviderInterface $provider)
+    {
+        $thirdPartyUser =
+            $this->thirdPartyUserRepository->find([
+                'id' => $provider->getUserId(),
+                'provider' => $provider->getIdentifier()
+            ]) ?: new Entity\ThirdPartyUser($provider->getUserId(), $provider->getIdentifier());
+
+        $thirdPartyUser->setData($provider->getUserData());
+
+        return $thirdPartyUser;
     }
 }

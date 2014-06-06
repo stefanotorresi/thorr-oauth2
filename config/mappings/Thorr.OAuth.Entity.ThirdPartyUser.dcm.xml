@@ -15,7 +15,9 @@
         <many-to-one target-entity="Thorr\OAuth\Entity\User"
                      field="user"
                      inversed-by="thirdPartyUsers"
-                     orphan-removal="true" />
+                     orphan-removal="true">
+            <join-column on-delete="CASCADE" />
+        </many-to-one>
 
     </entity>
 
