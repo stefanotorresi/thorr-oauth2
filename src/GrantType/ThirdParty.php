@@ -236,7 +236,7 @@ class ThirdParty implements GrantTypeInterface
         $userClass = $this->moduleOptions->getUserEntityClassName();
 
         // got access token? grab user form it
-        if ($accessToken && ($user = $accessToken->getUser()) instanceof $userClass) {
+        if ($accessToken && ! ($user = $accessToken->getUser()) instanceof $userClass) {
             // reload the user entity from the proper repository because the relation class may have been overridden
             $user = $this->userRepository->find($user->getId());
         }
