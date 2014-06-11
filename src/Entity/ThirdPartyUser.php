@@ -7,8 +7,12 @@
 
 namespace Thorr\OAuth\Entity;
 
+use Thorr\Persistence\Entity\FqcnProviderTrait;
+
 class ThirdPartyUser implements ThirdPartyUserInterface
 {
+    use FqcnProviderTrait;
+
     /**
      * @var string
      */
