@@ -89,8 +89,8 @@ trait UserTrait
     }
 
     /**
-     * @param $provider
-     * @return bool|ThirdPartyUserInterface
+     * @param  string $provider
+     * @return ThirdPartyUserInterface|null
      */
     public function findThirdPartyUser($provider)
     {
@@ -100,6 +100,6 @@ trait UserTrait
             };
         }
 
-        return false;
+        return null;
     }
 }
