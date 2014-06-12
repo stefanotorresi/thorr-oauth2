@@ -87,4 +87,19 @@ trait UserTrait
     {
         return (bool) $this->thirdPartyUsers->remove($thirdPartyUser);
     }
+
+    /**
+     * @param $provider
+     * @return bool|ThirdPartyUserInterface
+     */
+    public function findThirdPartyUser($provider)
+    {
+        foreach ($this->thirdPartyUsers as $thirdPartyUser) { /** @var ThirdPartyUserInterface $thirdPartyUser */
+            if ($thirdPartyUser->getProvider() === $provider) {
+                return $thirdPartyUser;
+            };
+        }
+
+        return false;
+    }
 }
