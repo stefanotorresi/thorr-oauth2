@@ -14,10 +14,10 @@
         <many-to-many field="scopes" target-entity="Thorr\OAuth\Entity\Scope">
             <join-table name="thorr_oauth_auth_codes_scopes">
                 <join-columns>
-                    <join-column name="token" referenced-column-name="token" />
+                    <join-column name="token" referenced-column-name="token" on-delete="CASCADE" />
                 </join-columns>
                 <inverse-join-columns>
-                    <join-column name="scopeId" referenced-column-name="id" />
+                    <join-column name="scopeId" referenced-column-name="id" on-delete="CASCADE" />
                 </inverse-join-columns>
             </join-table>
         </many-to-many>
