@@ -17,7 +17,7 @@
         <field name="redirectUri" type="string" length="2000" />
         <field name="grantTypes" type="json_array" nullable="true" />
 
-        <many-to-one field="user" target-entity="Thorr\OAuth\Entity\User" fetch="EAGER">
+        <many-to-one field="user" target-entity="Thorr\OAuth\Entity\UserInterface" fetch="EAGER">
             <join-column on-delete="CASCADE" />
         </many-to-one>
 

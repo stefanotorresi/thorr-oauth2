@@ -75,16 +75,19 @@ return [
 
     'doctrine' => [
         'driver' => [
-            'Thorr\OAuth' => [
+            'thorr_oauth_xml_driver' => [
                 'class' => 'Doctrine\ORM\Mapping\Driver\XmlDriver',
                 'paths' => __DIR__ . '/mappings',
             ],
             'orm_default' =>[
                 'drivers' => [
-                    'Thorr\OAuth\Entity\AccessToken'       => 'Thorr\OAuth',
-                    'Thorr\OAuth\Entity\AuthorizationCode' => 'Thorr\OAuth',
-                    'Thorr\OAuth\Entity\RefreshToken'      => 'Thorr\OAuth',
-                    'Thorr\OAuth\Entity\Scope'             => 'Thorr\OAuth',
+                    'Thorr\OAuth\Entity\AccessToken'       => 'thorr_oauth_xml_driver',
+                    'Thorr\OAuth\Entity\AuthorizationCode' => 'thorr_oauth_xml_driver',
+                    'Thorr\OAuth\Entity\RefreshToken'      => 'thorr_oauth_xml_driver',
+                    'Thorr\OAuth\Entity\Scope'             => 'thorr_oauth_xml_driver',
+                    'Thorr\OAuth\Entity\Client'            => 'thorr_oauth_xml_driver',
+                    'Thorr\OAuth\Entity\ThirdPartyUser'    => 'thorr_oauth_xml_driver',
+                    'Thorr\OAuth\Entity\AbstractToken'     => 'thorr_oauth_xml_driver',
                 ]
             ]
         ]
