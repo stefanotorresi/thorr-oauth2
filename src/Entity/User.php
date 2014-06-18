@@ -8,9 +8,10 @@
 namespace Thorr\OAuth\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Thorr\Nonce\Entity\NonceOwnerInterface;
 use Thorr\Persistence\Entity\IdProviderTrait;
 
-class User implements UserInterface
+class User implements UserInterface, NonceOwnerInterface
 {
     use UserTrait;
 
