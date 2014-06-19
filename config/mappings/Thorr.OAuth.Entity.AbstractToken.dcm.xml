@@ -9,7 +9,7 @@
         <field name="expiryDate" type="datetime" nullable="true" />
         <many-to-one field="client" target-entity="Thorr\OAuth\Entity\Client" />
         <many-to-one field="user" target-entity="Thorr\OAuth\Entity\UserInterface" fetch="EAGER">
-            <join-column on-delete="CASCADE" />
+            <join-column on-delete="CASCADE" on-update="CASCADE" />
         </many-to-one>
     </mapped-superclass>
 
