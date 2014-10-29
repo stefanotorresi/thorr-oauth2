@@ -3,10 +3,34 @@
  * @author Stefano Torresi (http://stefanotorresi.it)
  * @license See the file LICENSE.txt for copying permission.
  * ************************************************
- *
- * This file is placed here for compatibility with Zendframework 2's ModuleManager.
- * It allows usage of this module even without composer.
- * The original Module.php is in 'src/{ModuleNamespace}' in order to respect PSR-0
  */
 
-require_once __DIR__ . '/src/Module.php';
+namespace Thorr\OAuth2;
+
+use Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain;
+use Doctrine\ORM\Mapping\Driver\XmlDriver;
+use MyBase\AbstractModule;
+use Zend\ModuleManager\Feature;
+use Zend\Mvc\MvcEvent;
+
+class Module extends AbstractModule
+{
+    public function onBootstrap(MvcEvent $event)
+    {
+        $application    = $event->getApplication();
+        $serviceManager = $application->getServiceManager();
+
+        /** @var Options\ModuleOptions $options */
+        $options = $serviceManager->get(Options\ModuleOptions::class);
+
+        // default User entity mapping is opt-out, as it will be overridden in most cases
+        if ($options->isDefaultUserMappingEnabled()) {
+            /** @var MappingDriverChain $doctrineDriverChain */
+            $doctrineDriverChain = $serviceManager->get('doctrine.driver.orm_default');
+            $doctrineDriverChain->addDriver(
+                new XmlDriver(__DIR__ . '/../config/mappings', '.dcm.optional.xml'),
+                'Thorr\OAuth2\Entity'
+            );
+        }
+    }
+}
