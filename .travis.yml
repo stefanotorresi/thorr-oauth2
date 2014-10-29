@@ -1,0 +1,20 @@
+language: php
+php:
+ - "5.5"
+ - "5.6"
+ - "hhvm"
+
+before_install:
+ - composer self-update
+ - composer install --dev --prefer-source
+ - wget http://cs.sensiolabs.org/get/php-cs-fixer.phar
+
+script:
+ - php php-cs-fixer.phar fix -v --dry-run --level=all ./src
+ - php php-cs-fixer.phar fix -v --dry-run --level=all ./tests
+ - php php-cs-fixer.phar fix -v --dry-run --level=all ./config
+ - phpunit --coverage-clover ./build/coverage/clover.xml
+
+after_script:
+ - wget https://scrutinizer-ci.com/ocular.phar
+ - php ocular.phar code-coverage:upload --format=php-clover ./build/coverage/clover.xml

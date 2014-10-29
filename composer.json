@@ -1,0 +1,38 @@
+{
+    "name": "stefanotorresi/thorr-oauth2",
+    "description": "Thorr\\Persistence data mapper & Doctrine adapters for Brent Shaffer's OAauth2 Server",
+    "type" : "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Stefano Torresi",
+            "email": "stefano@torresi.pro"
+        }
+    ],
+    "require": {
+        "php": "~5.5",
+        "stefanotorresi/thorr-persistence": "0.*@dev"
+    },
+    "require-dev": {
+        "zendframework/zend-servicemanager": "~2.3",
+        "zendframework/zend-modulemanager": "~2.3"
+    },
+    "suggest": {
+        "zendframework/zend-servicemanager": "",
+        "zendframework/zend-modulemanager": "required to load the library as a ZF2 module"
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "0.x-dev"
+        }
+    },
+    "autoload" : {
+        "classmap": [
+            "Module.php"
+        ],
+        "psr-4": {
+            "Thorr\\OAuth2\\": "src/",
+            "Thorr\\OAuth2\\Test\\": "tests/"
+        }
+    }
+}
