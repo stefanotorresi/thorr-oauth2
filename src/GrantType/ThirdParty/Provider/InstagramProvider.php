@@ -5,7 +5,7 @@
  * ************************************************
  */
 
-namespace Thorr\OAuth\GrantType\ThirdParty\Provider;
+namespace Thorr\OAuth2\GrantType\ThirdParty\Provider;
 
 use Zend\Http\Client;
 use Zend\Http\Response;

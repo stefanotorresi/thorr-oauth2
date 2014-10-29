@@ -5,21 +5,21 @@
  * ************************************************
  */
 
-namespace Thorr\OAuth\GrantType;
+namespace Thorr\OAuth2\GrantType;
 
 use InvalidArgumentException;
 use OAuth2\GrantType\GrantTypeInterface;
 use OAuth2\RequestInterface;
 use OAuth2\ResponseInterface;
 use OAuth2\ResponseType\AccessTokenInterface;
-use Thorr\OAuth\Entity;
-use Thorr\OAuth\Entity\UserInterface;
-use Thorr\OAuth\GrantType\ThirdParty\Provider\Exception\ClientException;
-use Thorr\OAuth\GrantType\ThirdParty\Provider\ProviderInterface;
-use Thorr\OAuth\Options\ModuleOptions;
-use Thorr\OAuth\Repository\AccessTokenRepositoryInterface;
-use Thorr\OAuth\Repository\ThirdPartyUserRepositoryInterface;
-use Thorr\OAuth\Repository\UserRepositoryInterface;
+use Thorr\OAuth2\Entity;
+use Thorr\OAuth2\Entity\UserInterface;
+use Thorr\OAuth2\GrantType\ThirdParty\Provider\Exception\ClientException;
+use Thorr\OAuth2\GrantType\ThirdParty\Provider\ProviderInterface;
+use Thorr\OAuth2\Options\ModuleOptions;
+use Thorr\OAuth2\Repository\AccessTokenRepositoryInterface;
+use Thorr\OAuth2\Repository\ThirdPartyUserRepositoryInterface;
+use Thorr\OAuth2\Repository\UserRepositoryInterface;
 use Traversable;
 use Zend\Stdlib\Guard\ArrayOrTraversableGuardTrait;
 

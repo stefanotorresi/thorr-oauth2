@@ -5,7 +5,7 @@
  * ************************************************
  */
 
-namespace Thorr\OAuth\Repository;
+namespace Thorr\OAuth2\Repository;
 
 interface UserRepositoryAwareInterface
 {

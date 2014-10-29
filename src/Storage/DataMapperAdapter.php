@@ -5,13 +5,13 @@
  * ************************************************
  */
 
-namespace Thorr\OAuth\Storage;
+namespace Thorr\OAuth2\Storage;
 
 use DateTimeZone;
 use OAuth2\Storage;
-use Thorr\OAuth\Entity;
-use Thorr\OAuth\Entity\UserInterface;
-use Thorr\OAuth\Repository\RepositoryManagerWrapperTrait;
+use Thorr\OAuth2\Entity;
+use Thorr\OAuth2\Entity\UserInterface;
+use Thorr\OAuth2\Repository\RepositoryManagerWrapperTrait;
 use Thorr\Persistence\Repository\Manager\RepositoryManager;
 use Thorr\Persistence\Repository\Manager\RepositoryManagerAwareInterface;
 use Thorr\Persistence\Repository\Manager\RepositoryManagerAwareTrait;

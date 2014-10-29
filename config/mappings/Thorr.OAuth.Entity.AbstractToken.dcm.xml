@@ -4,11 +4,11 @@
                   xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
                                       http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
 
-    <mapped-superclass name="Thorr\OAuth\Entity\AbstractToken">
+    <mapped-superclass name="Thorr\OAuth2\Entity\AbstractToken">
         <id name="token" type="string" length="40" />
         <field name="expiryDate" type="datetime" nullable="true" />
-        <many-to-one field="client" target-entity="Thorr\OAuth\Entity\Client" />
-        <many-to-one field="user" target-entity="Thorr\OAuth\Entity\UserInterface" fetch="EAGER">
+        <many-to-one field="client" target-entity="Thorr\OAuth2\Entity\Client" />
+        <many-to-one field="user" target-entity="Thorr\OAuth2\Entity\UserInterface" fetch="EAGER">
             <join-column on-delete="CASCADE" on-update="CASCADE" />
         </many-to-one>
     </mapped-superclass>

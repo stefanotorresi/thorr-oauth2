@@ -8,13 +8,13 @@
 return [
 
     'thorr_oauth' => [
-//        'user_entity_class_name' => 'Thorr\OAuth\Entity\User',
+//        'user_entity_class_name' => 'Thorr\OAuth22\Entity\User',
 //        'bcrypt_cost' => 10,
 //        'default_user_mapping_enabled' => true,
 //        'third_party_grant_type_enabled' => false,
         'third_party_providers' => [
             'facebook' => [
-                'class' => 'Thorr\OAuth\GrantType\ThirdParty\Provider\FacebookProvider',
+                'class' => 'Thorr\OAuth22\GrantType\ThirdParty\Provider\FacebookProvider',
                 'options' => [
                     'app_id' => null,
                     'uri' => 'https://graph.facebook.com/v2.0',
@@ -22,7 +22,7 @@ return [
                 ],
             ],
             'instagram' => [
-                'class' => 'Thorr\OAuth\GrantType\ThirdParty\Provider\InstagramProvider',
+                'class' => 'Thorr\OAuth2\GrantType\ThirdParty\Provider\InstagramProvider',
                 'options' => [
                     'client_id' => null,
                     'uri' => 'https://api.instagram.com/v1'
@@ -33,29 +33,29 @@ return [
 
     'service_manager' => [
         'factories' => [
-            'Thorr\OAuth\Options\ModuleOptions'     => 'Thorr\OAuth\Options\ModuleOptionsFactory',
-            'Thorr\OAuth\Storage\DataMapperAdapter' => 'Thorr\OAuth\Storage\DataMapperAdapterFactory',
-            'Thorr\OAuth\Password\Bcrypt'           => 'Thorr\OAuth\Password\BcryptFactory',
-            'Thorr\OAuth\GrantType\ThirdParty'      => 'Thorr\OAuth\GrantType\ThirdParty\ServiceFactory',
+            'Thorr\OAuth2\Options\ModuleOptions'     => 'Thorr\OAuth2\Options\ModuleOptionsFactory',
+            'Thorr\OAuth2\Storage\DataMapperAdapter' => 'Thorr\OAuth2\Storage\DataMapperAdapterFactory',
+            'Thorr\OAuth2\Password\Bcrypt'           => 'Thorr\OAuth2\Password\BcryptFactory',
+            'Thorr\OAuth2\GrantType\ThirdParty'      => 'Thorr\OAuth2\GrantType\ThirdParty\ServiceFactory',
         ],
         'delegators' => [
             'ZF\OAuth2\Service\OAuth2Server' => [
-                'Thorr\OAuth\Server\ServerDecorator',
+                'Thorr\OAuth2\Server\ServerDecorator',
             ],
         ],
     ],
 
     'repository_manager' => [
         'factories' => [
-            'Thorr\OAuth\Repository\UserRepository' => 'Thorr\OAuth\Doctrine\Repository\UserRepositoryFactory',
+            'Thorr\OAuth2\Repository\UserRepository' => 'Thorr\OAuth2\Doctrine\Repository\UserRepositoryFactory',
         ],
         'repositories' => [
-            'Thorr\OAuth\Entity\AccessToken'       => 'Thorr\OAuth\Repository\AccessTokenRepository',
-            'Thorr\OAuth\Entity\AuthorizationCode' => 'Thorr\OAuth\Repository\AuthorizationCodeRepository',
-            'Thorr\OAuth\Entity\Client'            => 'Thorr\OAuth\Repository\ClientRepository',
-            'Thorr\OAuth\Entity\RefreshToken'      => 'Thorr\OAuth\Repository\RefreshTokenRepository',
-            'Thorr\OAuth\Entity\Scope'             => 'Thorr\OAuth\Repository\ScopeRepository',
-            'Thorr\OAuth\Entity\ThirdPartyUser'    => 'Thorr\OAuth\Repository\ThirdPartyUserRepository',
+            'Thorr\OAuth2\Entity\AccessToken'       => 'Thorr\OAuth2\Repository\AccessTokenRepository',
+            'Thorr\OAuth2\Entity\AuthorizationCode' => 'Thorr\OAuth2\Repository\AuthorizationCodeRepository',
+            'Thorr\OAuth2\Entity\Client'            => 'Thorr\OAuth2\Repository\ClientRepository',
+            'Thorr\OAuth2\Entity\RefreshToken'      => 'Thorr\OAuth2\Repository\RefreshTokenRepository',
+            'Thorr\OAuth2\Entity\Scope'             => 'Thorr\OAuth2\Repository\ScopeRepository',
+            'Thorr\OAuth2\Entity\ThirdPartyUser'    => 'Thorr\OAuth2\Repository\ThirdPartyUserRepository',
         ],
     ],
 
@@ -70,7 +70,7 @@ return [
     ],
 
     'zf-oauth2' => [
-        'storage' => 'Thorr\OAuth\Storage\DataMapperAdapter',
+        'storage' => 'Thorr\OAuth2\Storage\DataMapperAdapter',
     ],
 
     'doctrine' => [
@@ -81,13 +81,13 @@ return [
             ],
             'orm_default' =>[
                 'drivers' => [
-                    'Thorr\OAuth\Entity\AccessToken'       => 'thorr_oauth_xml_driver',
-                    'Thorr\OAuth\Entity\AuthorizationCode' => 'thorr_oauth_xml_driver',
-                    'Thorr\OAuth\Entity\RefreshToken'      => 'thorr_oauth_xml_driver',
-                    'Thorr\OAuth\Entity\Scope'             => 'thorr_oauth_xml_driver',
-                    'Thorr\OAuth\Entity\Client'            => 'thorr_oauth_xml_driver',
-                    'Thorr\OAuth\Entity\ThirdPartyUser'    => 'thorr_oauth_xml_driver',
-                    'Thorr\OAuth\Entity\AbstractToken'     => 'thorr_oauth_xml_driver',
+                    'Thorr\OAuth2\Entity\AccessToken'       => 'thorr_oauth_xml_driver',
+                    'Thorr\OAuth2\Entity\AuthorizationCode' => 'thorr_oauth_xml_driver',
+                    'Thorr\OAuth2\Entity\RefreshToken'      => 'thorr_oauth_xml_driver',
+                    'Thorr\OAuth2\Entity\Scope'             => 'thorr_oauth_xml_driver',
+                    'Thorr\OAuth2\Entity\Client'            => 'thorr_oauth_xml_driver',
+                    'Thorr\OAuth2\Entity\ThirdPartyUser'    => 'thorr_oauth_xml_driver',
+                    'Thorr\OAuth2\Entity\AbstractToken'     => 'thorr_oauth_xml_driver',
                 ]
             ]
         ]

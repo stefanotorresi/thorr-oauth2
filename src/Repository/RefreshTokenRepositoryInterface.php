@@ -5,14 +5,14 @@
  * ************************************************
  */
 
-namespace Thorr\OAuth\Repository;
+namespace Thorr\OAuth2\Repository;
 
-use Thorr\OAuth\Entity\RefreshToken;
+use Thorr\OAuth2\Entity\RefreshToken;
 use Thorr\Persistence\Repository\RepositoryInterface;
 
 /**
  * Interface RefreshTokenRepositoryInterface
- * @package Thorr\OAuth\Repository
+ * @package Thorr\OAuth2\Repository
  * @method RefreshToken|null find($token)
  */
 interface RefreshTokenRepositoryInterface extends RepositoryInterface

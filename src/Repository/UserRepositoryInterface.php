@@ -5,15 +5,15 @@
  * ************************************************
  */
 
-namespace Thorr\OAuth\Repository;
+namespace Thorr\OAuth2\Repository;
 
-use Thorr\OAuth\Entity\ThirdPartyUserInterface;
-use Thorr\OAuth\Entity\UserInterface;
+use Thorr\OAuth2\Entity\ThirdPartyUserInterface;
+use Thorr\OAuth2\Entity\UserInterface;
 use Thorr\Persistence\Repository\RepositoryInterface;
 
 /**
  * Interface UserRepositoryInterface
- * @package Thorr\OAuth\Repository
+ * @package Thorr\OAuth2\Repository
  * @method UserInterface|null find($userId)
  */
 interface UserRepositoryInterface extends RepositoryInterface

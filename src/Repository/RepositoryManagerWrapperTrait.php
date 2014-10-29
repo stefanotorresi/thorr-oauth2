@@ -5,7 +5,7 @@
  * ************************************************
  */
 
-namespace Thorr\OAuth\Repository;
+namespace Thorr\OAuth2\Repository;
 
 use Thorr\Persistence\Repository\Manager\RepositoryManagerAwareTrait;
 
@@ -18,7 +18,7 @@ trait RepositoryManagerWrapperTrait
      */
     public function getAccessTokenRepository()
     {
-        return $this->getRepositoryManager()->get('Thorr\OAuth\Repository\AccessTokenRepository');
+        return $this->getRepositoryManager()->get('Thorr\OAuth2\Repository\AccessTokenRepository');
     }
 
     /**
@@ -26,7 +26,7 @@ trait RepositoryManagerWrapperTrait
      */
     public function getAuthorizationCodeRepository()
     {
-        return $this->getRepositoryManager()->get('Thorr\OAuth\Repository\AuthorizationCodeRepository');
+        return $this->getRepositoryManager()->get('Thorr\OAuth2\Repository\AuthorizationCodeRepository');
     }
 
     /**
@@ -34,7 +34,7 @@ trait RepositoryManagerWrapperTrait
      */
     public function getClientRepository()
     {
-        return $this->getRepositoryManager()->get('Thorr\OAuth\Repository\ClientRepository');
+        return $this->getRepositoryManager()->get('Thorr\OAuth2\Repository\ClientRepository');
     }
 
     /**
@@ -42,7 +42,7 @@ trait RepositoryManagerWrapperTrait
      */
     public function getRefreshTokenRepository()
     {
-        return $this->getRepositoryManager()->get('Thorr\OAuth\Repository\RefreshTokenRepository');
+        return $this->getRepositoryManager()->get('Thorr\OAuth2\Repository\RefreshTokenRepository');
     }
 
     /**
@@ -50,7 +50,7 @@ trait RepositoryManagerWrapperTrait
      */
     public function getScopeRepository()
     {
-        return $this->getRepositoryManager()->get('Thorr\OAuth\Repository\ScopeRepository');
+        return $this->getRepositoryManager()->get('Thorr\OAuth2\Repository\ScopeRepository');
     }
 
     /**
@@ -58,7 +58,7 @@ trait RepositoryManagerWrapperTrait
      */
     public function getUserRepository()
     {
-        return $this->getRepositoryManager()->get('Thorr\OAuth\Repository\UserRepository');
+        return $this->getRepositoryManager()->get('Thorr\OAuth2\Repository\UserRepository');
     }
 
     /**
@@ -66,6 +66,6 @@ trait RepositoryManagerWrapperTrait
      */
     public function getThirdPartyUserRepository()
     {
-        return $this->getRepositoryManager()->get('Thorr\OAuth\Repository\ThirdPartyUserRepository');
+        return $this->getRepositoryManager()->get('Thorr\OAuth2\Repository\ThirdPartyUserRepository');
     }
 }

@@ -5,9 +5,9 @@
  * ************************************************
  */
 
-namespace Thorr\OAuth\Doctrine\Repository;
+namespace Thorr\OAuth2\Doctrine\Repository;
 
-use Thorr\OAuth\Repository\ScopeRepositoryInterface;
+use Thorr\OAuth2\Repository\ScopeRepositoryInterface;
 use Thorr\Persistence\Doctrine\Repository\EntityRepository;
 use Traversable;
 use Zend\Stdlib\ArrayUtils;

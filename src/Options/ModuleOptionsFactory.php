@@ -5,7 +5,7 @@
  * ************************************************
  */
 
-namespace Thorr\OAuth\Options;
+namespace Thorr\OAuth2\Options;
 
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;

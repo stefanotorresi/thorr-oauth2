@@ -5,7 +5,7 @@
  * ************************************************
  */
 
-namespace Thorr\OAuth\Generator;
+namespace Thorr\OAuth2\Generator;
 
 interface IdGeneratorInterface
 {

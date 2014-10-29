@@ -5,11 +5,11 @@
  * ************************************************
  */
 
-namespace Thorr\OAuth\Server;
+namespace Thorr\OAuth2\Server;
 
 use OAuth2\Server as OAuth2Server;
-use Thorr\OAuth\GrantType\ThirdParty;
-use Thorr\OAuth\Options\ModuleOptions;
+use Thorr\OAuth2\GrantType\ThirdParty;
+use Thorr\OAuth2\Options\ModuleOptions;
 use Zend\ServiceManager\DelegatorFactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
@@ -34,13 +34,13 @@ class ServerDecorator implements DelegatorFactoryInterface
         $oauth2Server = $callback();
 
         /** @var ModuleOptions $moduleOptions */
-        $moduleOptions = $serviceLocator->get('Thorr\OAuth\Options\ModuleOptions');
+        $moduleOptions = $serviceLocator->get('Thorr\OAuth2\Options\ModuleOptions');
 
         $thirdPartyProviders = $moduleOptions->getThirdPartyProviders();
 
         if ($moduleOptions->isThirdPartyGrantTypeEnabled() && ! empty($thirdPartyProviders)) {
             /** @var ThirdParty $thirdParty */
-            $thirdParty = $serviceLocator->get('Thorr\OAuth\GrantType\ThirdParty');
+            $thirdParty = $serviceLocator->get('Thorr\OAuth2\GrantType\ThirdParty');
 
             $oauth2Server->addGrantType($thirdParty);
         }

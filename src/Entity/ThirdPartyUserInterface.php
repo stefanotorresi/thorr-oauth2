@@ -4,7 +4,7 @@
  * @license See the file LICENSE.txt for copying permission.
  * ************************************************
  */
-namespace Thorr\OAuth\Entity;
+namespace Thorr\OAuth2\Entity;
 
 interface ThirdPartyUserInterface
 {

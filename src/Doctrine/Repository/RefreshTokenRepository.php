@@ -5,9 +5,9 @@
  * ************************************************
  */
 
-namespace Thorr\OAuth\Doctrine\Repository;
+namespace Thorr\OAuth2\Doctrine\Repository;
 
-use Thorr\OAuth\Repository\RefreshTokenRepositoryInterface;
+use Thorr\OAuth2\Repository\RefreshTokenRepositoryInterface;
 use Thorr\Persistence\Doctrine\Repository\EntityRepository;
 
 class RefreshTokenRepository extends EntityRepository implements RefreshTokenRepositoryInterface

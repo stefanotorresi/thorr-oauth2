@@ -4,15 +4,15 @@
                   xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
                                       http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
 
-    <entity name="Thorr\OAuth\Entity\ThirdPartyUser"
+    <entity name="Thorr\OAuth2\Entity\ThirdPartyUser"
             table="thorr_oauth_3rdpartyusers"
-            repository-class="Thorr\OAuth\Doctrine\Repository\ThirdPartyUserRepository">
+            repository-class="Thorr\OAuth2\Doctrine\Repository\ThirdPartyUserRepository">
 
         <id name="id" type="string" length="255" />
         <id name="provider" type="string" length="255" />
         <field name="data" type="json_array" nullable="true" />
 
-        <many-to-one target-entity="Thorr\OAuth\Entity\UserInterface"
+        <many-to-one target-entity="Thorr\OAuth2\Entity\UserInterface"
                      field="user"
                      inversed-by="thirdPartyUsers"
                      orphan-removal="true"

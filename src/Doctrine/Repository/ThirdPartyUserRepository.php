@@ -5,9 +5,9 @@
  * ************************************************
  */
 
-namespace Thorr\OAuth\Doctrine\Repository;
+namespace Thorr\OAuth2\Doctrine\Repository;
 
-use Thorr\OAuth\Repository\ThirdPartyUserRepositoryInterface;
+use Thorr\OAuth2\Repository\ThirdPartyUserRepositoryInterface;
 use Thorr\Persistence\Doctrine\Repository\EntityRepository;
 
 class ThirdPartyUserRepository extends EntityRepository implements ThirdPartyUserRepositoryInterface

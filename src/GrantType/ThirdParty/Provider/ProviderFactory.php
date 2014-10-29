@@ -5,7 +5,7 @@
  * ************************************************
  */
 
-namespace Thorr\OAuth\GrantType\ThirdParty\Provider;
+namespace Thorr\OAuth2\GrantType\ThirdParty\Provider;
 
 abstract class ProviderFactory
 {
@@ -30,7 +30,7 @@ abstract class ProviderFactory
             throw new Exception\DomainException(sprintf(
                 '%s expects the "class" attribute to resolve to a valid %s instance; received "%s"',
                 __METHOD__,
-                'Thorr\OAuth\GrantType\ThirdParty\Provider\ProviderInterface',
+                'Thorr\OAuth2\GrantType\ThirdParty\Provider\ProviderInterface',
                 get_class($provider)
             ));
         }

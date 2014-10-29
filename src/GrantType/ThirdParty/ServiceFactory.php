@@ -5,14 +5,14 @@
  * ************************************************
  */
 
-namespace Thorr\OAuth\GrantType\ThirdParty;
+namespace Thorr\OAuth2\GrantType\ThirdParty;
 
 use RuntimeException;
-use Thorr\OAuth\GrantType\ThirdParty;
-use Thorr\OAuth\Options\ModuleOptions;
-use Thorr\OAuth\Repository\AccessTokenRepositoryInterface;
-use Thorr\OAuth\Repository\ThirdPartyUserRepositoryInterface;
-use Thorr\OAuth\Repository\UserRepositoryInterface;
+use Thorr\OAuth2\GrantType\ThirdParty;
+use Thorr\OAuth2\Options\ModuleOptions;
+use Thorr\OAuth2\Repository\AccessTokenRepositoryInterface;
+use Thorr\OAuth2\Repository\ThirdPartyUserRepositoryInterface;
+use Thorr\OAuth2\Repository\UserRepositoryInterface;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
@@ -31,16 +31,16 @@ class ServiceFactory implements FactoryInterface
         $repositoryManager = $serviceLocator->get('Thorr\Persistence\Repository\Manager\RepositoryManager');
 
         /** @var UserRepositoryInterface            $userRepository */
-        $userRepository           = $repositoryManager->get('Thorr\OAuth\Repository\UserRepository');
+        $userRepository           = $repositoryManager->get('Thorr\OAuth2\Repository\UserRepository');
 
         /** @var ThirdPartyUserRepositoryInterface  $thirdPartyUserRepository */
-        $thirdPartyUserRepository = $repositoryManager->get('Thorr\OAuth\Repository\ThirdPartyUserRepository');
+        $thirdPartyUserRepository = $repositoryManager->get('Thorr\OAuth2\Repository\ThirdPartyUserRepository');
 
         /** @var AccessTokenRepositoryInterface     $accessTokenRepository */
-        $accessTokenRepository    = $repositoryManager->get('Thorr\OAuth\Repository\AccessTokenRepository');
+        $accessTokenRepository    = $repositoryManager->get('Thorr\OAuth2\Repository\AccessTokenRepository');
 
         /** @var ModuleOptions $moduleOptions */
-        $moduleOptions = $serviceLocator->get('Thorr\OAuth\Options\ModuleOptions');
+        $moduleOptions = $serviceLocator->get('Thorr\OAuth2\Options\ModuleOptions');
 
         $grantType = new ThirdParty(
             $userRepository,

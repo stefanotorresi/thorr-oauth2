@@ -5,13 +5,13 @@
  * ************************************************
  */
 
-namespace Thorr\OAuth\Doctrine;
+namespace Thorr\OAuth2\Doctrine;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Id\AbstractIdGenerator;
-use Thorr\OAuth\Generator\IdGenerator as BaseIdGenerator;
+use Thorr\OAuth2\Generator\IdGenerator as BaseIdGenerator;
 
-class IdGenerator extends AbstractIdGenerator
+class IdGenerator extends AbstractIdGenerato
 {
     /**
      * {@inheritdoc}

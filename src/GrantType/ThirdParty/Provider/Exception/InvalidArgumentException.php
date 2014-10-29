@@ -5,7 +5,7 @@
  * ************************************************
  */
 
-namespace Thorr\OAuth\GrantType\ThirdParty\Provider\Exception;
+namespace Thorr\OAuth2\GrantType\ThirdParty\Provider\Exception;
 
 class InvalidArgumentException extends \InvalidArgumentException
 {

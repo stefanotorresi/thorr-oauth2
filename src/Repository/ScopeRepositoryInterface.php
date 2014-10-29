@@ -5,7 +5,7 @@
  * ************************************************
  */
 
-namespace Thorr\OAuth\Repository;
+namespace Thorr\OAuth2\Repository;
 
 use Thorr\Persistence\Repository\RepositoryInterface;
 use Traversable;

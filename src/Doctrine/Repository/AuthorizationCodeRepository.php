@@ -5,9 +5,9 @@
  * ************************************************
  */
 
-namespace Thorr\OAuth\Doctrine\Repository;
+namespace Thorr\OAuth2\Doctrine\Repository;
 
-use Thorr\OAuth\Repository\AuthorizationCodeRepositoryInterface;
+use Thorr\OAuth2\Repository\AuthorizationCodeRepositoryInterface;
 use Thorr\Persistence\Doctrine\Repository\EntityRepository;
 
 class AuthorizationCodeRepository extends EntityRepository implements AuthorizationCodeRepositoryInterface

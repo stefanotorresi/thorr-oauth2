@@ -5,9 +5,9 @@
  * ************************************************
  */
 
-namespace Thorr\OAuth\Doctrine\Repository;
+namespace Thorr\OAuth2\Doctrine\Repository;
 
-use Thorr\OAuth\Options\ModuleOptions;
+use Thorr\OAuth2\Options\ModuleOptions;
 use Zend\ServiceManager\AbstractPluginManager;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
@@ -29,7 +29,7 @@ class UserRepositoryFactory implements FactoryInterface
         $entityManager = $serviceManager->get('Doctrine\ORM\EntityManager');
 
         /** @var ModuleOptions $moduleOptions */
-        $moduleOptions = $serviceManager->get('Thorr\OAuth\Options\ModuleOptions');
+        $moduleOptions = $serviceManager->get('Thorr\OAuth2\Options\ModuleOptions');
 
         return $entityManager->getRepository($moduleOptions->getUserEntityClassName());
     }

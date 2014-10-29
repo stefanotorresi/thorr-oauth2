@@ -5,7 +5,7 @@
  * ************************************************
  */
 
-namespace Thorr\OAuth\Entity;
+namespace Thorr\OAuth2\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Thorr\Nonce\Entity\NonceOwnerInterface;

@@ -5,7 +5,7 @@
  * ************************************************
  */
 
-namespace Thorr\OAuth\Entity;
+namespace Thorr\OAuth2\Entity;
 
 class RefreshToken extends AbstractToken
 {

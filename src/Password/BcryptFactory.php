@@ -5,9 +5,9 @@
  * ************************************************
  */
 
-namespace Thorr\OAuth\Password;
+namespace Thorr\OAuth2\Password;
 
-use Thorr\OAuth\Options\ModuleOptions;
+use Thorr\OAuth2\Options\ModuleOptions;
 use Zend\Crypt\Password\Bcrypt;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
@@ -23,7 +23,7 @@ class BcryptFactory implements FactoryInterface
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
         /** @var ModuleOptions $moduleOptions */
-        $moduleOptions = $serviceLocator->get('Thorr\OAuth\Options\ModuleOptions');
+        $moduleOptions = $serviceLocator->get('Thorr\OAuth2\Options\ModuleOptions');
 
         return new Bcrypt([ 'cost' => $moduleOptions->getBcryptCost() ]);
     }
