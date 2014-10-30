@@ -11,7 +11,10 @@
     ],
     "require": {
         "php": "~5.5",
-        "stefanotorresi/thorr-persistence": "0.*@dev"
+        "stefanotorresi/thorr-persistence": "0.*@dev",
+        "bshaffer/oauth2-server-php": "~1.5",
+        "zendframework/zend-crypt": "~2.3",
+        "zendframework/zend-math": "~2.3"
     },
     "require-dev": {
         "zendframework/zend-servicemanager": "~2.3",
