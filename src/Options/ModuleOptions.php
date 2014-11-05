@@ -25,11 +25,6 @@ class ModuleOptions extends AbstractOptions
     /**
      * @var bool
      */
-    protected $defaultUserMappingEnabled = true;
-
-    /**
-     * @var bool
-     */
     protected $thirdPartyGrantTypeEnabled = false;
 
     /**
@@ -72,22 +67,6 @@ class ModuleOptions extends AbstractOptions
     public function setBcryptCost($bcryptCost)
     {
         $this->bcryptCost = (int) $bcryptCost;
-    }
-
-    /**
-     * @return boolean
-     */
-    public function isDefaultUserMappingEnabled()
-    {
-        return $this->defaultUserMappingEnabled;
-    }
-
-    /**
-     * @param boolean $loadDefaultUserMapping
-     */
-    public function setDefaultUserMappingEnabled($loadDefaultUserMapping)
-    {
-        $this->defaultUserMappingEnabled = (bool) $loadDefaultUserMapping;
     }
 
     /**

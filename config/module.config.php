@@ -73,24 +73,4 @@ return [
         'storage' => 'Thorr\OAuth2\Storage\DataMapperAdapter',
     ],
 
-    'doctrine' => [
-        'driver' => [
-            'thorr_oauth_xml_driver' => [
-                'class' => 'Doctrine\ORM\Mapping\Driver\XmlDriver',
-                'paths' => __DIR__ . '/mappings',
-            ],
-            'orm_default' =>[
-                'drivers' => [
-                    'Thorr\OAuth2\Entity\AccessToken'       => 'thorr_oauth_xml_driver',
-                    'Thorr\OAuth2\Entity\AuthorizationCode' => 'thorr_oauth_xml_driver',
-                    'Thorr\OAuth2\Entity\RefreshToken'      => 'thorr_oauth_xml_driver',
-                    'Thorr\OAuth2\Entity\Scope'             => 'thorr_oauth_xml_driver',
-                    'Thorr\OAuth2\Entity\Client'            => 'thorr_oauth_xml_driver',
-                    'Thorr\OAuth2\Entity\ThirdPartyUser'    => 'thorr_oauth_xml_driver',
-                    'Thorr\OAuth2\Entity\AbstractToken'     => 'thorr_oauth_xml_driver',
-                ]
-            ]
-        ]
-    ],
-
 ];
