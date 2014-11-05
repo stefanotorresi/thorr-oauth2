@@ -14,7 +14,8 @@
         "stefanotorresi/thorr-persistence": "0.*@dev",
         "bshaffer/oauth2-server-php": "~1.5",
         "zendframework/zend-crypt": "~2.3",
-        "zendframework/zend-math": "~2.3"
+        "zendframework/zend-math": "~2.3",
+        "doctrine/collections": "~1.2"
     },
     "require-dev": {
         "zendframework/zend-servicemanager": "~2.3",
