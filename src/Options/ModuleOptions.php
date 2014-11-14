@@ -8,6 +8,7 @@
 namespace Thorr\OAuth2\Options;
 
 use InvalidArgumentException;
+use Thorr\OAuth2\Entity\User;
 use Zend\Stdlib\AbstractOptions;
 
 class ModuleOptions extends AbstractOptions
@@ -15,7 +16,7 @@ class ModuleOptions extends AbstractOptions
     /**
      * @var string
      */
-    protected $userEntityClassName = 'Thorr\OAuth2\Entity\User';
+    protected $userEntityClassName = User::class;
 
     /**
      * @var int
