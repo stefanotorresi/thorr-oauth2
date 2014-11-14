@@ -7,40 +7,40 @@
 
 namespace Thorr\OAuth2\GrantType;
 
+use Exception;
 use InvalidArgumentException;
 use OAuth2\GrantType\GrantTypeInterface;
 use OAuth2\RequestInterface;
 use OAuth2\ResponseInterface;
-use OAuth2\ResponseType\AccessTokenInterface;
+use OAuth2\ResponseType\AccessTokenInterface as AccessTokenFactory;
+use Thorr\OAuth2\DataMapper\ThirdPartyMapperInterface;
+use Thorr\OAuth2\DataMapper\TokenMapperInterface;
 use Thorr\OAuth2\Entity;
-use Thorr\OAuth2\Entity\UserInterface;
 use Thorr\OAuth2\GrantType\ThirdParty\Provider\Exception\ClientException;
 use Thorr\OAuth2\GrantType\ThirdParty\Provider\ProviderInterface;
 use Thorr\OAuth2\Options\ModuleOptions;
-use Thorr\OAuth2\Repository\AccessTokenRepositoryInterface;
-use Thorr\OAuth2\Repository\ThirdPartyUserRepositoryInterface;
-use Thorr\OAuth2\Repository\UserRepositoryInterface;
+use Thorr\Persistence\DataMapper\DataMapperInterface;
 use Traversable;
 use Zend\Stdlib\Guard\ArrayOrTraversableGuardTrait;
 
-class ThirdParty implements GrantTypeInterface
+class ThirdPartyGrantType implements GrantTypeInterface
 {
     use ArrayOrTraversableGuardTrait;
 
     /**
-     * @var UserRepositoryInterface
+     * @var DataMapperInterface
      */
-    protected $userRepository;
+    protected $userMapper;
 
     /**
-     * @var ThirdPartyUserRepositoryInterface
+     * @var ThirdPartyMapperInterface
      */
-    protected $thirdPartyUserRepository;
+    protected $thirdPartyMapper;
 
     /**
-     * @var AccessTokenRepositoryInterface
+     * @var TokenMapperInterface
      */
-    protected $accessTokenRepository;
+    protected $accessTokenMapper;
 
     /**
      * @var ModuleOptions
@@ -58,31 +58,25 @@ class ThirdParty implements GrantTypeInterface
     protected $providers;
 
     /**
-     * @param UserRepositoryInterface $userRepository
-     * @param ThirdPartyUserRepositoryInterface $thirdPartyUserRepository
-     * @param AccessTokenRepositoryInterface $accessTokenRepository
+     * @param DataMapperInterface $userMapper
+     * @param ThirdPartyMapperInterface $thirdPartyMapper
+     * @param TokenMapperInterface $accessTokenMapper
      * @param ModuleOptions $moduleOptions
-     * @param array|Traversable $providers
      */
     public function __construct(
-        UserRepositoryInterface $userRepository,
-        ThirdPartyUserRepositoryInterface $thirdPartyUserRepository,
-        AccessTokenRepositoryInterface $accessTokenRepository,
-        ModuleOptions $moduleOptions,
-        $providers = []
+        DataMapperInterface $userMapper,
+        ThirdPartyMapperInterface $thirdPartyMapper,
+        TokenMapperInterface $accessTokenMapper,
+        ModuleOptions $moduleOptions
     ) {
-        $this->userRepository = $userRepository;
-        $this->thirdPartyUserRepository = $thirdPartyUserRepository;
-        $this->accessTokenRepository = $accessTokenRepository;
+        $this->userMapper = $userMapper;
+        $this->thirdPartyMapper = $thirdPartyMapper;
+        $this->accessTokenMapper = $accessTokenMapper;
         $this->moduleOptions = $moduleOptions;
 
-        if (empty($providers)) {
-            foreach ($moduleOptions->getThirdPartyProviders() as $providerConfig) {
-                $provider = ThirdParty\Provider\ProviderFactory::createProvider($providerConfig);
-                $this->addProvider($provider);
-            }
-        } else {
-            $this->setProviders($providers);
+        foreach ($moduleOptions->getThirdPartyProviders() as $providerConfig) {
+            $provider = ThirdParty\Provider\ProviderFactory::createProvider($providerConfig);
+            $this->addProvider($provider);
         }
     }
 
@@ -115,14 +109,13 @@ class ThirdParty implements GrantTypeInterface
             return false;
         }
 
-        if (! isset($this->providers[$providerName])) {
+        $provider = isset($this->providers[$providerName]) ? $this->providers[$providerName] : null;
+
+        if (! $provider instanceof ProviderInterface) {
             $response->setError(400, 'invalid_request', 'Unknown provider selected');
 
             return false;
         }
-
-        /** @var ProviderInterface $provider */
-        $provider = $this->providers[$providerName];
 
         try {
             $errorMessage = '';
@@ -135,21 +128,54 @@ class ThirdParty implements GrantTypeInterface
             $response->setError($e->getCode(), 'provider_client_error', $e->getMessage());
 
             return false;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $response->setError(500, 'provider_error', $e->getMessage());
 
             return false;
         }
 
-        $accessToken = ($token = $request->request("access_token")) ? $this->accessTokenRepository->find($token) : null;
+        $token = $request->request("access_token");
+        $accessToken = $token ? $this->accessTokenMapper->findByToken($token) : null;
 
-        if ($accessToken && $accessToken->isExpired()) {
+        if ($accessToken instanceof Entity\AccessToken && $accessToken->isExpired()) {
             $response->setError(401, 'invalid_grant', 'Access token is expired');
             return false;
         }
 
-        $this->user = $this->loadUser($provider, $accessToken);
-        $this->userRepository->save($this->user);
+        $thirdPartyUser = $this->thirdPartyMapper->findByProvider($provider);
+
+        switch (true) {
+            // a known user tries to connect with third party credentials owned by another user? issue an error
+            case ($accessToken instanceof Entity\AccessToken
+                    && $thirdPartyUser instanceof Entity\ThirdParty
+                    && $thirdPartyUser->getUser() !== $accessToken->getUser()):
+                $response->setError(400, 'invalid_request', 'Another user is already registered with same credentials');
+                return false;
+
+            // known third party credentials? update the data and grab the user form it
+            case ($thirdPartyUser instanceof Entity\ThirdParty):
+                $thirdPartyUser->setData($provider->getUserData());
+                $user = $thirdPartyUser->getUser();
+                break;
+
+            // valid access token? grab the user form it
+            case ($accessToken instanceof Entity\AccessToken):
+                $user = $accessToken->getUser();
+                break;
+
+            // no third party credentials or access token? it's a new user
+            default:
+                $userClass = $this->moduleOptions->getUserEntityClassName();
+                $user = new $userClass();
+        }
+
+        // in case 3 and 4 we need to connect the user with new third party credentials
+        if (! $thirdPartyUser instanceof Entity\ThirdParty) {
+            $this->connectUserToThirdParty($user, $provider);
+        }
+
+        $this->userMapper->save($user);
+        $this->user = $user;
 
         return true;
     }
@@ -184,15 +210,15 @@ class ThirdParty implements GrantTypeInterface
     }
 
     /**
-     * @param AccessTokenInterface $accessToken
+     * @param AccessTokenFactory $accessTokenFactory
      * @param $client_id
      * @param $user_id
      * @param $scope
      * @return mixed
      */
-    public function createAccessToken(AccessTokenInterface $accessToken, $client_id, $user_id, $scope)
+    public function createAccessToken(AccessTokenFactory $accessTokenFactory, $client_id, $user_id, $scope)
     {
-        return $accessToken->createAccessToken($client_id, $user_id, $scope);
+        return $accessTokenFactory->createAccessToken($client_id, $user_id, $scope);
     }
 
     /**
@@ -225,53 +251,18 @@ class ThirdParty implements GrantTypeInterface
     }
 
     /**
+     * @param Entity\ThirdPartyAwareUserInterface $user
      * @param ProviderInterface $provider
-     * @param Entity\AccessToken $accessToken
-     * @return null|UserInterface
      */
-    protected function loadUser(ProviderInterface $provider, Entity\AccessToken $accessToken = null)
+    protected function connectUserToThirdParty(Entity\ThirdPartyAwareUserInterface $user, ProviderInterface $provider)
     {
-        $thirdPartyUser = $this->loadThirdPartyUser($provider);
+        $thirdPartyUser = new Entity\ThirdParty(
+            $provider->getUserId(),
+            $provider->getIdentifier(),
+            $user,
+            $provider->getUserData()
+        );
 
-        $userClass = $this->moduleOptions->getUserEntityClassName();
-
-        // got access token? grab user form it
-        if ($accessToken) {
-            $user = $accessToken->getUser();
-        }
-
-        // no user from token? get it from the credentials
-        if (! isset($user)) {
-            $user = $thirdPartyUser->getUser();
-        }
-
-        // still no user? create a new one with the third party credentials
-        if (! isset($user)) {
-            $user = new $userClass($thirdPartyUser->getId().'@'.$thirdPartyUser->getProvider());
-        }
-
-        /** @var UserInterface $user */
-
-        $user->addThirdPartyUser($thirdPartyUser);
-        $thirdPartyUser->setUser($user);
-
-        return $user;
-    }
-
-    /**
-     * @param ProviderInterface $provider
-     * @return Entity\ThirdPartyUser
-     */
-    protected function loadThirdPartyUser(ProviderInterface $provider)
-    {
-        $thirdPartyUser =
-            $this->thirdPartyUserRepository->find([
-                'id' => $provider->getUserId(),
-                'provider' => $provider->getIdentifier()
-            ]) ?: new Entity\ThirdPartyUser($provider->getUserId(), $provider->getIdentifier());
-
-        $thirdPartyUser->setData($provider->getUserData());
-
-        return $thirdPartyUser;
+        $user->addThirdParty($thirdPartyUser);
     }
 }
