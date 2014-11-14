@@ -19,7 +19,6 @@ trait ExpiryDateProviderTrait
 
     /**
      * @param DateTime $expiryDate
-     * @return self
      */
     public function setExpiryDate($expiryDate)
     {
@@ -28,8 +27,6 @@ trait ExpiryDateProviderTrait
         }
 
         $this->expiryDate = $expiryDate;
-
-        return $this;
     }
 
     /**

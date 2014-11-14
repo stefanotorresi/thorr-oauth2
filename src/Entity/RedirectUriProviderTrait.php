@@ -24,12 +24,9 @@ trait RedirectUriProviderTrait
 
     /**
      * @param string $redirectUri
-     * @return self
      */
     public function setRedirectUri($redirectUri)
     {
         $this->redirectUri = $redirectUri;
-
-        return $this;
     }
 }

@@ -34,7 +34,6 @@ trait ScopesProviderTrait
 
     /**
      * @param  Collections\Collection|array $scopes
-     * @return self
      */
     public function setScopes($scopes)
     {
@@ -43,8 +42,6 @@ trait ScopesProviderTrait
         }
 
         $this->scopes = $scopes;
-
-        return $this;
     }
 
     /**

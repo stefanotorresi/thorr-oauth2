@@ -51,13 +51,10 @@ class Client implements
 
     /**
      * @param string $secret
-     * @return self
      */
     public function setSecret($secret)
     {
         $this->secret = $secret;
-
-        return $this;
     }
 
     /**

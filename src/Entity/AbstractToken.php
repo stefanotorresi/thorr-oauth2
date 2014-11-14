@@ -41,13 +41,10 @@ abstract class AbstractToken implements ScopesProviderInterface
 
     /**
      * @param Client $client
-     * @return self
      */
-    public function setClient($client)
+    public function setClient(Client $client)
     {
         $this->client = $client;
-
-        return $this;
     }
 
     /**
@@ -60,13 +57,10 @@ abstract class AbstractToken implements ScopesProviderInterface
 
     /**
      * @param string $token
-     * @return self
      */
     public function setToken($token)
     {
         $this->token = (string) $token;
-
-        return $this;
     }
 
     /**
@@ -79,13 +73,10 @@ abstract class AbstractToken implements ScopesProviderInterface
 
     /**
      * @param UserInterface $user
-     * @return self
      */
     public function setUser(UserInterface $user)
     {
         $this->user = $user;
-
-        return $this;
     }
 
     /**
