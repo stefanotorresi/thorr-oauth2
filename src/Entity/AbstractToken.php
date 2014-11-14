@@ -10,9 +10,12 @@ namespace Thorr\OAuth2\Entity;
 use DateTime;
 use DateTimeZone;
 use Doctrine\Common\Collections;
+use Thorr\Persistence\Entity\IdProviderInterface;
+use Thorr\Persistence\Entity\IdProviderTrait;
 
-abstract class AbstractToken implements ScopesProviderInterface
+abstract class AbstractToken implements IdProviderInterface, ScopesProviderInterface
 {
+    use IdProviderTrait
     use ScopesProviderTrait;
     use ExpiryDateProviderTrait;
 
