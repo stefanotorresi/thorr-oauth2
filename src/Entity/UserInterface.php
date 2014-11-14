@@ -12,6 +12,16 @@ use Thorr\Persistence\Entity\IdProviderInterface;
 interface UserInterface extends IdProviderInterface
 {
     /**
+     * @return string
+     */
+    public function getUsername();
+
+    /**
+     * @param string $username
+     */
+    public function setUsername($username);
+
+    /**
      * Get password.
      *
      * @return string password
@@ -22,13 +32,6 @@ interface UserInterface extends IdProviderInterface
      * Set password.
      *
      * @param string $password
-     * @return UserInterface
      */
     public function setPassword($password);
-
-    /**
-     * @param ThirdPartyUserInterface $thirdPartyUser
-     * @return boolean
-     */
-    public function addThirdPartyUser(ThirdPartyUserInterface $thirdPartyUser);
 }

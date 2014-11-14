@@ -11,9 +11,11 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Thorr\Nonce\Entity\NonceOwnerInterface;
 use Thorr\Persistence\Entity\IdProviderTrait;
 
-class User implements UserInterface, NonceOwnerInterface
+class User implements ThirdPartyAwareUserInterface
 {
+    use IdProviderTrait;
     use UserTrait;
+    use ThirdPartyUsersAwareTrait;
 
     public function __construct($id = null, $password = null)
     {
@@ -25,6 +27,6 @@ class User implements UserInterface, NonceOwnerInterface
             $this->setPassword($password);
         }
 
-        $this->thirdPartyUsers = new ArrayCollection();
+        $this->initThirdPartyCredentials();
     }
 }
