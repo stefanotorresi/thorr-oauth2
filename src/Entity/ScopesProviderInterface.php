@@ -22,8 +22,7 @@ interface ScopesProviderInterface
     public function getScopesString();
 
     /**
-     * @param  Collection|array $scopes
-     * @return self
+     * @param Collection|array $scopes
      */
     public function setScopes($scopes);
 }

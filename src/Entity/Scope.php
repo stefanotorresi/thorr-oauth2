@@ -30,14 +30,11 @@ class Scope extends AbstractEntity
     }
 
     /**
-     * @param  string $name
-     * @return self
+     * @param string $name
      */
     public function setName($name)
     {
         $this->name = $name;
-
-        return $this;
     }
 
     /**
@@ -49,14 +46,11 @@ class Scope extends AbstractEntity
     }
 
     /**
-     * @param  boolean $default
-     * @return self
+     * @param boolean $default
      */
     public function setDefault($default)
     {
         $this->default = (bool) $default;
-
-        return $this;
     }
 
     /**
