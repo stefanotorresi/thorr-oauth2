@@ -7,18 +7,19 @@
 
 namespace Thorr\OAuth2\DataMapper;
 
+use Thorr\Persistence\DataMapper\DataMapperInterface;
 use Traversable;
 
 interface ScopeMapperInterface extends DataMapperInterface
 {
     /**
-     * @param array|Traversable $scopes
-     * @return array
+     * @param array|Traversable $scopes An array of scope names
+     * @return array                    An array of Scope instances
      */
     public function findScopes($scopes);
 
     /**
-     * @return array
+     * @return array An array of Scope instances
      */
     public function findDefaultScopes();
 }
