@@ -36,13 +36,18 @@ class DataMapperAdapter implements
     protected $password;
 
     /**
-     * @param PasswordInterface $password
-     * @param DataMapperManager $dataMapperManager
+     * @var string
      */
-    public function __construct(PasswordInterface $password, DataMapperManager $dataMapperManager)
+    protected $userClass = Entity\UserInterface::class;
+
+    /**
+     * @param DataMapperManager $dataMapperManager
+     * @param PasswordInterface $password
+     */
+    public function __construct(DataMapperManager $dataMapperManager, PasswordInterface $password)
     {
-        $this->setPassword($password);
         $this->setDataMapperManager($dataMapperManager);
+        $this->setPassword($password);
     }
 
     /**
@@ -50,9 +55,7 @@ class DataMapperAdapter implements
      */
     public function getAccessToken($oauthToken)
     {
-        $authTokenDataMapper = $this->getTokenDataMapper(Entity\AccessToken::class);
-
-        $token = $authTokenDataMapper->findByToken($oauthToken);
+        $token = $this->getTokenDataMapper(Entity\AccessToken::class)->findByToken($oauthToken);
 
         if (! $token instanceof Entity\AccessToken) {
             return;
@@ -69,39 +72,34 @@ class DataMapperAdapter implements
     /**
      * {@inheritdoc}
      */
-    public function setAccessToken($oauthToken, $clientId, $userId, $expires, $scope = null)
+    public function setAccessToken($token, $clientId, $userId, $expires, $scope = null)
     {
         $authTokenDataMapper = $this->getTokenDataMapper(Entity\AccessToken::class);
 
-        if (! $token = $authTokenDataMapper->findByToken($oauthToken)) {
-            $token = new Entity\AccessToken();
+        $client = $this->getClientDataMapper()->findById($clientId);
+
+        if (! $accessToken = $authTokenDataMapper->findByToken($token)) {
+            $accessToken = new Entity\AccessToken($token, $client);
+        } else {
+            $accessToken->setClient($client);
         }
 
-        $clientDataMapper = $this->getDataMapperManager()->getDataMapperForEntity(Entity\Client::class);
-
-        $client = $clientDataMapper->findById($clientId);
-
-        $userDataMapper = $this->getDataMapperManager()->getDataMapperForEntity(Entity\User::class);
-
         if ($userId) {
-            $user = $userDataMapper->findById($userId);
+            $user = $this->getUserDataMapper()->findById($userId);
 
             if ($user instanceof Entity\User) {
-                $token->setUser($user);
+                $accessToken->setUser($user);
             }
         }
 
-        $token->setToken($oauthToken);
-        $token->setClient($client);
-        $token->setExpiryDate(new DateTime('@' . $expires));
+        $accessToken->setExpiryDate(new DateTime('@' . $expires));
 
         if ($scope) {
-            $scopeDataMapper = $this->getScopeDataMapper();
-            $scopes = $scopeDataMapper->findScopes(explode(' ', $scope));
-            $token->setScopes($scopes);
+            $scopes = $this->getScopeDataMapper()->findScopes(explode(' ', $scope));
+            $accessToken->setScopes($scopes);
         }
 
-        $authTokenDataMapper->save($token);
+        $authTokenDataMapper->save($accessToken);
     }
 
     /**
@@ -109,9 +107,7 @@ class DataMapperAdapter implements
      */
     public function getAuthorizationCode($code)
     {
-        $authCodeDataMapper = $this->getTokenDataMapper(Entity\AuthorizationCode::class);
-
-        $authorizationCode = $authCodeDataMapper->findByToken($code);
+        $authorizationCode = $this->getTokenDataMapper(Entity\AuthorizationCode::class)->findByToken($code);
 
         if (! $authorizationCode instanceof Entity\AuthorizationCode || $authorizationCode->isExpired()) {
             return;
@@ -133,33 +129,22 @@ class DataMapperAdapter implements
     {
         $authCodeDataMapper = $this->getTokenDataMapper(Entity\AuthorizationCode::class);
 
+        $client = $this->getClientDataMapper()->findById($clientId);
+
         if (! $authorizationCode = $authCodeDataMapper->findByToken($code)) {
-            $authorizationCode = new Entity\AuthorizationCode();
+            $authorizationCode = new Entity\AuthorizationCode($code, $client);
+        } else {
+            $authorizationCode->setClient($client);
         }
 
-        $clientDataMapper = $this->getDataMapperManager()->getDataMapperForEntity(Entity\Client::class);
-        $client = $clientDataMapper->findById($clientId);
-
-        if (! $client instanceof Entity\Client) {
-            throw new InvalidArgumentException('Invalid clientId provided');
-        }
-
-        $userDataMapper = $this->getDataMapperManager()->getDataMapperForEntity(Entity\User::class);
-        $user = $userDataMapper->findById($userId);
-
-        if (! $user instanceof Entity\User) {
-            throw new InvalidArgumentException('Invalid userId provided');
-        }
-
-        $authorizationCode->setToken($code);
-        $authorizationCode->setClient($client);
+        $user = $this->getUserDataMapper()->findById($userId);
         $authorizationCode->setUser($user);
+
         $authorizationCode->setExpiryDate(new DateTime('@' . $expires));
         $authorizationCode->setRedirectUri($redirectUri);
 
         if ($scope) {
-            $scopeDataMapper = $this->getScopeDataMapper();
-            $scopes = $scopeDataMapper->findScopes(explode(' ', $scope));
+            $scopes = $this->getScopeDataMapper()->findScopes(explode(' ', $scope));
             $authorizationCode->setScopes($scopes);
         }
 
@@ -174,7 +159,6 @@ class DataMapperAdapter implements
         $authCodeDataMapper = $this->getTokenDataMapper(Entity\AuthorizationCode::class);
 
         $authorizationCode = $authCodeDataMapper->findByToken($code);
-
         $authorizationCode->setExpiryDate(new DateTime());
 
         $authCodeDataMapper->save($authorizationCode);
@@ -185,9 +169,7 @@ class DataMapperAdapter implements
      */
     public function checkClientCredentials($clientId, $clientSecret = null)
     {
-        $clientDataMapper = $this->getDataMapperManager()->getDataMapperForEntity(Entity\Client::class);
-
-        $client = $clientDataMapper->findById($clientId);
+        $client = $this->getClientDataMapper()->findById($clientId);
 
         if (! $client instanceof Entity\Client) {
             return false;
@@ -201,9 +183,7 @@ class DataMapperAdapter implements
      */
     public function isPublicClient($clientId)
     {
-        $clientDataMapper = $this->getDataMapperManager()->getDataMapperForEntity(Entity\Client::class);
-
-        $client = $clientDataMapper->findById($clientId);
+        $client = $this->getClientDataMapper()->findById($clientId);
 
         if (! $client instanceof Entity\Client) {
             return false;
@@ -217,9 +197,7 @@ class DataMapperAdapter implements
      */
     public function getClientDetails($clientId)
     {
-        $clientDataMapper = $this->getDataMapperManager()->getDataMapperForEntity(Entity\Client::class);
-
-        $client = $clientDataMapper->findById($clientId);
+        $client = $this->getClientDataMapper()->findById($clientId);
 
         if (! $client instanceof Entity\Client) {
             return false;
@@ -239,9 +217,7 @@ class DataMapperAdapter implements
      */
     public function getClientScope($clientId)
     {
-        $clientDataMapper = $this->getDataMapperManager()->getDataMapperForEntity(Entity\Client::class);
-
-        $client = $clientDataMapper->findById($clientId);
+        $client = $this->getClientDataMapper()->findById($clientId);
 
         if (! $client instanceof Entity\Client) {
             throw new InvalidArgumentException('Invalid clientId provided');
@@ -255,21 +231,19 @@ class DataMapperAdapter implements
      */
     public function checkRestrictedGrantType($clientId, $grantType)
     {
-        $clientDataMapper = $this->getDataMapperManager()->getDataMapperForEntity(Entity\Client::class);
-
-        $client = $clientDataMapper->findById($clientId);
+        $client = $this->getClientDataMapper()->findById($clientId);
 
         if (! $client instanceof Entity\Client) {
             return false;
         }
 
-        $grantTypes = $client->getGrantTypes();
+        $clientGrantTypes = $client->getGrantTypes();
 
-        if (empty($grantTypes)) {
+        if (empty($clientGrantTypes)) {
             return true;
         }
 
-        return in_array($grantType, $grantTypes);
+        return in_array($grantType, $clientGrantTypes);
     }
 
     /**
@@ -288,7 +262,7 @@ class DataMapperAdapter implements
         return [
             'refresh_token' => $token->getToken(),
             'client_id'     => $token->getClient()->getId(),
-            'user_id'       => $token->getUser()->getId(),
+            'user_id'       => $token->getUser() ? $token->getUser()->getId() : null,
             'expires'       => $token->getExpiryUTCTimestamp(),
             'scope'         => $token->getScopesString(),
         ];
@@ -301,30 +275,25 @@ class DataMapperAdapter implements
     {
         $refreshTokenDataMapper = $this->getTokenDataMapper(Entity\RefreshToken::class);
 
+        $client = $this->getClientDataMapper()->findById($clientId);
+
         if (! $refreshToken = $refreshTokenDataMapper->findByToken($token)) {
-            $refreshToken = new Entity\RefreshToken();
+            $refreshToken = new Entity\RefreshToken($token, $client);
+        } else {
+            $refreshToken->setClient($client);
         }
 
-        $clientDataMapper = $this->getDataMapperManager()->getDataMapperForEntity(Entity\Client::class);
-
-        $client = $clientDataMapper->findById($clientId);
-
-        $userDataMapper = $this->getDataMapperManager()->getDataMapperForEntity(Entity\User::class);
-
         if ($userId) {
-            $user = $userDataMapper->findById($userId);
+            $user = $this->getUserDataMapper()->findById($userId);
             if ($user instanceof Entity\User) {
                 $refreshToken->setUser($user);
             }
         }
 
-        $refreshToken->setToken($token);
-        $refreshToken->setClient($client);
         $refreshToken->setExpiryDate(new DateTime('@' . $expires));
 
         if ($scope) {
-            $scopeDataMapper = $this->getScopeDataMapper();
-            $scopes = $scopeDataMapper->findScopes(explode(' ', $scope));
+            $scopes = $this->getScopeDataMapper()->findScopes(explode(' ', $scope));
             $refreshToken->setScopes($scopes);
         }
 
@@ -346,15 +315,14 @@ class DataMapperAdapter implements
     /**
      * {@inheritdoc}
      */
-    public function scopeExists($scopes)
+    public function scopeExists($scopesString)
     {
-        $scopes = explode(' ', $scopes);
+        $scopes = explode(' ', $scopesString);
 
-        $scopeDataMapper = $this->getScopeDataMapper();
+        $foundScopes = $this->getScopeDataMapper()->findScopes($scopes);
 
-        $result = $scopeDataMapper->findScopes($scopes);
-
-        return count($scopes) === count($result);
+        // todo: make a better check over the scopes, the following assumes scope names are unique
+        return count($scopes) === count($foundScopes);
     }
 
     /**
@@ -362,10 +330,7 @@ class DataMapperAdapter implements
      */
     public function getDefaultScope($clientId = null)
     {
-        /** @var DataMapper\ScopeMapperInterface $scopeDataMapper */
-
-
-        $scopes = $scopeDataMapper->findDefaultScopes();
+        $scopes = $this->getScopeDataMapper()->findDefaultScopes();
 
         if (! count($scopes)) {
             return;
@@ -384,11 +349,9 @@ class DataMapperAdapter implements
     /**
      * {@inheritdoc}
      */
-    public function checkUserCredentials($userId, $password)
+    public function checkUserCredentials($credential, $password)
     {
-        $userDataMapper = $this->getDataMapperManager()->getDataMapperForEntity(Entity\User::class);
-
-        $user = $userDataMapper->findById($userId);
+        $user = $this->getUserDataMapper()->findByCredential($credential);
 
         if (! $user instanceof UserInterface) {
             return false;
@@ -400,11 +363,9 @@ class DataMapperAdapter implements
     /**
      * {@inheritdoc}
      */
-    public function getUserDetails($userId)
+    public function getUserDetails($credential)
     {
-        $userDataMapper = $this->getDataMapperManager()->getDataMapperForEntity(Entity\User::class);
-
-        $user = $userDataMapper->findById($userId);
+        $user = $this->getUserDataMapper()->findByCredential($credential);
 
         if (! $user instanceof UserInterface) {
             return false;
@@ -433,15 +394,27 @@ class DataMapperAdapter implements
     }
 
     /**
+     * @return string
+     */
+    public function getUserClass()
+    {
+        return $this->userClass;
+    }
+
+    /**
+     * @param string $userClass
+     */
+    public function setUserClass($userClass)
+    {
+        $this->userClass = $userClass;
+    }
+
+    /**
      * @return DataMapper\ScopeMapperInterface
      */
     protected function getScopeDataMapper()
     {
-        $scopeDataMapper = $this->getDataMapperManager()->getDataMapperForEntity(Entity\Scope::class);
-
-        $this->guardDataMapperType($scopeDataMapper, DataMapper\ScopeMapperInterface::class, Entity\Scope::class);
-
-        return $scopeDataMapper;
+        return $this->getDataMapperManager()->getDataMapperForEntity(Entity\Scope::class);
     }
 
     /**
@@ -450,27 +423,22 @@ class DataMapperAdapter implements
      */
     protected function getTokenDataMapper($tokenClass)
     {
-        $tokenDataMapper = $this->getDataMapperManager()->getDataMapperForEntity($tokenClass);
-
-        $this->guardDataMapperType($tokenDataMapper, DataMapper\TokenMapperInterface::class, $tokenClass);
-
-        return $tokenDataMapper;
+        return $this->getDataMapperManager()->getDataMapperForEntity($tokenClass);
     }
 
     /**
-     * @param DataMapperInterface $dataMapper
-     * @param string              $dataMapperClass
-     * @param string              $entityClass
+     * @return DataMapperInterface
      */
-    protected function guardDataMapperType(DataMapperInterface $dataMapper, $dataMapperClass, $entityClass)
+    protected function getClientDataMapper()
     {
-        if (! is_a($dataMapper, $dataMapperClass)) {
-            throw new \RuntimeException(sprintf(
-                "Invalid data mapper type for entity '%s'. Expected '%s', got '%s'",
-                $entityClass,
-                DataMapper\ScopeMapperInterface::class,
-                get_class($dataMapper)
-            ));
-        }
+        return $this->getDataMapperManager()->getDataMapperForEntity(Entity\Client::class);
+    }
+
+    /**
+     * @return DataMapper\UserMapperInterface
+     */
+    protected function getUserDataMapper()
+    {
+        return $this->getDataMapperManager()->getDataMapperForEntity($this->userClass);
     }
 }
