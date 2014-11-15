@@ -13,8 +13,8 @@ use Traversable;
 interface ScopeMapperInterface extends DataMapperInterface
 {
     /**
-     * @param array|Traversable $scopes An array of scope names
-     * @return array                    An array of Scope instances
+     * @param  array|Traversable $scopes An array of scope names
+     * @return array             An array of Scope instances
      */
     public function findScopes($scopes);
 

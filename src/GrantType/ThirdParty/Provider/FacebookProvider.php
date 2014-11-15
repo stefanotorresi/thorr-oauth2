@@ -75,13 +75,13 @@ class FacebookProvider implements
     /**
      * @param $userId
      * @param $accessToken
-     * @param null $errorMessage
+     * @param  null                      $errorMessage
      * @throws Exception\ClientException
      * @return bool
      */
     public function validate($userId, $accessToken, &$errorMessage = null)
     {
-        $client = new Client($this->uri . '/me', $this->clientOptions);
+        $client = new Client($this->uri.'/me', $this->clientOptions);
         $client->setMethod('GET');
         $params = ArrayUtils::merge($this->endpointParams, [ 'access_token' => $accessToken ]);
         $client->setParameterGet($params);
@@ -98,6 +98,7 @@ class FacebookProvider implements
 
         if ($userData->id !== $userId) {
             $errorMessage = 'user_id mismatch';
+
             return false;
         }
 
@@ -110,7 +111,7 @@ class FacebookProvider implements
     }
 
     /**
-     * @param Response $response
+     * @param  Response                  $response
      * @return mixed
      * @throws Exception\ClientException
      */

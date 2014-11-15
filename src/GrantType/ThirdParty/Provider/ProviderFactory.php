@@ -12,7 +12,7 @@ abstract class ProviderFactory
     public static function createProvider($spec)
     {
         $providerClass = is_string($spec) ? $spec
-            : ( (is_array($spec) && isset($spec['class'])) ? $spec['class'] : '' );
+            : ((is_array($spec) && isset($spec['class'])) ? $spec['class'] : '');
 
         if (! class_exists($providerClass)) {
             throw new Exception\DomainException(sprintf(

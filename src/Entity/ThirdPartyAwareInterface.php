@@ -22,19 +22,19 @@ interface ThirdPartyAwareInterface
     public function setThirdPartyCredentials($thirdPartyCredentials);
 
     /**
-     * @param ThirdParty $thirdParty
+     * @param  ThirdParty $thirdParty
      * @return boolean
      */
     public function addThirdParty(ThirdParty $thirdParty);
 
     /**
-     * @param ThirdParty $thirdParty
+     * @param  ThirdParty $thirdParty
      * @return bool
      */
     public function removeThirdParty(ThirdParty $thirdParty);
 
     /**
-     * @param  string $provider
+     * @param  string          $provider
      * @return ThirdParty|null
      */
     public function findThirdPartyByProvider($provider);

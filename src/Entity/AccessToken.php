@@ -9,5 +9,4 @@ namespace Thorr\OAuth2\Entity;
 
 class AccessToken extends AbstractToken
 {
-
 }

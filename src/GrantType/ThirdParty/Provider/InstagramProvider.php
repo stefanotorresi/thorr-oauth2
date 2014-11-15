@@ -70,7 +70,7 @@ class InstagramProvider implements ProviderInterface
      */
     public function validate($userId, $accessToken, &$errorMessage = null)
     {
-        $client = new Client($this->uri . '/users/self', $this->clientOptions);
+        $client = new Client($this->uri.'/users/self', $this->clientOptions);
         $client->setMethod('GET');
         $client->setParameterGet(['access_token' => $accessToken]);
 
@@ -86,6 +86,7 @@ class InstagramProvider implements ProviderInterface
 
         if ($userData->id !== $userId) {
             $errorMessage = 'user_id mismatch';
+
             return false;
         }
 
@@ -98,7 +99,7 @@ class InstagramProvider implements ProviderInterface
     }
 
     /**
-     * @param Response $response
+     * @param  Response                  $response
      * @return mixed
      * @throws Exception\ClientException
      */

@@ -42,7 +42,7 @@ class ModuleOptions extends AbstractOptions
     }
 
     /**
-     * @param string $userClassName
+     * @param  string                   $userClassName
      * @throws InvalidArgumentException
      */
     public function setUserEntityClassName($userClassName)

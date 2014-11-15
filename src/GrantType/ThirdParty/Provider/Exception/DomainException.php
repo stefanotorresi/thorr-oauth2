@@ -9,5 +9,4 @@ namespace Thorr\OAuth2\GrantType\ThirdParty\Provider\Exception;
 
 class DomainException extends \DomainException
 {
-
 }

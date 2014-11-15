@@ -33,7 +33,7 @@ trait ScopesProviderTrait
     }
 
     /**
-     * @param  Collections\Collection|array $scopes
+     * @param Collections\Collection|array $scopes
      */
     public function setScopes($scopes)
     {

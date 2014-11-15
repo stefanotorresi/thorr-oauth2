@@ -19,11 +19,10 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 
 class GrantTypeFactory implements FactoryInterface
 {
-
     /**
      * Create service
      *
-     * @param ServiceLocatorInterface $serviceLocator
+     * @param  ServiceLocatorInterface $serviceLocator
      * @throws RuntimeException
      * @return ThirdPartyGrantType
      */

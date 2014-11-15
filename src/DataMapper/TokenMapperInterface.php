@@ -13,7 +13,7 @@ use Thorr\Persistence\DataMapper\DataMapperInterface;
 interface TokenMapperInterface extends DataMapperInterface
 {
     /**
-     * @param  string $token
+     * @param  string             $token
      * @return AbstractToken|null
      */
     public function findByToken($token);

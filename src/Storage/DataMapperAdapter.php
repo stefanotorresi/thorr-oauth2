@@ -92,7 +92,7 @@ class DataMapperAdapter implements
             }
         }
 
-        $accessToken->setExpiryDate(new DateTime('@' . $expires));
+        $accessToken->setExpiryDate(new DateTime('@'.$expires));
 
         if ($scope) {
             $scopes = $this->getScopeDataMapper()->findScopes(explode(' ', $scope));
@@ -140,7 +140,7 @@ class DataMapperAdapter implements
         $user = $this->getUserDataMapper()->findById($userId);
         $authorizationCode->setUser($user);
 
-        $authorizationCode->setExpiryDate(new DateTime('@' . $expires));
+        $authorizationCode->setExpiryDate(new DateTime('@'.$expires));
         $authorizationCode->setRedirectUri($redirectUri);
 
         if ($scope) {
@@ -290,7 +290,7 @@ class DataMapperAdapter implements
             }
         }
 
-        $refreshToken->setExpiryDate(new DateTime('@' . $expires));
+        $refreshToken->setExpiryDate(new DateTime('@'.$expires));
 
         if ($scope) {
             $scopes = $this->getScopeDataMapper()->findScopes(explode(' ', $scope));
@@ -418,7 +418,7 @@ class DataMapperAdapter implements
     }
 
     /**
-     * @param  string $tokenClass
+     * @param  string                          $tokenClass
      * @return DataMapper\TokenMapperInterface
      */
     protected function getTokenDataMapper($tokenClass)

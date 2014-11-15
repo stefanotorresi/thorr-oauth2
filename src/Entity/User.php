@@ -7,8 +7,6 @@
 
 namespace Thorr\OAuth2\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Thorr\Nonce\Entity\NonceOwnerInterface;
 use Thorr\Persistence\Entity\IdProviderTrait;
 
 class User implements ThirdPartyAwareUserInterface

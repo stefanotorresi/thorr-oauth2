@@ -58,10 +58,10 @@ class ThirdPartyGrantType implements GrantTypeInterface
     protected $providers;
 
     /**
-     * @param DataMapperInterface $userMapper
+     * @param DataMapperInterface       $userMapper
      * @param ThirdPartyMapperInterface $thirdPartyMapper
-     * @param TokenMapperInterface $accessTokenMapper
-     * @param ModuleOptions $moduleOptions
+     * @param TokenMapperInterface      $accessTokenMapper
+     * @param ModuleOptions             $moduleOptions
      */
     public function __construct(
         DataMapperInterface $userMapper,
@@ -89,8 +89,8 @@ class ThirdPartyGrantType implements GrantTypeInterface
     }
 
     /**
-     * @param RequestInterface $request
-     * @param ResponseInterface $response
+     * @param  RequestInterface  $request
+     * @param  ResponseInterface $response
      * @return bool
      */
     public function validateRequest(RequestInterface $request, ResponseInterface $response)
@@ -139,6 +139,7 @@ class ThirdPartyGrantType implements GrantTypeInterface
 
         if ($accessToken instanceof Entity\AccessToken && $accessToken->isExpired()) {
             $response->setError(401, 'invalid_grant', 'Access token is expired');
+
             return false;
         }
 
@@ -150,6 +151,7 @@ class ThirdPartyGrantType implements GrantTypeInterface
                     && $thirdPartyUser instanceof Entity\ThirdParty
                     && $thirdPartyUser->getUser() !== $accessToken->getUser()):
                 $response->setError(400, 'invalid_request', 'Another user is already registered with same credentials');
+
                 return false;
 
             // known third party credentials? update the data and grab the user form it
@@ -210,7 +212,7 @@ class ThirdPartyGrantType implements GrantTypeInterface
     }
 
     /**
-     * @param AccessTokenFactory $accessTokenFactory
+     * @param  AccessTokenFactory $accessTokenFactory
      * @param $client_id
      * @param $user_id
      * @param $scope
@@ -230,7 +232,7 @@ class ThirdPartyGrantType implements GrantTypeInterface
     }
 
     /**
-     * @param array|Traversable $providers
+     * @param  array|Traversable        $providers
      * @throws InvalidArgumentException
      */
     public function setProviders($providers)
@@ -252,7 +254,7 @@ class ThirdPartyGrantType implements GrantTypeInterface
 
     /**
      * @param Entity\ThirdPartyAwareUserInterface $user
-     * @param ProviderInterface $provider
+     * @param ProviderInterface                   $provider
      */
     protected function connectUserToThirdParty(Entity\ThirdPartyAwareUserInterface $user, ProviderInterface $provider)
     {

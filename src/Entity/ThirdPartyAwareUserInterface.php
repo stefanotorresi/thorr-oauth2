@@ -9,5 +9,4 @@ namespace Thorr\OAuth2\Entity;
 
 interface ThirdPartyAwareUserInterface extends UserInterface, ThirdPartyAwareInterface
 {
-
 }

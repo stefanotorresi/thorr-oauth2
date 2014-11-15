@@ -12,7 +12,7 @@ use Doctrine\Common\Collections;
 /**
  * Don't forget to initialize $thirdPartyUsers property in the constructor
  */
-trait ThirdPartyUsersAwareTrait
+trait ThirdPartyAwareTrait
 {
     /**
      * @var Collections\Collection
@@ -39,7 +39,7 @@ trait ThirdPartyUsersAwareTrait
     }
 
     /**
-     * @param ThirdParty $thirdParty
+     * @param  ThirdParty $thirdParty
      * @return bool
      */
     public function addThirdParty(ThirdParty $thirdParty)
@@ -52,7 +52,7 @@ trait ThirdPartyUsersAwareTrait
     }
 
     /**
-     * @param ThirdParty $thirdParty
+     * @param  ThirdParty $thirdParty
      * @return bool
      */
     public function removeThirdParty(ThirdParty $thirdParty)
@@ -61,7 +61,7 @@ trait ThirdPartyUsersAwareTrait
     }
 
     /**
-     * @param  string $provider
+     * @param  string          $provider
      * @return ThirdParty|null
      */
     public function findThirdPartyByProvider($provider)
