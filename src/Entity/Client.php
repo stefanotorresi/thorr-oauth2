@@ -7,14 +7,10 @@
 
 namespace Thorr\OAuth2\Entity;
 
-use Thorr\Persistence\Entity\IdProviderInterface;
-use Thorr\Persistence\Entity\IdProviderTrait;
+use Thorr\Persistence\Entity\AbstractEntity;
 
-class Client implements
-    IdProviderInterface,
-    ScopesProviderInterface
+class Client extends AbstractEntity implements ScopesProviderInterface
 {
-    use IdProviderTrait;
     use RedirectUriProviderTrait;
     use ScopesProviderTrait;
 

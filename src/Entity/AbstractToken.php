@@ -7,39 +7,55 @@
 
 namespace Thorr\OAuth2\Entity;
 
-use DateTime;
-use DateTimeZone;
-use Doctrine\Common\Collections;
-use Thorr\Persistence\Entity\IdProviderInterface;
-use Thorr\Persistence\Entity\IdProviderTrait;
+use Doctrine\Common\Collections\Collection;
+use Thorr\Persistence\Entity\AbstractEntity;
 
-abstract class AbstractToken implements IdProviderInterface, ScopesProviderInterface
+abstract class AbstractToken extends AbstractEntity implements ScopesProviderInterface
 {
-    use IdProviderTrait
     use ScopesProviderTrait;
     use ExpiryDateProviderTrait;
 
     /**
+     * The token string; must be unique
+     *
      * @var string
      */
     protected $token;
 
     /**
+     * A token always belongs to a particular client
+     *
      * @var Client
      */
     protected $client;
 
     /**
+     * A token may belong to a particular user
+     *
      * @var UserInterface
      */
     protected $user;
 
     /**
-     *
+     * @param string           $token
+     * @param Client           $client
+     * @param UserInterface    $user
+     * @param array|Collection $scopes
      */
-    public function __construct()
+    public function __construct($token, Client $client, UserInterface $user = null, $scopes = null)
     {
-        $this->initScopes();
+        $this->setToken($token);
+        $this->setClient($client);
+
+        if ($user) {
+            $this->setUser($user);
+        }
+
+        if ($scopes) {
+            $this->setScopes($scopes);
+        } else {
+            $this->initScopes();
+        }
     }
 
     /**
@@ -83,7 +99,7 @@ abstract class AbstractToken implements IdProviderInterface, ScopesProviderInter
     }
 
     /**
-     * @return UserInterface
+     * @return UserInterface|null
      */
     public function getUser()
     {
