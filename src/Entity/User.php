@@ -13,7 +13,7 @@ class User implements ThirdPartyAwareUserInterface
 {
     use IdProviderTrait;
     use UserTrait;
-    use ThirdPartyUsersAwareTrait;
+    use ThirdPartyAwareTrait;
 
     public function __construct($id = null, $password = null)
     {

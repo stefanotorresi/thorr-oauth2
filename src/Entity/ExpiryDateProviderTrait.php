@@ -20,7 +20,7 @@ trait ExpiryDateProviderTrait
     /**
      * @param DateTime $expiryDate
      */
-    public function setExpiryDate($expiryDate)
+    public function setExpiryDate(DateTime $expiryDate = null)
     {
         if ($expiryDate instanceof DateTime) {
             $expiryDate->setTimezone(new DateTimeZone(date_default_timezone_get()));

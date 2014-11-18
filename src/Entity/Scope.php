@@ -34,7 +34,7 @@ class Scope extends AbstractEntity
      */
     public function setName($name)
     {
-        $this->name = $name;
+        $this->name = (string) $name;
     }
 
     /**

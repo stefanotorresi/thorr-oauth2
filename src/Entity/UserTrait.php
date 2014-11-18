@@ -31,6 +31,6 @@ trait UserTrait
      */
     public function setPassword($password)
     {
-        $this->password = $password;
+        $this->password = (string) $password;
     }
 }
