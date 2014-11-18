@@ -32,7 +32,7 @@ class Client extends AbstractEntity implements ScopesProviderInterface
     /**
      *
      */
-    public function __construct($id = null, $secret = null, $user = null)
+    public function __construct($id = null, $secret = null, $user = null, $grantTypes = null, $redirectUri = null)
     {
         if ($id) {
             $this->setId($id);
@@ -44,6 +44,14 @@ class Client extends AbstractEntity implements ScopesProviderInterface
 
         if ($user) {
             $this->setUser($user);
+        }
+
+        if ($grantTypes) {
+            $this->setGrantTypes($grantTypes);
+        }
+
+        if ($redirectUri) {
+            $this->setRedirectUri($redirectUri);
         }
 
         $this->initScopes();
