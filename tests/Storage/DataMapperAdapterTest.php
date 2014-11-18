@@ -8,6 +8,7 @@
 namespace Thorr\OAuth2\Test\Storage;
 
 use DateTime;
+use DomainException;
 use PHPUnit_Framework_TestCase as TestCase;
 use PHPUnit_Framework_MockObject_MockObject as MockObject;
 use Thorr\OAuth2\Entity;
@@ -49,6 +50,11 @@ class DataMapperAdapterTest extends TestCase
         $this->dataMapperManager->expects($this->any())
             ->method('getDataMapperForEntity')
             ->willReturnCallback(function ($entityClassName) {
+                if (! isset($this->dataMapperMocks[$entityClassName])) {
+                    throw new DomainException(
+                        "Don't forget to add DataMapper mocks to the DataMapperManager mock via 'setDataMapperMock'"
+                    );
+                }
                 return $this->dataMapperMocks[$entityClassName];
             });
     }
@@ -428,6 +434,46 @@ class DataMapperAdapterTest extends TestCase
             ],
             [
                 null,                                               null,           false
+            ]
+        ];
+    }
+
+    /**
+     * @param Entity\Client $client
+     * @param bool $expectedResult
+     *
+     * @dataProvider isPublicClientProvider
+     */
+    public function testIsPublicClient($client, $expectedResult)
+    {
+        $dataMapperAdapter = new DataMapperAdapter($this->dataMapperManager, $this->password);
+
+        $clientDataMapper = $this->getMock(DataMapperInterface::class);
+        $clientDataMapper->expects($this->any())
+            ->method('findById')
+            ->with($this->callback(function ($arg) use ($client) {
+                return $client ? $client->getId() === $arg : $arg === 'invalid';
+            }))
+            ->willReturn($client);
+
+        $this->setDataMapperMock(Entity\Client::class, $clientDataMapper);
+
+        $result = $dataMapperAdapter->isPublicClient($client ? $client->getId() : 'invalid');
+        $this->assertSame($result, $expectedResult);
+    }
+
+    public function isPublicClientProvider()
+    {
+        return [
+            // $client                                              $expectedResult
+            [
+                new Entity\Client('someClient', 'clientSecret'),    false
+            ],
+            [
+                new Entity\Client('someClient'),                    true
+            ],
+            [
+                null,                                               false
             ]
         ];
     }
