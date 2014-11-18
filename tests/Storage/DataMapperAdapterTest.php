@@ -9,6 +9,7 @@ namespace Thorr\OAuth2\Test\Storage;
 
 use DateTime;
 use DomainException;
+use InvalidArgumentException;
 use PHPUnit_Framework_TestCase as TestCase;
 use PHPUnit_Framework_MockObject_MockObject as MockObject;
 use Thorr\OAuth2\Entity;
@@ -428,16 +429,10 @@ class DataMapperAdapterTest extends TestCase
     public function checkClientCredentialsProvider()
     {
         return [
-            // $client                                              $secretToCheck  $expectedResult
-            [
-                new Entity\Client('someClient', 'clientSecret'),    'clientSecret', true
-            ],
-            [
-                new Entity\Client('someClient', 'clientSecret'),    'bogus',        false
-            ],
-            [
-                null,                                               null,           false
-            ]
+            //  $client                                             $secretToCheck  $expectedResult
+            [   new Entity\Client('someClient', 'clientSecret'),    'clientSecret', true    ],
+            [   new Entity\Client('someClient', 'clientSecret'),    'bogus',        false   ],
+            [   null,                                               null,           false   ]
         ];
     }
 
@@ -468,16 +463,10 @@ class DataMapperAdapterTest extends TestCase
     public function isPublicClientProvider()
     {
         return [
-            // $client                                              $expectedResult
-            [
-                new Entity\Client('someClient', 'clientSecret'),    false
-            ],
-            [
-                new Entity\Client('someClient'),                    true
-            ],
-            [
-                null,                                               false
-            ]
+            //  $client                                             $expectedResult
+            [   new Entity\Client('someClient', 'clientSecret'),    false   ],
+            [   new Entity\Client('someClient'),                    true    ],
+            [   null,                                               false   ]
         ];
     }
 
@@ -519,6 +508,78 @@ class DataMapperAdapterTest extends TestCase
         $this->setDataMapperMock(Entity\Client::class, $clientDataMapper);
 
         $this->assertFalse($dataMapperAdapter->getClientDetails($bogusClientId));
+    }
+
+    public function testGetClientScope()
+    {
+        $dataMapperAdapter = new DataMapperAdapter($this->dataMapperManager, $this->password);
+        $client            = new Entity\Client('someClient');
+        $scopes            = [new Entity\Scope('someScope'), new Entity\Scope('someOtherScope')];
+        $client->setScopes($scopes);
+
+        $clientDataMapper = $this->getMock(DataMapperInterface::class);
+        $clientDataMapper->expects($this->any())
+            ->method('findById')
+            ->with($client->getId())
+            ->willReturn($client);
+
+        $this->setDataMapperMock(Entity\Client::class, $clientDataMapper);
+
+        $this->assertEquals($client->getScopesString(), $dataMapperAdapter->getClientScope($client->getId()));
+    }
+
+    public function testGetClientScopeWithInvalidId()
+    {
+        $dataMapperAdapter = new DataMapperAdapter($this->dataMapperManager, $this->password);
+        $bogusClientId     = 'invalid';
+
+        $clientDataMapper = $this->getMock(DataMapperInterface::class);
+        $clientDataMapper->expects($this->any())
+            ->method('findById')
+            ->with($bogusClientId)
+            ->willReturn(null);
+
+        $this->setDataMapperMock(Entity\Client::class, $clientDataMapper);
+
+        $this->setExpectedException(InvalidArgumentException::class, 'Invalid clientId');
+        $dataMapperAdapter->getClientScope($bogusClientId);
+    }
+
+    /**
+     * @param Entity\Client $client
+     * @param string $grantType
+     * @param bool $expectedResult
+     *
+     * @dataProvider checkRestrictedGrantTypeProvider
+     */
+    public function testCheckRestrictedGrantType($client, $grantType, $expectedResult)
+    {
+        $dataMapperAdapter = new DataMapperAdapter($this->dataMapperManager, $this->password);
+        $clientId          = $client ? $client->getId() : 'invalid';
+
+        $clientDataMapper = $this->getMock(DataMapperInterface::class);
+        $clientDataMapper->expects($this->any())
+            ->method('findById')
+            ->with($clientId)
+            ->willReturn($client);
+
+        $this->setDataMapperMock(Entity\Client::class, $clientDataMapper);
+
+        $result = $dataMapperAdapter->checkRestrictedGrantType($clientId, $grantType);
+
+        $this->assertSame($expectedResult, $result);
+    }
+
+    public function checkRestrictedGrantTypeProvider()
+    {
+        return [
+            //  $client                                                         $grantType  $expectedResult
+            [   new Entity\Client('someClient', null, null, ['foo', 'bar']),    'foo',      true,   ],
+            [   new Entity\Client('someClient', null, null, ['foo', 'bar']),    'bar',      true,   ],
+            [   new Entity\Client('someClient', null, null, ['foo', 'bar']),    'baz',      false,  ],
+            [   null,                                                           'bogus',    false,  ],
+            [   new Entity\Client('someClient', null, null),                    'anything', true,   ],
+        ];
     }
 
     protected function setDataMapperMock($entityClassName, DataMapperInterface $dataMapper)

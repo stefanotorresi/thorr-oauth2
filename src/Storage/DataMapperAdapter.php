@@ -231,6 +231,8 @@ class DataMapperAdapter implements
 
     /**
      * {@inheritdoc}
+     *
+     * if no grant type is defined for the client, then any type is valid
      */
     public function checkRestrictedGrantType($clientId, $grantType)
     {
