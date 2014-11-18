@@ -29,7 +29,7 @@ class DataMapperAdapterTest extends TestCase
     protected $dataMapperManager;
 
     /**
-     * @var PasswordInterface
+     * @var PasswordInterface|MockObject
      */
     protected $password;
 
@@ -382,6 +382,54 @@ class DataMapperAdapterTest extends TestCase
 
         $dataMapperAdapter->expireAuthorizationCode($token);
         $this->assertTrue($authCode->getExpiryDate() <= new DateTime());
+    }
+
+    /**
+     * @param Entity\Client $client
+     * @param string $secretToCheck
+     * @param bool $expectedResult
+     *
+     * @dataProvider checkClientCredentialsProvider
+     */
+    public function testCheckClientCredentials($client, $secretToCheck, $expectedResult)
+    {
+        $dataMapperAdapter = new DataMapperAdapter($this->dataMapperManager, $this->password);
+
+        $clientDataMapper = $this->getMock(DataMapperInterface::class);
+        $clientDataMapper->expects($this->any())
+            ->method('findById')
+            ->with($this->callback(function ($arg) use ($client) {
+                return $client ? $client->getId() === $arg : $arg === 'invalid';
+            }))
+            ->willReturn($client);
+
+        $this->setDataMapperMock(Entity\Client::class, $clientDataMapper);
+
+        $this->password->expects($this->any())
+            ->method('verify')
+            ->willReturnCallback(function () use ($client, $secretToCheck) {
+                return $client->getSecret() === $secretToCheck;
+            })
+        ;
+
+        $result = $dataMapperAdapter->checkClientCredentials($client ? $client->getId() : 'invalid', $secretToCheck);
+        $this->assertSame($result, $expectedResult);
+    }
+
+    public function checkClientCredentialsProvider()
+    {
+        return [
+            // $client                                              $secretToCheck  $expectedResult
+            [
+                new Entity\Client('someClient', 'clientSecret'),    'clientSecret', true
+            ],
+            [
+                new Entity\Client('someClient', 'clientSecret'),    'bogus',        false
+            ],
+            [
+                null,                                               null,           false
+            ]
+        ];
     }
 
     protected function setDataMapperMock($entityClassName, DataMapperInterface $dataMapper)
