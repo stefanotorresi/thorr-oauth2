@@ -221,6 +221,50 @@ class DataMapperAdapterTest extends TestCase
         $dataMapperAdapter->setAccessToken($token, $newClient->getId(), null, null, null);
     }
 
+    public function testGetAuthorizationCode()
+    {
+        $dataMapperAdapter = new DataMapperAdapter($this->dataMapperManager, $this->password);
+        $client = new Entity\Client('someId');
+        $user = new Entity\User('someUser');
+        $token = Rand::getString(32);
+        $authCode = new Entity\AuthorizationCode($token, $client, $user);
+
+        $tokenDataMapper = $this->getMock(DataMapper\TokenMapperInterface::class);
+        $tokenDataMapper->expects($this->any())
+            ->method('findByToken')
+            ->with($token)
+            ->willReturn($authCode);
+
+        $this->setDataMapperMock(Entity\AuthorizationCode::class, $tokenDataMapper);
+
+        $codeArray = $dataMapperAdapter->getAuthorizationCode($token);
+
+        $this->assertInternalType('array', $codeArray);
+        $this->assertEquals($authCode->getExpiryUTCTimestamp(), $codeArray['expires']);
+        $this->assertEquals($authCode->getClient()->getId(), $codeArray['client_id']);
+        $this->assertEquals($authCode->getUser()->getId(), $codeArray['user_id']);
+        $this->assertEquals($authCode->getScopesString(), $codeArray['scope']);
+        $this->assertEquals($authCode->getRedirectUri(), $codeArray['redirect_uri']);
+    }
+
+    public function testGetAuthorizationCodeWithInvalidToken()
+    {
+        $dataMapperAdapter = new DataMapperAdapter($this->dataMapperManager, $this->password);
+        $token = Rand::getString(32);
+
+        $tokenDataMapper = $this->getMock(DataMapper\TokenMapperInterface::class);
+        $tokenDataMapper->expects($this->any())
+            ->method('findByToken')
+            ->with($token)
+            ->willReturn(null);
+
+        $this->setDataMapperMock(Entity\AuthorizationCode::class, $tokenDataMapper);
+
+        $tokenArray = $dataMapperAdapter->getAuthorizationCode($token);
+
+        $this->assertNull($tokenArray);
+    }
+
     protected function setDataMapperMock($entityClassName, DataMapperInterface $dataMapper)
     {
         $this->dataMapperMocks[$entityClassName] = $dataMapper;

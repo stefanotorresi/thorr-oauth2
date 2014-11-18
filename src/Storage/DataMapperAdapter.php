@@ -110,7 +110,7 @@ class DataMapperAdapter implements
     {
         $authorizationCode = $this->getTokenDataMapper(Entity\AuthorizationCode::class)->findByToken($code);
 
-        if (! $authorizationCode instanceof Entity\AuthorizationCode || $authorizationCode->isExpired()) {
+        if (! $authorizationCode instanceof Entity\AuthorizationCode) {
             return;
         }
 
@@ -119,7 +119,7 @@ class DataMapperAdapter implements
             'client_id'    => $authorizationCode->getClient()->getId(),
             'user_id'      => $authorizationCode->getUser()->getId(),
             'redirect_uri' => $authorizationCode->getRedirectUri(),
-            'scopes'       => $authorizationCode->getScopesString()
+            'scope'        => $authorizationCode->getScopesString()
         ];
     }
 
