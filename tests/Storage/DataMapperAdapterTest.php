@@ -170,9 +170,10 @@ class DataMapperAdapterTest extends TestCase
         $tokenDataMapper = $this->getMock(DataMapper\TokenMapperInterface::class);
         $tokenDataMapper->expects($this->atLeastOnce())
             ->method('save')
-            ->with($this->callback(function ($accessToken) use ($client, $user, $expiryUTCTimestamp, $scopeString) {
+            ->with($this->callback(function ($accessToken) use ($token, $client, $user, $expiryUTCTimestamp, $scopeString) {
                 /** @var Entity\AccessToken $accessToken */
                 $this->assertInstanceOf(Entity\AccessToken::class, $accessToken);
+                $this->assertEquals($token, $accessToken->getToken());
                 $this->assertSame($client, $accessToken->getClient());
                 $this->assertSame($user, $accessToken->getUser());
                 $this->assertSame($expiryUTCTimestamp, $accessToken->getExpiryUTCTimestamp());
@@ -300,9 +301,10 @@ class DataMapperAdapterTest extends TestCase
         $tokenDataMapper = $this->getMock(DataMapper\TokenMapperInterface::class);
         $tokenDataMapper->expects($this->atLeastOnce())
             ->method('save')
-            ->with($this->callback(function ($authCode) use ($client, $user, $redirectUri, $expiryUTCTimestamp, $scopeString) {
+            ->with($this->callback(function ($authCode) use ($token, $client, $user, $redirectUri, $expiryUTCTimestamp, $scopeString) {
                 /** @var Entity\AuthorizationCode $authCode */
                 $this->assertInstanceOf(Entity\AuthorizationCode::class, $authCode);
+                $this->assertEquals($token, $authCode->getToken());
                 $this->assertSame($client, $authCode->getClient());
                 $this->assertSame($user, $authCode->getUser());
                 $this->assertSame($expiryUTCTimestamp, $authCode->getExpiryUTCTimestamp());
