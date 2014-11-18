@@ -265,6 +265,119 @@ class DataMapperAdapterTest extends TestCase
         $this->assertNull($tokenArray);
     }
 
+
+    public function testSetAuthorizationCode()
+    {
+        $dataMapperAdapter = new DataMapperAdapter($this->dataMapperManager, $this->password);
+        $token = Rand::getString(32);
+        $client = new Entity\Client('someClient');
+        $user = new Entity\User('someUser');
+        $expiryUTCTimestamp = time() + 1000;
+        $redirectUri = 'someUri';
+        $scopeNames = ['someScope', 'someOtherScope'];
+        $scopeString = implode(' ', $scopeNames);
+        $scopes = [ new Entity\Scope($scopeNames[0]), new Entity\Scope($scopeNames[1]) ];
+
+        $clientDataMapper = $this->getMock(DataMapperInterface::class);
+        $clientDataMapper->expects($this->any())
+            ->method('findById')
+            ->with($client->getId())
+            ->willReturn($client);
+
+        $userDataMapper = $this->getMock(DataMapper\UserMapperInterface::class);
+        $userDataMapper->expects($this->any())
+            ->method('findById')
+            ->with($user->getId())
+            ->willReturn($user);
+
+        $scopeDataMapper = $this->getMock(DataMapper\ScopeMapperInterface::class);
+        $scopeDataMapper->expects($this->any())
+            ->method('findScopes')
+            ->with($scopeNames)
+            ->willReturn($scopes);
+
+        $tokenDataMapper = $this->getMock(DataMapper\TokenMapperInterface::class);
+        $tokenDataMapper->expects($this->atLeastOnce())
+            ->method('save')
+            ->with($this->callback(function ($authCode) use ($client, $user, $redirectUri, $expiryUTCTimestamp, $scopeString) {
+                /** @var Entity\AuthorizationCode $authCode */
+                $this->assertInstanceOf(Entity\AuthorizationCode::class, $authCode);
+                $this->assertSame($client, $authCode->getClient());
+                $this->assertSame($user, $authCode->getUser());
+                $this->assertSame($expiryUTCTimestamp, $authCode->getExpiryUTCTimestamp());
+                $this->assertCount(2, $authCode->getScopes());
+                $this->assertEquals($redirectUri, $authCode->getRedirectUri());
+                $this->assertEquals($scopeString, $authCode->getScopesString());
+
+                return true;
+            }));
+
+        $this->setDataMapperMock(Entity\Client::class, $clientDataMapper);
+        $this->setDataMapperMock(Entity\UserInterface::class, $userDataMapper);
+        $this->setDataMapperMock(Entity\Scope::class, $scopeDataMapper);
+        $this->setDataMapperMock(Entity\AuthorizationCode::class, $tokenDataMapper);
+
+        $dataMapperAdapter->setAuthorizationCode(
+            $token,
+            $client->getId(),
+            $user->getId(),
+            $redirectUri,
+            $expiryUTCTimestamp,
+            $scopeString);
+    }
+
+
+    public function testSetAuthorizationCodeWithExistingToken()
+    {
+        $dataMapperAdapter = new DataMapperAdapter($this->dataMapperManager, $this->password);
+
+        $token = Rand::getString(32);
+        $client = new Entity\Client('someClient');
+        $user = new Entity\User('someUser');
+        $newClient = new Entity\Client('someOtherClient');
+        $authCode = new Entity\AuthorizationCode($token, $client);
+
+        $clientDataMapper = $this->getMock(DataMapperInterface::class);
+        $clientDataMapper->expects($this->any())
+            ->method('findById')
+            ->with($newClient->getId())
+            ->willReturn($newClient);
+
+        $userDataMapper = $this->getMock(DataMapper\UserMapperInterface::class);
+        $userDataMapper->expects($this->any())
+            ->method('findById')
+            ->with($user->getId())
+            ->willReturn($user);
+
+        $tokenDataMapper = $this->getMock(DataMapper\TokenMapperInterface::class);
+        $tokenDataMapper->expects($this->any())
+            ->method('findByToken')
+            ->with($token)
+            ->willReturn($authCode);
+
+        $tokenDataMapper->expects($this->atLeastOnce())
+            ->method('save')
+            ->with($this->callback(function ($foundAuthCode) use ($authCode, $newClient, $user) {
+                /** @var Entity\AuthorizationCode $foundAuthCode */
+                $this->assertSame($authCode, $foundAuthCode);
+                $this->assertSame($newClient, $foundAuthCode->getClient());
+                $this->assertSame($user, $foundAuthCode->getUser());
+                $this->assertNull($foundAuthCode->getExpiryDate());
+                $this->assertNull($foundAuthCode->getExpiryUTCTimestamp());
+                $this->assertEmpty($foundAuthCode->getScopes());
+                $this->assertEmpty($foundAuthCode->getScopesString());
+                $this->assertEmpty($foundAuthCode->getRedirectUri());
+
+                return true;
+            }));
+
+        $this->setDataMapperMock(Entity\Client::class, $clientDataMapper);
+        $this->setDataMapperMock(Entity\UserInterface::class, $userDataMapper);
+        $this->setDataMapperMock(Entity\AuthorizationCode::class, $tokenDataMapper);
+
+        $dataMapperAdapter->setAuthorizationCode($token, $newClient->getId(), $user->getId(), null, null);
+    }
+
     protected function setDataMapperMock($entityClassName, DataMapperInterface $dataMapper)
     {
         $this->dataMapperMocks[$entityClassName] = $dataMapper;
