@@ -155,12 +155,13 @@ class DataMapperAdapter implements
 
     /**
      * {@inheritdoc}
+     * @param string $token
      */
-    public function expireAuthorizationCode($code)
+    public function expireAuthorizationCode($token)
     {
         $authCodeDataMapper = $this->getTokenDataMapper(Entity\AuthorizationCode::class);
 
-        $authorizationCode = $authCodeDataMapper->findByToken($code);
+        $authorizationCode = $authCodeDataMapper->findByToken($token);
         $authorizationCode->setExpiryDate(new DateTime());
 
         $authCodeDataMapper->save($authorizationCode);

@@ -7,6 +7,7 @@
 
 namespace Thorr\OAuth2\Test\Storage;
 
+use DateTime;
 use PHPUnit_Framework_TestCase as TestCase;
 use PHPUnit_Framework_MockObject_MockObject as MockObject;
 use Thorr\OAuth2\Entity;
@@ -376,6 +377,31 @@ class DataMapperAdapterTest extends TestCase
         $this->setDataMapperMock(Entity\AuthorizationCode::class, $tokenDataMapper);
 
         $dataMapperAdapter->setAuthorizationCode($token, $newClient->getId(), $user->getId(), null, null);
+    }
+
+    public function testExpireAuthorizationCode()
+    {
+        $dataMapperAdapter = new DataMapperAdapter($this->dataMapperManager, $this->password);
+        $token             = Rand::getString(32);
+        $client            = new Entity\Client('someClient');
+        $authCode          = new Entity\AuthorizationCode($token, $client);
+        $expiryDate        = new DateTime('@'.(time() + 1000));
+        $authCode->setExpiryDate($expiryDate);
+
+        $tokenDataMapper = $this->getMock(DataMapper\TokenMapperInterface::class);
+        $tokenDataMapper->expects($this->any())
+            ->method('findByToken')
+            ->with($token)
+            ->willReturn($authCode);
+
+        $tokenDataMapper->expects($this->atLeastOnce())
+            ->method('save')
+            ->with($authCode);
+
+        $this->setDataMapperMock(Entity\AuthorizationCode::class, $tokenDataMapper);
+
+        $dataMapperAdapter->expireAuthorizationCode($token);
+        $this->assertTrue($authCode->getExpiryDate() <= new DateTime());
     }
 
     protected function setDataMapperMock($entityClassName, DataMapperInterface $dataMapper)
