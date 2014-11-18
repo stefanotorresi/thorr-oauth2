@@ -315,6 +315,10 @@ class DataMapperAdapter implements
 
         $refreshToken = $refreshTokenDataMapper->findByToken($token);
 
+        if (! $refreshToken instanceof Entity\RefreshToken) {
+            throw new InvalidArgumentException('Invalid token provided');
+        }
+
         $refreshTokenDataMapper->remove($refreshToken);
     }
 

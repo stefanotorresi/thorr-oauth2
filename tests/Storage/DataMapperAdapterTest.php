@@ -734,6 +734,47 @@ class DataMapperAdapterTest extends TestCase
         $this->assertSame($newClient, $refreshToken->getClient());
     }
 
+    public function testUnsetRefreshToken()
+    {
+        $dataMapperAdapter = new DataMapperAdapter($this->dataMapperManager, $this->password);
+        $token             = Rand::getString(32);
+        $client            = new Entity\Client('someClient');
+        $refreshToken      = new Entity\RefreshToken($token, $client);
+
+        $tokenDataMapper = $this->getMock(DataMapper\TokenMapperInterface::class);
+        $tokenDataMapper->expects($this->any())
+            ->method('findByToken')
+            ->with($token)
+            ->willReturn($refreshToken);
+
+        $tokenDataMapper->expects($this->atLeastOnce())
+            ->method('remove')
+            ->with($refreshToken);
+
+        $this->setDataMapperMock(Entity\RefreshToken::class, $tokenDataMapper);
+
+        $dataMapperAdapter->unsetRefreshToken($token);
+    }
+
+    public function testUnsetRefreshTokenWithInvalidToken()
+    {
+        $dataMapperAdapter = new DataMapperAdapter($this->dataMapperManager, $this->password);
+        $bogusToken        = 'invalid';
+
+        $tokenDataMapper = $this->getMock(DataMapper\TokenMapperInterface::class);
+        $tokenDataMapper->expects($this->any())
+            ->method('findByToken')
+            ->with($bogusToken)
+            ->willReturn(null);
+
+        $tokenDataMapper->expects($this->never())->method('remove');
+
+        $this->setDataMapperMock(Entity\RefreshToken::class, $tokenDataMapper);
+        $this->setExpectedException(InvalidArgumentException::class, 'Invalid token');
+
+        $dataMapperAdapter->unsetRefreshToken($bogusToken);
+    }
+
     protected function setDataMapperMock($entityClassName, DataMapperInterface $dataMapper)
     {
         $this->dataMapperMocks[$entityClassName] = $dataMapper;
