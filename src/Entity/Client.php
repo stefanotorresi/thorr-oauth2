@@ -32,8 +32,20 @@ class Client extends AbstractEntity implements ScopesProviderInterface
     /**
      *
      */
-    public function __construct()
+    public function __construct($id = null, $secret = null, $user = null)
     {
+        if ($id) {
+            $this->setId($id);
+        }
+
+        if ($secret) {
+            $this->setSecret($secret);
+        }
+
+        if ($user) {
+            $this->setUser($user);
+        }
+
         $this->initScopes();
     }
 
