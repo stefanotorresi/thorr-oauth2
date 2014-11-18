@@ -582,6 +582,156 @@ class DataMapperAdapterTest extends TestCase
         ];
     }
 
+    public function testGetRefreshToken()
+    {
+        $dataMapperAdapter = new DataMapperAdapter($this->dataMapperManager, $this->password);
+        $client            = new Entity\Client('someId');
+        $user              = new Entity\User('someUser');
+        $token             = Rand::getString(32);
+        $refreshToken      = new Entity\RefreshToken($token, $client, $user);
+
+        $tokenDataMapper = $this->getMock(DataMapper\TokenMapperInterface::class);
+        $tokenDataMapper->expects($this->any())
+            ->method('findByToken')
+            ->with($token)
+            ->willReturn($refreshToken);
+
+        $this->setDataMapperMock(Entity\RefreshToken::class, $tokenDataMapper);
+
+        $tokenArray = $dataMapperAdapter->getRefreshToken($token);
+
+        $this->assertInternalType('array', $tokenArray);
+        $this->assertEquals($refreshToken->getToken(), $tokenArray['refresh_token']);
+        $this->assertEquals($refreshToken->getExpiryUTCTimestamp(), $tokenArray['expires']);
+        $this->assertEquals($refreshToken->getClient()->getId(), $tokenArray['client_id']);
+        $this->assertEquals($refreshToken->getUser()->getId(), $tokenArray['user_id']);
+        $this->assertEquals($refreshToken->getScopesString(), $tokenArray['scope']);
+    }
+
+    public function testGetRefreshTokenWithNullUser()
+    {
+        $dataMapperAdapter = new DataMapperAdapter($this->dataMapperManager, $this->password);
+        $client            = new Entity\Client('someId');
+        $token             = Rand::getString(32);
+        $refreshToken      = new Entity\RefreshToken($token, $client);
+
+        $tokenDataMapper = $this->getMock(DataMapper\TokenMapperInterface::class);
+        $tokenDataMapper->expects($this->any())
+            ->method('findByToken')
+            ->with($token)
+            ->willReturn($refreshToken);
+
+        $this->setDataMapperMock(Entity\RefreshToken::class, $tokenDataMapper);
+
+        $tokenArray = $dataMapperAdapter->getRefreshToken($token);
+
+        $this->assertInternalType('array', $tokenArray);
+        $this->assertNull($tokenArray['user_id']);
+    }
+
+    public function testGetRefreshTokenWithInvalidToken()
+    {
+        $dataMapperAdapter = new DataMapperAdapter($this->dataMapperManager, $this->password);
+        $token             = Rand::getString(32);
+
+        $tokenDataMapper = $this->getMock(DataMapper\TokenMapperInterface::class);
+        $tokenDataMapper->expects($this->any())
+            ->method('findByToken')
+            ->with($token)
+            ->willReturn(null);
+
+        $this->setDataMapperMock(Entity\RefreshToken::class, $tokenDataMapper);
+
+        $tokenArray = $dataMapperAdapter->getRefreshToken($token);
+
+        $this->assertNull($tokenArray);
+    }
+
+    public function testSetRefreshToken()
+    {
+        $dataMapperAdapter  = new DataMapperAdapter($this->dataMapperManager, $this->password);
+        $token              = Rand::getString(32);
+        $client             = new Entity\Client('someClient');
+        $user               = new Entity\User('someUser');
+        $expiryUTCTimestamp = time() + 1000;
+        $scopeNames         = ['someScope', 'someOtherScope'];
+        $scopeString        = implode(' ', $scopeNames);
+        $scopes             = [new Entity\Scope($scopeNames[0]), new Entity\Scope($scopeNames[1])];
+
+        $clientDataMapper = $this->getMock(DataMapperInterface::class);
+        $clientDataMapper->expects($this->any())
+            ->method('findById')
+            ->with($client->getId())
+            ->willReturn($client);
+
+        $userDataMapper = $this->getMock(DataMapper\UserMapperInterface::class);
+        $userDataMapper->expects($this->any())
+            ->method('findById')
+            ->with($user->getId())
+            ->willReturn($user);
+
+        $scopeDataMapper = $this->getMock(DataMapper\ScopeMapperInterface::class);
+        $scopeDataMapper->expects($this->any())
+            ->method('findScopes')
+            ->with($scopeNames)
+            ->willReturn($scopes);
+
+        $tokenDataMapper = $this->getMock(DataMapper\TokenMapperInterface::class);
+        $tokenDataMapper->expects($this->atLeastOnce())
+            ->method('save')
+            ->with($this->callback(function ($refreshToken) use ($token, $client, $user, $expiryUTCTimestamp, $scopeString) {
+                /** @var Entity\RefreshToken $refreshToken */
+                $this->assertInstanceOf(Entity\RefreshToken::class, $refreshToken);
+                $this->assertEquals($token, $refreshToken->getToken());
+                $this->assertSame($client, $refreshToken->getClient());
+                $this->assertSame($user, $refreshToken->getUser());
+                $this->assertSame($expiryUTCTimestamp, $refreshToken->getExpiryUTCTimestamp());
+                $this->assertCount(2, $refreshToken->getScopes());
+                $this->assertEquals($scopeString, $refreshToken->getScopesString());
+
+                return true;
+            }));
+
+        $this->setDataMapperMock(Entity\Client::class, $clientDataMapper);
+        $this->setDataMapperMock(Entity\UserInterface::class, $userDataMapper);
+        $this->setDataMapperMock(Entity\Scope::class, $scopeDataMapper);
+        $this->setDataMapperMock(Entity\RefreshToken::class, $tokenDataMapper);
+
+        $dataMapperAdapter->setRefreshToken($token, $client->getId(), $user->getId(), $expiryUTCTimestamp, $scopeString);
+    }
+
+    public function testSetRefreshTokenWithExistingToken()
+    {
+        $dataMapperAdapter = new DataMapperAdapter($this->dataMapperManager, $this->password);
+        $token             = Rand::getString(32);
+        $client            = new Entity\Client('someClient');
+        $newClient         = new Entity\Client('someOtherClient');
+        $refreshToken      = new Entity\RefreshToken($token, $client);
+
+        $clientDataMapper = $this->getMock(DataMapperInterface::class);
+        $clientDataMapper->expects($this->any())
+            ->method('findById')
+            ->with($newClient->getId())
+            ->willReturn($newClient);
+
+        $tokenDataMapper = $this->getMock(DataMapper\TokenMapperInterface::class);
+        $tokenDataMapper->expects($this->any())
+            ->method('findByToken')
+            ->with($token)
+            ->willReturn($refreshToken);
+
+        $tokenDataMapper->expects($this->atLeastOnce())
+            ->method('save')
+            ->with($refreshToken);
+
+        $this->setDataMapperMock(Entity\Client::class, $clientDataMapper);
+        $this->setDataMapperMock(Entity\RefreshToken::class, $tokenDataMapper);
+
+        $dataMapperAdapter->setRefreshToken($token, $newClient->getId(), null, null, null);
+
+        $this->assertSame($newClient, $refreshToken->getClient());
+    }
+
     protected function setDataMapperMock($entityClassName, DataMapperInterface $dataMapper)
     {
         $this->dataMapperMocks[$entityClassName] = $dataMapper;
