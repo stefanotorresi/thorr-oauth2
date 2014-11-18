@@ -72,7 +72,7 @@ class DataMapperAdapter implements
     /**
      * {@inheritdoc}
      */
-    public function setAccessToken($token, $clientId, $userId, $expires, $scope = null)
+    public function setAccessToken($token, $clientId, $userId, $expiryTimestamp, $scope = null)
     {
         $authTokenDataMapper = $this->getTokenDataMapper(Entity\AccessToken::class);
 
@@ -92,7 +92,8 @@ class DataMapperAdapter implements
             }
         }
 
-        $accessToken->setExpiryDate(new DateTime('@'.$expires));
+        $expiryDate = is_int($expiryTimestamp) ? new DateTime('@'.$expiryTimestamp) : null;
+        $accessToken->setExpiryDate($expiryDate);
 
         if ($scope) {
             $scopes = $this->getScopeDataMapper()->findScopes(explode(' ', $scope));
@@ -125,7 +126,7 @@ class DataMapperAdapter implements
     /**
      * {@inheritdoc}
      */
-    public function setAuthorizationCode($code, $clientId, $userId, $redirectUri, $expires, $scope = null)
+    public function setAuthorizationCode($code, $clientId, $userId, $redirectUri, $expiryTimestamp, $scope = null)
     {
         $authCodeDataMapper = $this->getTokenDataMapper(Entity\AuthorizationCode::class);
 
@@ -140,7 +141,8 @@ class DataMapperAdapter implements
         $user = $this->getUserDataMapper()->findById($userId);
         $authorizationCode->setUser($user);
 
-        $authorizationCode->setExpiryDate(new DateTime('@'.$expires));
+        $expiryDate = is_int($expiryTimestamp) ? new DateTime('@'.$expiryTimestamp) : null;
+        $authorizationCode->setExpiryDate($expiryDate);
         $authorizationCode->setRedirectUri($redirectUri);
 
         if ($scope) {
@@ -271,7 +273,7 @@ class DataMapperAdapter implements
     /**
      * {@inheritdoc}
      */
-    public function setRefreshToken($token, $clientId, $userId, $expires, $scope = null)
+    public function setRefreshToken($token, $clientId, $userId, $expiryTimestamp, $scope = null)
     {
         $refreshTokenDataMapper = $this->getTokenDataMapper(Entity\RefreshToken::class);
 
@@ -290,7 +292,8 @@ class DataMapperAdapter implements
             }
         }
 
-        $refreshToken->setExpiryDate(new DateTime('@'.$expires));
+        $expiryDate = is_int($expiryTimestamp) ? new DateTime('@'.$expiryTimestamp) : null;
+        $refreshToken->setExpiryDate($expiryDate);
 
         if ($scope) {
             $scopes = $this->getScopeDataMapper()->findScopes(explode(' ', $scope));
