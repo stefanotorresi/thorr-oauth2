@@ -64,10 +64,10 @@ class DataMapperAdapterTest extends TestCase
     public function testGetAccessToken()
     {
         $dataMapperAdapter = new DataMapperAdapter($this->dataMapperManager, $this->password);
-        $client = new Entity\Client('someId');
-        $user = new Entity\User('someUser');
-        $token = Rand::getString(32);
-        $accessToken = new Entity\AccessToken($token, $client, $user);
+        $client            = new Entity\Client('someId');
+        $user              = new Entity\User('someUser');
+        $token             = Rand::getString(32);
+        $accessToken       = new Entity\AccessToken($token, $client, $user);
 
         $tokenDataMapper = $this->getMock(DataMapper\TokenMapperInterface::class);
         $tokenDataMapper->expects($this->any())
@@ -89,9 +89,9 @@ class DataMapperAdapterTest extends TestCase
     public function testGetAccessTokenWithNullUser()
     {
         $dataMapperAdapter = new DataMapperAdapter($this->dataMapperManager, $this->password);
-        $client = new Entity\Client('someId');
-        $token = Rand::getString(32);
-        $accessToken = new Entity\AccessToken($token, $client);
+        $client            = new Entity\Client('someId');
+        $token             = Rand::getString(32);
+        $accessToken       = new Entity\AccessToken($token, $client);
 
         $tokenDataMapper = $this->getMock(DataMapper\TokenMapperInterface::class);
         $tokenDataMapper->expects($this->any())
@@ -113,7 +113,7 @@ class DataMapperAdapterTest extends TestCase
     public function testGetAccessTokenWithInvalidToken()
     {
         $dataMapperAdapter = new DataMapperAdapter($this->dataMapperManager, $this->password);
-        $token = Rand::getString(32);
+        $token             = Rand::getString(32);
 
         $tokenDataMapper = $this->getMock(DataMapper\TokenMapperInterface::class);
         $tokenDataMapper->expects($this->any())
@@ -130,14 +130,14 @@ class DataMapperAdapterTest extends TestCase
 
     public function testSetAccessToken()
     {
-        $dataMapperAdapter = new DataMapperAdapter($this->dataMapperManager, $this->password);
-        $token = Rand::getString(32);
-        $client = new Entity\Client('someClient');
-        $user = new Entity\User('someUser');
+        $dataMapperAdapter  = new DataMapperAdapter($this->dataMapperManager, $this->password);
+        $token              = Rand::getString(32);
+        $client             = new Entity\Client('someClient');
+        $user               = new Entity\User('someUser');
         $expiryUTCTimestamp = time() + 1000;
-        $scopeNames = ['someScope', 'someOtherScope'];
-        $scopeString = implode(' ', $scopeNames);
-        $scopes = [ new Entity\Scope($scopeNames[0]), new Entity\Scope($scopeNames[1]) ];
+        $scopeNames         = ['someScope', 'someOtherScope'];
+        $scopeString        = implode(' ', $scopeNames);
+        $scopes             = [new Entity\Scope($scopeNames[0]), new Entity\Scope($scopeNames[1])];
 
         $clientDataMapper = $this->getMock(DataMapperInterface::class);
         $clientDataMapper->expects($this->any())
@@ -183,11 +183,10 @@ class DataMapperAdapterTest extends TestCase
     public function testSetAccessTokenWithExistingToken()
     {
         $dataMapperAdapter = new DataMapperAdapter($this->dataMapperManager, $this->password);
-
-        $token = Rand::getString(32);
-        $client = new Entity\Client('someClient');
-        $newClient = new Entity\Client('someOtherClient');
-        $accessToken = new Entity\AccessToken($token, $client);
+        $token             = Rand::getString(32);
+        $client            = new Entity\Client('someClient');
+        $newClient         = new Entity\Client('someOtherClient');
+        $accessToken       = new Entity\AccessToken($token, $client);
 
         $clientDataMapper = $this->getMock(DataMapperInterface::class);
         $clientDataMapper->expects($this->any())
@@ -203,32 +202,23 @@ class DataMapperAdapterTest extends TestCase
 
         $tokenDataMapper->expects($this->atLeastOnce())
             ->method('save')
-            ->with($this->callback(function ($foundAccessToken) use ($accessToken, $newClient) {
-                /** @var Entity\AccessToken $foundAccessToken */
-                $this->assertSame($accessToken, $foundAccessToken);
-                $this->assertSame($newClient, $foundAccessToken->getClient());
-                $this->assertNull($foundAccessToken->getUser());
-                $this->assertNull($foundAccessToken->getExpiryDate());
-                $this->assertNull($foundAccessToken->getExpiryUTCTimestamp());
-                $this->assertEmpty($foundAccessToken->getScopes());
-                $this->assertEmpty($foundAccessToken->getScopesString());
-
-                return true;
-            }));
+            ->with($accessToken);
 
         $this->setDataMapperMock(Entity\Client::class, $clientDataMapper);
         $this->setDataMapperMock(Entity\AccessToken::class, $tokenDataMapper);
 
         $dataMapperAdapter->setAccessToken($token, $newClient->getId(), null, null, null);
+
+        $this->assertSame($newClient, $accessToken->getClient());
     }
 
     public function testGetAuthorizationCode()
     {
         $dataMapperAdapter = new DataMapperAdapter($this->dataMapperManager, $this->password);
-        $client = new Entity\Client('someId');
-        $user = new Entity\User('someUser');
-        $token = Rand::getString(32);
-        $authCode = new Entity\AuthorizationCode($token, $client, $user);
+        $client            = new Entity\Client('someId');
+        $user              = new Entity\User('someUser');
+        $token             = Rand::getString(32);
+        $authCode          = new Entity\AuthorizationCode($token, $client, $user);
 
         $tokenDataMapper = $this->getMock(DataMapper\TokenMapperInterface::class);
         $tokenDataMapper->expects($this->any())
@@ -251,7 +241,7 @@ class DataMapperAdapterTest extends TestCase
     public function testGetAuthorizationCodeWithInvalidToken()
     {
         $dataMapperAdapter = new DataMapperAdapter($this->dataMapperManager, $this->password);
-        $token = Rand::getString(32);
+        $token             = Rand::getString(32);
 
         $tokenDataMapper = $this->getMock(DataMapper\TokenMapperInterface::class);
         $tokenDataMapper->expects($this->any())
@@ -269,15 +259,15 @@ class DataMapperAdapterTest extends TestCase
 
     public function testSetAuthorizationCode()
     {
-        $dataMapperAdapter = new DataMapperAdapter($this->dataMapperManager, $this->password);
-        $token = Rand::getString(32);
-        $client = new Entity\Client('someClient');
-        $user = new Entity\User('someUser');
+        $dataMapperAdapter  = new DataMapperAdapter($this->dataMapperManager, $this->password);
+        $token              = Rand::getString(32);
+        $client             = new Entity\Client('someClient');
+        $user               = new Entity\User('someUser');
         $expiryUTCTimestamp = time() + 1000;
-        $redirectUri = 'someUri';
-        $scopeNames = ['someScope', 'someOtherScope'];
-        $scopeString = implode(' ', $scopeNames);
-        $scopes = [ new Entity\Scope($scopeNames[0]), new Entity\Scope($scopeNames[1]) ];
+        $redirectUri        = 'someUri';
+        $scopeNames         = ['someScope', 'someOtherScope'];
+        $scopeString        = implode(' ', $scopeNames);
+        $scopes             = [new Entity\Scope($scopeNames[0]), new Entity\Scope($scopeNames[1])];
 
         $clientDataMapper = $this->getMock(DataMapperInterface::class);
         $clientDataMapper->expects($this->any())
@@ -324,19 +314,19 @@ class DataMapperAdapterTest extends TestCase
             $user->getId(),
             $redirectUri,
             $expiryUTCTimestamp,
-            $scopeString);
+            $scopeString
+        );
     }
 
 
     public function testSetAuthorizationCodeWithExistingToken()
     {
         $dataMapperAdapter = new DataMapperAdapter($this->dataMapperManager, $this->password);
-
-        $token = Rand::getString(32);
-        $client = new Entity\Client('someClient');
-        $user = new Entity\User('someUser');
-        $newClient = new Entity\Client('someOtherClient');
-        $authCode = new Entity\AuthorizationCode($token, $client);
+        $token             = Rand::getString(32);
+        $client            = new Entity\Client('someClient');
+        $user              = new Entity\User('someUser');
+        $newClient         = new Entity\Client('someOtherClient');
+        $authCode          = new Entity\AuthorizationCode($token, $client);
 
         $clientDataMapper = $this->getMock(DataMapperInterface::class);
         $clientDataMapper->expects($this->any())
@@ -358,25 +348,15 @@ class DataMapperAdapterTest extends TestCase
 
         $tokenDataMapper->expects($this->atLeastOnce())
             ->method('save')
-            ->with($this->callback(function ($foundAuthCode) use ($authCode, $newClient, $user) {
-                /** @var Entity\AuthorizationCode $foundAuthCode */
-                $this->assertSame($authCode, $foundAuthCode);
-                $this->assertSame($newClient, $foundAuthCode->getClient());
-                $this->assertSame($user, $foundAuthCode->getUser());
-                $this->assertNull($foundAuthCode->getExpiryDate());
-                $this->assertNull($foundAuthCode->getExpiryUTCTimestamp());
-                $this->assertEmpty($foundAuthCode->getScopes());
-                $this->assertEmpty($foundAuthCode->getScopesString());
-                $this->assertEmpty($foundAuthCode->getRedirectUri());
-
-                return true;
-            }));
+            ->with($authCode);
 
         $this->setDataMapperMock(Entity\Client::class, $clientDataMapper);
         $this->setDataMapperMock(Entity\UserInterface::class, $userDataMapper);
         $this->setDataMapperMock(Entity\AuthorizationCode::class, $tokenDataMapper);
 
         $dataMapperAdapter->setAuthorizationCode($token, $newClient->getId(), $user->getId(), null, null);
+
+        $this->assertSame($newClient, $authCode->getClient());
     }
 
     public function testExpireAuthorizationCode()
