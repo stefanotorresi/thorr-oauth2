@@ -775,6 +775,52 @@ class DataMapperAdapterTest extends TestCase
         $dataMapperAdapter->unsetRefreshToken($bogusToken);
     }
 
+    /**
+     * @param array $scopeNames
+     * @param string $inputScopeString
+     * @param bool $expectedResult
+     *
+     * @dataProvider scopeExistsProvider
+     */
+    public function testScopeExists($scopeNames, $inputScopeString, $expectedResult)
+    {
+        $dataMapperAdapter = new DataMapperAdapter($this->dataMapperManager, $this->password);
+        $scopes            = [];
+
+        foreach ($scopeNames as $name) {
+            $scopes[] = new Entity\Scope($name);
+        }
+
+        $scopeDataMapper = $this->getMock(DataMapper\ScopeMapperInterface::class);
+        $scopeDataMapper->expects($this->any())
+            ->method('findScopes')
+            ->with(explode(' ', $inputScopeString))
+            ->willReturnCallback(function ($inputScopes) use ($scopes) {
+                return array_filter($scopes, function (Entity\Scope $scope) use ($inputScopes) {
+                    return in_array($scope, $inputScopes);
+                });
+            });
+
+        $this->setDataMapperMock(Entity\Scope::class, $scopeDataMapper);
+
+        $result = $dataMapperAdapter->scopeExists($inputScopeString);
+
+        $this->assertSame($expectedResult, $result);
+    }
+
+    public function scopeExistsProvider()
+    {
+        return [
+            //  $scopeNames         $inputScopeString   $expectedResult
+            [   [ 'foo', 'bar'],    'foo',              true    ],
+            [   [ 'foo', 'bar'],    'bar',              true    ],
+            [   [ 'foo', 'bar'],    'baz',              false   ],
+            [   [ 'foo', 'bar'],    'baz bar',          false   ],
+            [   [ 'bar', 'bar'],    'baz bar',          false   ],
+            [   [],                 'any',              false   ],
+        ];
+    }
+
     protected function setDataMapperMock($entityClassName, DataMapperInterface $dataMapper)
     {
         $this->dataMapperMocks[$entityClassName] = $dataMapper;

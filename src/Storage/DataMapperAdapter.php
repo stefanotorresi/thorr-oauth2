@@ -327,12 +327,20 @@ class DataMapperAdapter implements
      */
     public function scopeExists($scopesString)
     {
-        $scopes = explode(' ', $scopesString);
-
+        $scopes      = explode(' ', $scopesString);
         $foundScopes = $this->getScopeDataMapper()->findScopes($scopes);
+        $inputScopes = $scopes;
 
-        // todo: make a better check over the scopes, the following assumes scope names are unique
-        return count($scopes) === count($foundScopes);
+        $matches = array_filter($foundScopes, function (Entity\Scope $scope) use (&$inputScopes) {
+            $result = in_array($scope, $inputScopes);
+            if ($result) {
+                $matchKey = array_search($scope, $inputScopes);
+                unset($inputScopes[$matchKey]);
+            }
+            return $result;
+        });
+
+        return count($matches) === count($scopes);
     }
 
     /**
