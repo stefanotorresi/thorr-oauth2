@@ -15,6 +15,7 @@ use PHPUnit_Framework_MockObject_MockObject as MockObject;
 use Thorr\OAuth2\Entity;
 use Thorr\OAuth2\DataMapper;
 use Thorr\OAuth2\Storage\DataMapperAdapter;
+use Thorr\OAuth2\Test\Asset\ScopeAwareUser;
 use Thorr\Persistence\DataMapper\DataMapperInterface;
 use Thorr\Persistence\DataMapper\Manager\DataMapperManager;
 use Zend\Crypt\Password\PasswordInterface;
@@ -902,13 +903,12 @@ class DataMapperAdapterTest extends TestCase
     public function testCheckUserCredentials($user, $secretToCheck, $expectedResult)
     {
         $dataMapperAdapter = new DataMapperAdapter($this->dataMapperManager, $this->password);
+        $userId            = $user ? $user->getId() : 'invalid';
 
         $userDataMapper = $this->getMock(DataMapper\UserMapperInterface::class);
         $userDataMapper->expects($this->any())
             ->method('findByCredential')
-            ->with($this->callback(function ($arg) use ($user) {
-                return $user ? $user->getId() === $arg : $arg === 'invalid';
-            }))
+            ->with($userId)
             ->willReturn($user);
 
         $this->setDataMapperMock(Entity\UserInterface::class, $userDataMapper);
@@ -920,7 +920,7 @@ class DataMapperAdapterTest extends TestCase
             })
         ;
 
-        $result = $dataMapperAdapter->checkUserCredentials($user ? $user->getId() : 'invalid', $secretToCheck);
+        $result = $dataMapperAdapter->checkUserCredentials($userId, $secretToCheck);
         $this->assertSame($result, $expectedResult);
     }
 
@@ -930,7 +930,42 @@ class DataMapperAdapterTest extends TestCase
             //  $client                                     $secretToCheck  $expectedResult
             [   new Entity\User('someUser', 'password'),    'password',     true    ],
             [   new Entity\User('someUser', 'password'),    'bogus',        false   ],
-            [   null,                                        null,           false   ]
+            [   null,                                        null,          false   ]
+        ];
+    }
+
+    /**
+     * @param Entity\User|null $user
+     * @param mixed $expectedResult
+     *
+     * @dataProvider getUserDetailsProvider
+     */
+    public function testGetUserDetails($user, $expectedResult)
+    {
+        $dataMapperAdapter = new DataMapperAdapter($this->dataMapperManager, $this->password);
+        $userId            = $user ? $user->getId() : 'invalid';
+
+        $userDataMapper = $this->getMock(DataMapper\UserMapperInterface::class);
+        $userDataMapper->expects($this->any())
+            ->method('findByCredential')
+            ->with($userId)
+            ->willReturn($user);
+
+        $this->setDataMapperMock(Entity\UserInterface::class, $userDataMapper);
+
+        $this->assertSame($expectedResult, $dataMapperAdapter->getUserDetails($userId));
+    }
+
+    public function getUserDetailsProvider()
+    {
+        $scopeAwareUser = new ScopeAwareUser('someUser');
+        $scopeAwareUser->setScopes([new Entity\Scope('foo'), new Entity\Scope('bar')]);
+
+        return [
+            //  $user                           $expectedResult
+            [   new Entity\User('someUser'),    [ 'user_id' => 'someUser', 'scope' => null ]    ],
+            [   $scopeAwareUser,                [ 'user_id' => 'someUser', 'scope' => "foo bar" ]    ],
+            [   null,                           false   ],
         ];
     }
 
