@@ -7,7 +7,7 @@ Thorr\OAuth2
 [![Code Coverage](https://scrutinizer-ci.com/g/stefanotorresi/thorr-oauth2/badges/coverage.png)](https://scrutinizer-ci.com/g/stefanotorresi/thorr-oauth2/)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/stefanotorresi/thorr-oauth2/badges/quality-score.png)](https://scrutinizer-ci.com/g/stefanotorresi/thorr-oauth2/)
 
-[Thorr\Persistence][thorr-persistence] data mapper & [Doctrine][doctrine] adapters for [Brent Shaffer's OAauth2 Server][bshaffer-oauth2-server]
+[Thorr\Persistence][thorr-persistence] data mapper adapter for [Brent Shaffer's OAauth2 Server][bshaffer-oauth2-server]
 
 [bshaffer-oauth2-server]: http://github.com/bshaffer/oauth2-server-php
 [thorr-persistence]: http://github.com/stefanotorresi/thorr-persistence
