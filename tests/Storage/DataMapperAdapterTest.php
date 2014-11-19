@@ -60,6 +60,7 @@ class DataMapperAdapterTest extends TestCase
                         __CLASS__
                     ));
                 }
+
                 return $this->dataMapperMocks[$entityClassName];
             });
     }
@@ -268,7 +269,6 @@ class DataMapperAdapterTest extends TestCase
         $this->assertNull($tokenArray);
     }
 
-
     public function testSetAuthorizationCode()
     {
         $dataMapperAdapter  = new DataMapperAdapter($this->dataMapperManager, $this->password);
@@ -330,7 +330,6 @@ class DataMapperAdapterTest extends TestCase
             $scopeString
         );
     }
-
 
     public function testSetAuthorizationCodeWithExistingToken()
     {
@@ -399,8 +398,8 @@ class DataMapperAdapterTest extends TestCase
 
     /**
      * @param Entity\Client $client
-     * @param string $secretToCheck
-     * @param bool $expectedResult
+     * @param string        $secretToCheck
+     * @param bool          $expectedResult
      *
      * @dataProvider checkClientCredentialsProvider
      */
@@ -441,7 +440,7 @@ class DataMapperAdapterTest extends TestCase
 
     /**
      * @param Entity\Client $client
-     * @param bool $expectedResult
+     * @param bool          $expectedResult
      *
      * @dataProvider isPublicClientProvider
      */
@@ -475,7 +474,7 @@ class DataMapperAdapterTest extends TestCase
 
     /**
      * @param Entity\Client|null $client
-     * @param mixed $expectedResult
+     * @param mixed              $expectedResult
      *
      * @dataProvider getClientDetailsProvider
      */
@@ -551,8 +550,8 @@ class DataMapperAdapterTest extends TestCase
 
     /**
      * @param Entity\Client $client
-     * @param string $grantType
-     * @param bool $expectedResult
+     * @param string        $grantType
+     * @param bool          $expectedResult
      *
      * @dataProvider checkRestrictedGrantTypeProvider
      */
@@ -778,9 +777,9 @@ class DataMapperAdapterTest extends TestCase
     }
 
     /**
-     * @param array $scopeNames
+     * @param array  $scopeNames
      * @param string $inputScopeString
-     * @param bool $expectedResult
+     * @param bool   $expectedResult
      *
      * @dataProvider scopeExistsProvider
      */
@@ -836,8 +835,8 @@ class DataMapperAdapterTest extends TestCase
         $scopeDataMapper = $this->getMock(DataMapper\ScopeMapperInterface::class);
         $scopeDataMapper->expects($this->any())
             ->method('findDefaultScopes')
-            ->willReturnCallback(function() use ($scopes) {
-                return array_filter($scopes, function(Entity\Scope $scope) {
+            ->willReturnCallback(function () use ($scopes) {
+                return array_filter($scopes, function (Entity\Scope $scope) {
                     return $scope->isDefault();
                 });
             });
@@ -858,7 +857,7 @@ class DataMapperAdapterTest extends TestCase
                     new Entity\Scope('baz', false),
                 ],
                 // $expected result
-                "foo bar"
+                "foo bar",
             ],
             [
                 // $scopes
@@ -896,8 +895,8 @@ class DataMapperAdapterTest extends TestCase
 
     /**
      * @param Entity\User|null $user
-     * @param string $secretToCheck
-     * @param bool $expectedResult
+     * @param string           $secretToCheck
+     * @param bool             $expectedResult
      *
      * @dataProvider checkUserCredentialsProvider
      */
@@ -937,7 +936,7 @@ class DataMapperAdapterTest extends TestCase
 
     /**
      * @param Entity\User|null $user
-     * @param mixed $expectedResult
+     * @param mixed            $expectedResult
      *
      * @dataProvider getUserDetailsProvider
      */

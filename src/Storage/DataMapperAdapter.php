@@ -337,6 +337,7 @@ class DataMapperAdapter implements
                 $matchKey = array_search($scope, $inputScopes);
                 unset($inputScopes[$matchKey]);
             }
+
             return $result;
         });
 
