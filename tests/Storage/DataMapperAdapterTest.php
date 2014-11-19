@@ -892,6 +892,48 @@ class DataMapperAdapterTest extends TestCase
         ];
     }
 
+    /**
+     * @param Entity\User|null $user
+     * @param string $secretToCheck
+     * @param bool $expectedResult
+     *
+     * @dataProvider checkUserCredentialsProvider
+     */
+    public function testCheckUserCredentials($user, $secretToCheck, $expectedResult)
+    {
+        $dataMapperAdapter = new DataMapperAdapter($this->dataMapperManager, $this->password);
+
+        $userDataMapper = $this->getMock(DataMapper\UserMapperInterface::class);
+        $userDataMapper->expects($this->any())
+            ->method('findByCredential')
+            ->with($this->callback(function ($arg) use ($user) {
+                return $user ? $user->getId() === $arg : $arg === 'invalid';
+            }))
+            ->willReturn($user);
+
+        $this->setDataMapperMock(Entity\UserInterface::class, $userDataMapper);
+
+        $this->password->expects($this->any())
+            ->method('verify')
+            ->willReturnCallback(function () use ($user, $secretToCheck) {
+                return $user->getPassword() === $secretToCheck;
+            })
+        ;
+
+        $result = $dataMapperAdapter->checkUserCredentials($user ? $user->getId() : 'invalid', $secretToCheck);
+        $this->assertSame($result, $expectedResult);
+    }
+
+    public function checkUserCredentialsProvider()
+    {
+        return [
+            //  $client                                     $secretToCheck  $expectedResult
+            [   new Entity\User('someUser', 'password'),    'password',     true    ],
+            [   new Entity\User('someUser', 'password'),    'bogus',        false   ],
+            [   null,                                        null,           false   ]
+        ];
+    }
+
     protected function setDataMapperMock($entityClassName, DataMapperInterface $dataMapper)
     {
         $this->dataMapperMocks[$entityClassName] = $dataMapper;
