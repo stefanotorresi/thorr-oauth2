@@ -473,44 +473,45 @@ class DataMapperAdapterTest extends TestCase
         ];
     }
 
-    public function testGetClientDetails()
+    /**
+     * @param Entity\Client|null $client
+     * @param mixed $expectedResult
+     *
+     * @dataProvider getClientDetailsProvider
+     */
+    public function testGetClientDetails($client, $expectedResult)
     {
         $dataMapperAdapter = new DataMapperAdapter($this->dataMapperManager, $this->password);
-        $user              = new Entity\User('someUser');
-        $client            = new Entity\Client('someClient', null, $user, ['foo', 'bar'], 'uri');
+        $clientId          = $client ? $client->getId() : 'invalid';
 
         $clientDataMapper = $this->getMock(DataMapperInterface::class);
         $clientDataMapper->expects($this->any())
             ->method('findById')
-            ->with($client->getId())
+            ->with($clientId)
             ->willReturn($client);
 
         $this->setDataMapperMock(Entity\Client::class, $clientDataMapper);
 
-        $clientArray = $dataMapperAdapter->getClientDetails($client->getId());
-
-        $this->assertInternalType('array', $clientArray);
-        $this->assertEquals($client->getRedirectUri(), $clientArray['redirect_uri']);
-        $this->assertEquals($client->getId(), $clientArray['client_id']);
-        $this->assertEquals($client->getGrantTypes(), $clientArray['grant_types']);
-        $this->assertEquals($user->getId(), $clientArray['user_id']);
-        $this->assertEquals($client->getScopesString(), $clientArray['scope']);
+        $this->assertSame($expectedResult, $dataMapperAdapter->getClientDetails($clientId));
     }
 
-    public function testGetClientDetailsWithInvalidId()
+    public function getClientDetailsProvider()
     {
-        $dataMapperAdapter = new DataMapperAdapter($this->dataMapperManager, $this->password);
-        $bogusClientId     = 'invalid';
-
-        $clientDataMapper = $this->getMock(DataMapperInterface::class);
-        $clientDataMapper->expects($this->any())
-            ->method('findById')
-            ->with($bogusClientId)
-            ->willReturn(null);
-
-        $this->setDataMapperMock(Entity\Client::class, $clientDataMapper);
-
-        $this->assertFalse($dataMapperAdapter->getClientDetails($bogusClientId));
+        return [
+            [
+                new Entity\Client('someClient', null, new Entity\User('someUser'), ['foo', 'bar'], 'uri'),
+                [
+                    'redirect_uri' => 'uri',
+                    'client_id'    => 'someClient',
+                    'grant_types'  => ['foo', 'bar'],
+                    'user_id'      => 'someUser',
+                    'scope'        => '',
+                ],
+            ],
+            [
+                null, false
+            ]
+        ];
     }
 
     public function testGetClientScope()
@@ -967,6 +968,22 @@ class DataMapperAdapterTest extends TestCase
             [   $scopeAwareUser,                [ 'user_id' => 'someUser', 'scope' => "foo bar" ]    ],
             [   null,                           false   ],
         ];
+    }
+
+    public function testUserClassSetterChangesUserDataMapper()
+    {
+        $dataMapperManager  = $this->getMock(DataMapperManager::class);
+        $userDataMapper     = $this->getMock(DataMapper\UserMapperInterface::class);
+
+        $dataMapperAdapter  = new DataMapperAdapter($dataMapperManager, $this->password);
+        $dataMapperAdapter->setUserClass(Entity\User::class);
+
+        $dataMapperManager->expects($this->atLeastOnce())
+            ->method('getDataMapperForEntity')
+            ->with($dataMapperAdapter->getUserClass())
+            ->willReturn($userDataMapper);
+
+        $dataMapperAdapter->getUserDetails(null);
     }
 
     protected function setDataMapperMock($entityClassName, DataMapperInterface $dataMapper)
