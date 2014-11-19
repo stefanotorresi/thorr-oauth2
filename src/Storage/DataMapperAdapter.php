@@ -72,7 +72,7 @@ class DataMapperAdapter implements
     /**
      * {@inheritdoc}
      */
-    public function setAccessToken($token, $clientId, $userId, $expires, $scope = null)
+    public function setAccessToken($token, $clientId, $userId, $expiryTimestamp, $scope = null)
     {
         $authTokenDataMapper = $this->getTokenDataMapper(Entity\AccessToken::class);
 
@@ -92,7 +92,8 @@ class DataMapperAdapter implements
             }
         }
 
-        $accessToken->setExpiryDate(new DateTime('@'.$expires));
+        $expiryDate = is_int($expiryTimestamp) ? new DateTime('@'.$expiryTimestamp) : null;
+        $accessToken->setExpiryDate($expiryDate);
 
         if ($scope) {
             $scopes = $this->getScopeDataMapper()->findScopes(explode(' ', $scope));
@@ -109,7 +110,7 @@ class DataMapperAdapter implements
     {
         $authorizationCode = $this->getTokenDataMapper(Entity\AuthorizationCode::class)->findByToken($code);
 
-        if (! $authorizationCode instanceof Entity\AuthorizationCode || $authorizationCode->isExpired()) {
+        if (! $authorizationCode instanceof Entity\AuthorizationCode) {
             return;
         }
 
@@ -118,14 +119,14 @@ class DataMapperAdapter implements
             'client_id'    => $authorizationCode->getClient()->getId(),
             'user_id'      => $authorizationCode->getUser()->getId(),
             'redirect_uri' => $authorizationCode->getRedirectUri(),
-            'scopes'       => $authorizationCode->getScopesString()
+            'scope'        => $authorizationCode->getScopesString()
         ];
     }
 
     /**
      * {@inheritdoc}
      */
-    public function setAuthorizationCode($code, $clientId, $userId, $redirectUri, $expires, $scope = null)
+    public function setAuthorizationCode($code, $clientId, $userId, $redirectUri, $expiryTimestamp, $scope = null)
     {
         $authCodeDataMapper = $this->getTokenDataMapper(Entity\AuthorizationCode::class);
 
@@ -140,7 +141,8 @@ class DataMapperAdapter implements
         $user = $this->getUserDataMapper()->findById($userId);
         $authorizationCode->setUser($user);
 
-        $authorizationCode->setExpiryDate(new DateTime('@'.$expires));
+        $expiryDate = is_int($expiryTimestamp) ? new DateTime('@'.$expiryTimestamp) : null;
+        $authorizationCode->setExpiryDate($expiryDate);
         $authorizationCode->setRedirectUri($redirectUri);
 
         if ($scope) {
@@ -153,12 +155,13 @@ class DataMapperAdapter implements
 
     /**
      * {@inheritdoc}
+     * @param string $token
      */
-    public function expireAuthorizationCode($code)
+    public function expireAuthorizationCode($token)
     {
         $authCodeDataMapper = $this->getTokenDataMapper(Entity\AuthorizationCode::class);
 
-        $authorizationCode = $authCodeDataMapper->findByToken($code);
+        $authorizationCode = $authCodeDataMapper->findByToken($token);
         $authorizationCode->setExpiryDate(new DateTime());
 
         $authCodeDataMapper->save($authorizationCode);
@@ -228,6 +231,8 @@ class DataMapperAdapter implements
 
     /**
      * {@inheritdoc}
+     *
+     * if no grant type is defined for the client, then any type is valid
      */
     public function checkRestrictedGrantType($clientId, $grantType)
     {
@@ -271,7 +276,7 @@ class DataMapperAdapter implements
     /**
      * {@inheritdoc}
      */
-    public function setRefreshToken($token, $clientId, $userId, $expires, $scope = null)
+    public function setRefreshToken($token, $clientId, $userId, $expiryTimestamp, $scope = null)
     {
         $refreshTokenDataMapper = $this->getTokenDataMapper(Entity\RefreshToken::class);
 
@@ -290,7 +295,8 @@ class DataMapperAdapter implements
             }
         }
 
-        $refreshToken->setExpiryDate(new DateTime('@'.$expires));
+        $expiryDate = is_int($expiryTimestamp) ? new DateTime('@'.$expiryTimestamp) : null;
+        $refreshToken->setExpiryDate($expiryDate);
 
         if ($scope) {
             $scopes = $this->getScopeDataMapper()->findScopes(explode(' ', $scope));
@@ -309,6 +315,10 @@ class DataMapperAdapter implements
 
         $refreshToken = $refreshTokenDataMapper->findByToken($token);
 
+        if (! $refreshToken instanceof Entity\RefreshToken) {
+            throw new InvalidArgumentException('Invalid token provided');
+        }
+
         $refreshTokenDataMapper->remove($refreshToken);
     }
 
@@ -317,12 +327,20 @@ class DataMapperAdapter implements
      */
     public function scopeExists($scopesString)
     {
-        $scopes = explode(' ', $scopesString);
-
+        $scopes      = explode(' ', $scopesString);
         $foundScopes = $this->getScopeDataMapper()->findScopes($scopes);
+        $inputScopes = $scopes;
 
-        // todo: make a better check over the scopes, the following assumes scope names are unique
-        return count($scopes) === count($foundScopes);
+        $matches = array_filter($foundScopes, function (Entity\Scope $scope) use (&$inputScopes) {
+            $result = in_array($scope, $inputScopes);
+            if ($result) {
+                $matchKey = array_search($scope, $inputScopes);
+                unset($inputScopes[$matchKey]);
+            }
+            return $result;
+        });
+
+        return count($matches) === count($scopes);
     }
 
     /**

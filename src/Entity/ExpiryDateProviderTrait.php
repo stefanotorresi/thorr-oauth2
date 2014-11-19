@@ -50,8 +50,8 @@ trait ExpiryDateProviderTrait
      */
     public function getExpiryUTCTimestamp()
     {
-        if (! $this->expiryDate) {
-            return 0;
+        if (! $this->expiryDate instanceof DateTime) {
+            return null;
         }
 
         if ($this->expiryDate->getTimezone()->getOffset($this->expiryDate) === 0) {

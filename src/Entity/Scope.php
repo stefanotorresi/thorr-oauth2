@@ -22,6 +22,21 @@ class Scope extends AbstractEntity
     protected $default = false;
 
     /**
+     * @param string $name
+     * @param $default
+     */
+    public function __construct($name = null, $default = null)
+    {
+        if ($name) {
+            $this->setName($name);
+        }
+
+        if ($default) {
+            $this->setDefault($default);
+        }
+    }
+
+    /**
      * @return string
      */
     public function getName()
