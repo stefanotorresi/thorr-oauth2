@@ -821,6 +821,77 @@ class DataMapperAdapterTest extends TestCase
         ];
     }
 
+    /**
+     * @param $scopes
+     * @param $expectedResult
+     *
+     * @dataProvider getDefaultScopeProvider
+     */
+    public function testGetDefaultScope($scopes, $expectedResult)
+    {
+        $dataMapperAdapter = new DataMapperAdapter($this->dataMapperManager, $this->password);
+
+        $scopeDataMapper = $this->getMock(DataMapper\ScopeMapperInterface::class);
+        $scopeDataMapper->expects($this->any())
+            ->method('findDefaultScopes')
+            ->willReturnCallback(function() use ($scopes) {
+                return array_filter($scopes, function(Entity\Scope $scope) {
+                    return $scope->isDefault();
+                });
+            });
+
+        $this->setDataMapperMock(Entity\Scope::class, $scopeDataMapper);
+
+        $this->assertSame($expectedResult, $dataMapperAdapter->getDefaultScope());
+    }
+
+    public function getDefaultScopeProvider()
+    {
+        return [
+            [
+                // $scopes
+                [
+                    new Entity\Scope('foo', true),
+                    new Entity\Scope('bar', true),
+                    new Entity\Scope('baz', false),
+                ],
+                // $expected result
+                "foo bar"
+            ],
+            [
+                // $scopes
+                [
+                    new Entity\Scope('foo', true),
+                    new Entity\Scope('bar', false),
+                ],
+                // $expected result
+                "foo"
+            ],
+            [
+                // $scopes
+                [
+                    new Entity\Scope('foo', true),
+                ],
+                // $expected result
+                "foo"
+            ],
+            [
+                // $scopes
+                [
+                    new Entity\Scope('foo', false),
+                ],
+                // $expected result
+                null
+            ],
+            [
+                // $scopes
+                [],
+                // $expected result
+                null
+            ],
+        ];
+    }
+
     protected function setDataMapperMock($entityClassName, DataMapperInterface $dataMapper)
     {
         $this->dataMapperMocks[$entityClassName] = $dataMapper;
