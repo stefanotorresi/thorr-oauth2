@@ -15,7 +15,7 @@ tools:
         config:
             standard: PSR2
         filter:
-            paths: ["config/*", "src/*", "tests/*"]
+            paths: ["src/*", "tests/*"]
     php_loc:
         enabled: true
         excluded_dirs: ["tests", "vendor"]
