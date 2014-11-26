@@ -30,9 +30,19 @@ class Client extends AbstractEntity implements ScopesProviderInterface
     protected $grantTypes = [];
 
     /**
-     *
+     * @var string
      */
-    public function __construct($id = null, $secret = null, $user = null, $grantTypes = null, $redirectUri = null)
+    protected $description;
+
+    /**
+     * @param mixed|null $id
+     * @param string|null $secret
+     * @param UserInterface|null $user
+     * @param array|null $grantTypes
+     * @param string|null $redirectUri
+     * @param string|null $description
+     */
+    public function __construct($id = null, $secret = null, $user = null, $grantTypes = null, $redirectUri = null, $description = null)
     {
         if ($id) {
             $this->setId($id);
@@ -54,6 +64,10 @@ class Client extends AbstractEntity implements ScopesProviderInterface
             $this->setRedirectUri($redirectUri);
         }
 
+        if ($description) {
+            $this->setDescription($description);
+        }
+
         $this->initScopes();
     }
 
@@ -70,7 +84,7 @@ class Client extends AbstractEntity implements ScopesProviderInterface
      */
     public function setSecret($secret)
     {
-        $this->secret = $secret;
+        $this->secret = (string) $secret;
     }
 
     /**
@@ -92,7 +106,7 @@ class Client extends AbstractEntity implements ScopesProviderInterface
     /**
      * @param UserInterface $user
      */
-    public function setUser($user)
+    public function setUser(UserInterface $user = null)
     {
         $this->user = $user;
     }
@@ -108,8 +122,24 @@ class Client extends AbstractEntity implements ScopesProviderInterface
     /**
      * @param array $grantTypes
      */
-    public function setGrantTypes($grantTypes)
+    public function setGrantTypes(array $grantTypes)
     {
         $this->grantTypes = $grantTypes;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
+    }
+
+    /**
+     * @param string $description
+     */
+    public function setDescription($description)
+    {
+        $this->description = (string) $description;
     }
 }
