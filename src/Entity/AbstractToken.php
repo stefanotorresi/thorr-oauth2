@@ -8,6 +8,7 @@
 namespace Thorr\OAuth2\Entity;
 
 use Doctrine\Common\Collections\Collection;
+use Rhumsaa\Uuid\Uuid;
 use Thorr\Persistence\Entity\AbstractEntity;
 
 abstract class AbstractToken extends AbstractEntity implements ScopesProviderInterface
@@ -37,13 +38,16 @@ abstract class AbstractToken extends AbstractEntity implements ScopesProviderInt
     protected $user;
 
     /**
+     * {@inheritdoc}
      * @param string           $token
      * @param Client           $client
      * @param UserInterface    $user
      * @param array|Collection $scopes
      */
-    public function __construct($token, Client $client, UserInterface $user = null, $scopes = null)
+    public function __construct(Uuid $uuid = null, $token, Client $client, UserInterface $user = null, $scopes = null)
     {
+        parent::__construct($uuid);
+
         $this->setToken($token);
         $this->setClient($client);
 

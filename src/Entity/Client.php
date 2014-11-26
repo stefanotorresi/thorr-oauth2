@@ -7,6 +7,7 @@
 
 namespace Thorr\OAuth2\Entity;
 
+use Rhumsaa\Uuid\Uuid;
 use Thorr\Persistence\Entity\AbstractEntity;
 
 class Client extends AbstractEntity implements ScopesProviderInterface
@@ -35,18 +36,16 @@ class Client extends AbstractEntity implements ScopesProviderInterface
     protected $description;
 
     /**
-     * @param mixed|null         $id
+     * {@inheritdoc}
      * @param string|null        $secret
      * @param UserInterface|null $user
      * @param array|null         $grantTypes
      * @param string|null        $redirectUri
      * @param string|null        $description
      */
-    public function __construct($id = null, $secret = null, $user = null, $grantTypes = null, $redirectUri = null, $description = null)
+    public function __construct(Uuid $uuid = null, $secret = null, $user = null, $grantTypes = null, $redirectUri = null, $description = null)
     {
-        if ($id) {
-            $this->setId($id);
-        }
+        parent::__construct($uuid);
 
         if ($secret) {
             $this->setSecret($secret);

@@ -200,7 +200,7 @@ class ThirdPartyGrantType implements GrantTypeInterface
             return null;
         }
 
-        return $this->user->getId();
+        return $this->user->getUuid();
     }
 
     /**
@@ -259,6 +259,7 @@ class ThirdPartyGrantType implements GrantTypeInterface
     protected function connectUserToThirdParty(Entity\ThirdPartyAwareUserInterface $user, ProviderInterface $provider)
     {
         $thirdPartyUser = new Entity\ThirdParty(
+            null,
             $provider->getUserId(),
             $provider->getIdentifier(),
             $user,

@@ -7,12 +7,11 @@
 
 namespace Thorr\OAuth2\Entity;
 
-use Thorr\Persistence\Entity\IdProviderTrait;
+use Rhumsaa\Uuid\Uuid;
+use Thorr\Persistence\Entity\AbstractEntity;
 
-class ThirdParty
+class ThirdParty extends AbstractEntity
 {
-    use IdProviderTrait;
-
     /**
      * @var mixed
      */
@@ -34,13 +33,16 @@ class ThirdParty
     protected $data;
 
     /**
+     * {@inheritdoc}
      * @param mixed         $providerUserId
      * @param string        $provider
      * @param UserInterface $user
      * @param array         $data
      */
-    public function __construct($providerUserId, $provider, UserInterface $user, $data = [])
+    public function __construct(Uuid $uuid = null, $providerUserId, $provider, UserInterface $user, $data = [])
     {
+        parent::__construct($uuid);
+
         $this->setProviderUserId($providerUserId);
         $this->setProvider($provider);
         $this->setUser($user);

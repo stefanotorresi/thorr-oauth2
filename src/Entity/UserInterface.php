@@ -7,9 +7,9 @@
 
 namespace Thorr\OAuth2\Entity;
 
-use Thorr\Persistence\Entity\IdProviderInterface;
+use Thorr\Persistence\Entity\UuidProviderInterface;
 
-interface UserInterface extends IdProviderInterface
+interface UserInterface extends UuidProviderInterface
 {
     /**
      * Get password.

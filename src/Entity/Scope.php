@@ -7,6 +7,7 @@
 
 namespace Thorr\OAuth2\Entity;
 
+use Rhumsaa\Uuid\Uuid;
 use Thorr\Persistence\Entity\AbstractEntity;
 
 class Scope extends AbstractEntity
@@ -22,11 +23,14 @@ class Scope extends AbstractEntity
     protected $default = false;
 
     /**
+     * {@inheritdoc}
      * @param string $name
      * @param $default
      */
-    public function __construct($name = null, $default = null)
+    public function __construct(Uuid $uuid = null, $name = null, $default = null)
     {
+        parent::__construct($uuid);
+
         if ($name) {
             $this->setName($name);
         }

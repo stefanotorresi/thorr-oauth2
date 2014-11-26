@@ -7,19 +7,17 @@
 
 namespace Thorr\OAuth2\Entity;
 
-use Thorr\Persistence\Entity\IdProviderTrait;
+use Rhumsaa\Uuid\Uuid;
+use Thorr\Persistence\Entity\AbstractEntity;
 
-class User implements ThirdPartyAwareUserInterface
+class User extends AbstractEntity implements ThirdPartyAwareUserInterface
 {
-    use IdProviderTrait;
     use UserTrait;
     use ThirdPartyAwareTrait;
 
-    public function __construct($id = null, $password = null)
+    public function __construct(Uuid $uuid = null, $password = null)
     {
-        if ($id) {
-            $this->setId($id);
-        }
+        parent::__construct($uuid);
 
         if ($password) {
             $this->setPassword($password);
