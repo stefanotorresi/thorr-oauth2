@@ -131,19 +131,21 @@ class DataMapperAdapter implements
         $authCodeDataMapper = $this->getTokenDataMapper(Entity\AuthorizationCode::class);
 
         $client = $this->getClientDataMapper()->findByUuid($clientId);
-
-        if (! $authorizationCode = $authCodeDataMapper->findByToken($code)) {
-            $authorizationCode = new Entity\AuthorizationCode(null, $code, $client);
-        } else {
-            $authorizationCode->setClient($client);
-        }
-
         $user = $this->getUserDataMapper()->findByUuid($userId);
-        $authorizationCode->setUser($user);
+
+        /** @var Entity\AuthorizationCode $authorizationCode */
+        $authorizationCode = $authCodeDataMapper->findByToken($code);
+
+        if (! $authorizationCode) {
+            $authorizationCode = new Entity\AuthorizationCode(null, $code, $client, $user, null, $redirectUri);
+        } else {
+            $authorizationCode->setUser($user);
+            $authorizationCode->setClient($client);
+            $authorizationCode->setRedirectUri($redirectUri);
+        }
 
         $expiryDate = is_int($expiryTimestamp) ? new DateTime('@'.$expiryTimestamp) : null;
         $authorizationCode->setExpiryDate($expiryDate);
-        $authorizationCode->setRedirectUri($redirectUri);
 
         if ($scope) {
             $scopes = $this->getScopeDataMapper()->findScopes(explode(' ', $scope));

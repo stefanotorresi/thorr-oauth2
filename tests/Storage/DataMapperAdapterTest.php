@@ -231,7 +231,7 @@ class DataMapperAdapterTest extends TestCase
         $client            = new Entity\Client();
         $user              = new Entity\User();
         $token             = Rand::getString(32);
-        $authCode          = new Entity\AuthorizationCode(null, $token, $client, $user);
+        $authCode          = new Entity\AuthorizationCode(null, $token, $client, $user, null, 'someUri');
 
         $tokenDataMapper = $this->getMock(DataMapper\TokenMapperInterface::class);
         $tokenDataMapper->expects($this->any())
@@ -338,7 +338,7 @@ class DataMapperAdapterTest extends TestCase
         $client            = new Entity\Client();
         $user              = new Entity\User();
         $newClient         = new Entity\Client();
-        $authCode          = new Entity\AuthorizationCode(null, $token, $client);
+        $authCode          = new Entity\AuthorizationCode(null, $token, $client, $user, null, 'someUri');
 
         $clientDataMapper = $this->getMock(DataMapperInterface::class);
         $clientDataMapper->expects($this->any())
@@ -376,7 +376,7 @@ class DataMapperAdapterTest extends TestCase
         $dataMapperAdapter = new DataMapperAdapter($this->dataMapperManager, $this->password);
         $token             = Rand::getString(32);
         $client            = new Entity\Client();
-        $authCode          = new Entity\AuthorizationCode(null, $token, $client);
+        $authCode          = new Entity\AuthorizationCode(null, $token, $client, null, null, 'someUri');
         $expiryDate        = new DateTime('@'.(time() + 1000));
         $authCode->setExpiryDate($expiryDate);
 

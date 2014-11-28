@@ -97,7 +97,7 @@ abstract class AbstractToken extends AbstractEntity implements ScopesProviderInt
     /**
      * @param UserInterface $user
      */
-    public function setUser(UserInterface $user)
+    public function setUser(UserInterface $user = null)
     {
         $this->user = $user;
     }
