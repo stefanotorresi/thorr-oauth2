@@ -988,6 +988,21 @@ class DataMapperAdapterTest extends TestCase
         $dataMapperAdapter->getUserDetails(null);
     }
 
+    public function testUserClassSetterThrowsException()
+    {
+        $dataMapperManager  = $this->getMock(DataMapperManager::class);
+
+        $dataMapperAdapter  = new DataMapperAdapter($dataMapperManager, $this->password);
+
+        $this->setExpectedException(InvalidArgumentException::class, 'Invalid user class');
+        $dataMapperAdapter->setUserClass('foo');
+
+        $dataMapperAdapter  = new DataMapperAdapter($dataMapperManager, $this->password);
+
+        $this->setExpectedException(InvalidArgumentException::class, 'Invalid user class');
+        $dataMapperAdapter->setUserClass(\stdClass::class);
+    }
+
     protected function setDataMapperMock($entityClassName, DataMapperInterface $dataMapper)
     {
         $this->dataMapperMocks[$entityClassName] = $dataMapper;

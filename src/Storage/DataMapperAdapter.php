@@ -12,7 +12,6 @@ use InvalidArgumentException;
 use OAuth2\Storage;
 use Thorr\OAuth2\DataMapper;
 use Thorr\OAuth2\Entity;
-use Thorr\OAuth2\Entity\UserInterface;
 use Thorr\Persistence\DataMapper\DataMapperInterface;
 use Thorr\Persistence\DataMapper\Manager\DataMapperManager;
 use Thorr\Persistence\DataMapper\Manager\DataMapperManagerAwareInterface;
@@ -87,7 +86,7 @@ class DataMapperAdapter implements
         if ($userId) {
             $user = $this->getUserDataMapper()->findByUuid($userId);
 
-            if ($user instanceof Entity\User) {
+            if ($user instanceof $this->userClass) {
                 $accessToken->setUser($user);
             }
         }
@@ -292,7 +291,7 @@ class DataMapperAdapter implements
 
         if ($userId) {
             $user = $this->getUserDataMapper()->findByUuid($userId);
-            if ($user instanceof Entity\User) {
+            if ($user instanceof $this->userClass) {
                 $refreshToken->setUser($user);
             }
         }
@@ -374,7 +373,7 @@ class DataMapperAdapter implements
     {
         $user = $this->getUserDataMapper()->findByCredential($credential);
 
-        if (! $user instanceof UserInterface) {
+        if (! $user instanceof $this->userClass) {
             return false;
         }
 
@@ -388,7 +387,7 @@ class DataMapperAdapter implements
     {
         $user = $this->getUserDataMapper()->findByCredential($credential);
 
-        if (! $user instanceof UserInterface) {
+        if (! $user instanceof $this->userClass) {
             return false;
         }
 
@@ -427,6 +426,13 @@ class DataMapperAdapter implements
      */
     public function setUserClass($userClass)
     {
+        if (! class_exists($userClass) || ! is_a($userClass, Entity\UserInterface::class, true)) {
+            throw new InvalidArgumentException(sprintf(
+                'Invalid user class: must implement %s',
+                Entity\UserInterface::class
+            ));
+        }
+
         $this->userClass = $userClass;
     }
 
