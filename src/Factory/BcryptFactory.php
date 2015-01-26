@@ -14,11 +14,10 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 
 class BcryptFactory implements FactoryInterface
 {
-
     /**
      * Create service
      *
-     * @param ServiceLocatorInterface $serviceLocator
+     * @param  ServiceLocatorInterface $serviceLocator
      * @return Bcrypt
      */
     public function createService(ServiceLocatorInterface $serviceLocator)

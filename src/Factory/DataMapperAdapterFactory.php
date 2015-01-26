@@ -7,10 +7,8 @@
 
 namespace Thorr\OAuth2\Factory;
 
-use Thorr\OAuth2\Options\ModuleOptions;
 use Thorr\OAuth2\Storage\DataMapperAdapter;
 use Thorr\Persistence\DataMapper\Manager\DataMapperManager;
-use Zend\Crypt\Password\Bcrypt;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
