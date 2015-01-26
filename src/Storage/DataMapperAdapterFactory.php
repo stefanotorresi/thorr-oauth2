@@ -26,10 +26,7 @@ class DataMapperAdapterFactory implements FactoryInterface
         /** @var DataMapperManager $dataMapperManager */
         $dataMapperManager = $serviceLocator->get(DataMapperManager::class);
 
-        /** @var ModuleOptions $moduleOptions */
-        $moduleOptions = $serviceLocator->get(ModuleOptions::class);
-
-        $password = new Bcrypt(['cost' => $moduleOptions->getBcryptCost()]);
+        $password = $serviceLocator->get('Thorr\OAuth2\DefaultPasswordInterface');
 
         $adapter = new DataMapperAdapter($dataMapperManager, $password);
 

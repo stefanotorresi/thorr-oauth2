@@ -43,9 +43,11 @@ class Module implements Feature\ConfigProviderInterface
 
             'service_manager' => [
                 'factories' => [
+                    // @todo move all the factories under the Factory namespace
                     Options\ModuleOptions::class         => Options\ModuleOptionsFactory::class,
                     Storage\DataMapperAdapter::class     => Storage\DataMapperAdapterFactory::class,
                     GrantType\ThirdPartyGrantType::class => GrantType\ThirdParty\GrantTypeFactory::class,
+                    'Thorr\OAuth2\DefaultPasswordInterface' => Factory\BcryptFactory::class,
                 ],
                 'delegators' => [
                     'ZF\OAuth2\Service\OAuth2Server' => [
