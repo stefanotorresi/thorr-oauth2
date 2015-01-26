@@ -20,7 +20,7 @@ class Scope extends AbstractEntity
     /**
      * @var boolean
      */
-    protected $default = false;
+    protected $defaultScope = false;
 
     /**
      * {@inheritdoc}
@@ -36,7 +36,7 @@ class Scope extends AbstractEntity
         }
 
         if ($default) {
-            $this->setDefault($default);
+            $this->setDefaultScope($default);
         }
     }
 
@@ -59,17 +59,17 @@ class Scope extends AbstractEntity
     /**
      * @return boolean
      */
-    public function isDefault()
+    public function isDefaultScope()
     {
-        return $this->default;
+        return $this->defaultScope;
     }
 
     /**
      * @param boolean $default
      */
-    public function setDefault($default)
+    public function setDefaultScope($default)
     {
-        $this->default = (bool) $default;
+        $this->defaultScope = (bool) $default;
     }
 
     /**

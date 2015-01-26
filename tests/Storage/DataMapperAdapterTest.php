@@ -839,7 +839,7 @@ class DataMapperAdapterTest extends TestCase
             ->method('findDefaultScopes')
             ->willReturnCallback(function () use ($scopes) {
                 return array_filter($scopes, function (Entity\Scope $scope) {
-                    return $scope->isDefault();
+                    return $scope->isDefaultScope();
                 });
             });
 
