@@ -5,7 +5,7 @@
  * ************************************************
  */
 
-namespace Thorr\OAuth2\GrantType\ThirdParty;
+namespace Thorr\OAuth2\Factory;
 
 use RuntimeException;
 use Thorr\OAuth2\DataMapper\ThirdPartyMapperInterface;
@@ -17,7 +17,7 @@ use Thorr\Persistence\DataMapper\Manager\DataMapperManager;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
-class GrantTypeFactory implements FactoryInterface
+class ThirdPartyGrantTypeFactory implements FactoryInterface
 {
     /**
      * Create service
