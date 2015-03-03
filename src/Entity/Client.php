@@ -37,11 +37,11 @@ class Client extends AbstractEntity implements ScopesProviderInterface
     /**
      * {@inheritdoc}
      *
-     * @param string|null        $secret
-     * @param UserInterface|null $user
-     * @param array|null         $grantTypes
-     * @param string|null        $redirectUri
-     * @param string|null        $description
+     * @param string        $secret
+     * @param UserInterface $user
+     * @param string[]      $grantTypes
+     * @param string        $redirectUri
+     * @param string        $description
      */
     public function __construct($uuid = null, $secret = null, $user = null, $grantTypes = null, $redirectUri = null, $description = null)
     {
