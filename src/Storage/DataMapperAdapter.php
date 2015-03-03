@@ -51,6 +51,8 @@ class DataMapperAdapter implements
 
     /**
      * {@inheritdoc}
+     *
+     * @param string $oauthToken
      */
     public function getAccessToken($oauthToken)
     {
@@ -70,6 +72,10 @@ class DataMapperAdapter implements
 
     /**
      * {@inheritdoc}
+     *
+     * @param string      $token
+     * @param string      $clientId
+     * @param string|null $userId
      */
     public function setAccessToken($token, $clientId, $userId, $expiryTimestamp, $scope = null)
     {
@@ -104,6 +110,8 @@ class DataMapperAdapter implements
 
     /**
      * {@inheritdoc}
+     *
+     * @param string $code
      */
     public function getAuthorizationCode($code)
     {
@@ -171,6 +179,9 @@ class DataMapperAdapter implements
 
     /**
      * {@inheritdoc}
+     *
+     * @param string $clientId
+     * @param string $clientSecret
      */
     public function checkClientCredentials($clientId, $clientSecret = null)
     {
@@ -185,6 +196,8 @@ class DataMapperAdapter implements
 
     /**
      * {@inheritdoc}
+     *
+     * @param string $clientId
      */
     public function isPublicClient($clientId)
     {
@@ -199,6 +212,8 @@ class DataMapperAdapter implements
 
     /**
      * {@inheritdoc}
+     *
+     * @param string $clientId
      */
     public function getClientDetails($clientId)
     {
@@ -219,6 +234,8 @@ class DataMapperAdapter implements
 
     /**
      * {@inheritdoc}
+     *
+     * @param string $clientUuid
      */
     public function getClientScope($clientUuid)
     {
@@ -235,6 +252,9 @@ class DataMapperAdapter implements
      * {@inheritdoc}
      *
      * if no grant type is defined for the client, then any type is valid
+     *
+     * @param string $clientUuid
+     * @param string $grantType
      */
     public function checkRestrictedGrantType($clientUuid, $grantType)
     {
@@ -255,6 +275,8 @@ class DataMapperAdapter implements
 
     /**
      * {@inheritdoc}
+     *
+     * @param string $refreshToken
      */
     public function getRefreshToken($refreshToken)
     {
@@ -277,6 +299,12 @@ class DataMapperAdapter implements
 
     /**
      * {@inheritdoc}
+     *
+     * @param string       $token
+     * @param string       $clientId
+     * @param string|null  $userId
+     * @param integer|null $expiryTimestamp
+     * @param string       $scope
      */
     public function setRefreshToken($token, $clientId, $userId, $expiryTimestamp, $scope = null)
     {
@@ -310,6 +338,8 @@ class DataMapperAdapter implements
 
     /**
      * {@inheritdoc}
+     *
+     * @param string $token
      */
     public function unsetRefreshToken($token)
     {
@@ -326,6 +356,8 @@ class DataMapperAdapter implements
 
     /**
      * {@inheritdoc}
+     *
+     * @param string $scopesString
      */
     public function scopeExists($scopesString)
     {
@@ -369,6 +401,9 @@ class DataMapperAdapter implements
 
     /**
      * {@inheritdoc}
+     *
+     * @param string $credential
+     * @param string $password
      */
     public function checkUserCredentials($credential, $password)
     {
@@ -383,6 +418,8 @@ class DataMapperAdapter implements
 
     /**
      * {@inheritdoc}
+     *
+     * @param string|null $credential
      */
     public function getUserDetails($credential)
     {
