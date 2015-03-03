@@ -22,8 +22,10 @@ class ThirdPartyGrantTypeFactory implements FactoryInterface
     /**
      * Create service
      *
-     * @param  ServiceLocatorInterface $serviceLocator
+     * @param ServiceLocatorInterface $serviceLocator
+     *
      * @throws RuntimeException
+     *
      * @return ThirdPartyGrantType
      */
     public function createService(ServiceLocatorInterface $serviceLocator)

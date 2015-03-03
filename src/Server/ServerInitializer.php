@@ -24,6 +24,7 @@ class ServerInitializer implements DelegatorFactoryInterface
      * @param callable                $callback       the callback that is responsible for creating the service
      *
      * @throws \RuntimeException
+     *
      * @return OAuth2Server
      */
     public function createDelegatorWithName(ServiceLocatorInterface $serviceLocator, $name, $requestedName, $callback)

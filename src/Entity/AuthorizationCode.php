@@ -15,6 +15,7 @@ class AuthorizationCode extends AbstractToken
 
     /**
      * {@inheritdoc}
+     *
      * @param string $redirectUri
      */
     public function __construct($uuid = null, $token, Client $client, UserInterface $user = null, $scopes = null, $redirectUri)

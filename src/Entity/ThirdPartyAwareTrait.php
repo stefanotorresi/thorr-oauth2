@@ -39,7 +39,8 @@ trait ThirdPartyAwareTrait
     }
 
     /**
-     * @param  ThirdParty $thirdParty
+     * @param ThirdParty $thirdParty
+     *
      * @return bool
      */
     public function addThirdParty(ThirdParty $thirdParty)
@@ -52,7 +53,8 @@ trait ThirdPartyAwareTrait
     }
 
     /**
-     * @param  ThirdParty $thirdParty
+     * @param ThirdParty $thirdParty
+     *
      * @return bool
      */
     public function removeThirdParty(ThirdParty $thirdParty)
@@ -61,18 +63,19 @@ trait ThirdPartyAwareTrait
     }
 
     /**
-     * @param  string          $provider
+     * @param string $provider
+     *
      * @return ThirdParty|null
      */
     public function findThirdPartyByProvider($provider)
     {
-        foreach ($this->thirdPartyCredentials as $thirdParty) { /** @var ThirdParty $thirdParty */
+        foreach ($this->thirdPartyCredentials as $thirdParty) { /* @var ThirdParty $thirdParty */
             if ($thirdParty->getProvider() === $provider) {
                 return $thirdParty;
             };
         }
 
-        return null;
+        return;
     }
 
     /**

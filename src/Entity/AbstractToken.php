@@ -39,6 +39,7 @@ abstract class AbstractToken extends AbstractEntity implements ScopesProviderInt
 
     /**
      * {@inheritdoc}
+     *
      * @param string           $token
      * @param Client           $client
      * @param UserInterface    $user

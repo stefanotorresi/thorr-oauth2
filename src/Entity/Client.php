@@ -37,6 +37,7 @@ class Client extends AbstractEntity implements ScopesProviderInterface
 
     /**
      * {@inheritdoc}
+     *
      * @param string|null        $secret
      * @param UserInterface|null $user
      * @param array|null         $grantTypes

@@ -69,10 +69,10 @@ class ThirdPartyGrantType implements GrantTypeInterface
         TokenMapperInterface $accessTokenMapper,
         ModuleOptions $moduleOptions
     ) {
-        $this->userMapper = $userMapper;
-        $this->thirdPartyMapper = $thirdPartyMapper;
+        $this->userMapper        = $userMapper;
+        $this->thirdPartyMapper  = $thirdPartyMapper;
         $this->accessTokenMapper = $accessTokenMapper;
-        $this->moduleOptions = $moduleOptions;
+        $this->moduleOptions     = $moduleOptions;
 
         foreach ($moduleOptions->getThirdPartyProviders() as $providerConfig) {
             $provider = ThirdParty\Provider\ProviderFactory::createProvider($providerConfig);
@@ -89,8 +89,9 @@ class ThirdPartyGrantType implements GrantTypeInterface
     }
 
     /**
-     * @param  RequestInterface  $request
-     * @param  ResponseInterface $response
+     * @param RequestInterface  $request
+     * @param ResponseInterface $response
+     *
      * @return bool
      */
     public function validateRequest(RequestInterface $request, ResponseInterface $response)
@@ -120,7 +121,7 @@ class ThirdPartyGrantType implements GrantTypeInterface
         try {
             $errorMessage = '';
             if (! $provider->validate($providerUserId, $providerAccessToken, $errorMessage)) {
-                $response->setError(401, 'invalid_grant', 'Invalid third party credentials: '.$errorMessage);
+                $response->setError(401, 'invalid_grant', 'Invalid third party credentials: ' . $errorMessage);
 
                 return false;
             }
@@ -134,7 +135,7 @@ class ThirdPartyGrantType implements GrantTypeInterface
             return false;
         }
 
-        $token = $request->request("access_token");
+        $token       = $request->request("access_token");
         $accessToken = $token ? $this->accessTokenMapper->findByToken($token) : null;
 
         if ($accessToken instanceof Entity\AccessToken && $accessToken->isExpired()) {
@@ -168,7 +169,7 @@ class ThirdPartyGrantType implements GrantTypeInterface
             // no third party credentials or access token? it's a new user
             default:
                 $userClass = $this->moduleOptions->getUserEntityClassName();
-                $user = new $userClass();
+                $user      = new $userClass();
         }
 
         // in case 3 and 4 we need to connect the user with new third party credentials
@@ -188,7 +189,7 @@ class ThirdPartyGrantType implements GrantTypeInterface
      */
     public function getClientId()
     {
-        return null;
+        return;
     }
 
     /**
@@ -197,7 +198,7 @@ class ThirdPartyGrantType implements GrantTypeInterface
     public function getUserId()
     {
         if (! $this->user) {
-            return null;
+            return;
         }
 
         return $this->user->getUuid();
@@ -212,10 +213,11 @@ class ThirdPartyGrantType implements GrantTypeInterface
     }
 
     /**
-     * @param  AccessTokenFactory $accessTokenFactory
+     * @param AccessTokenFactory $accessTokenFactory
      * @param $client_id
      * @param $user_id
      * @param $scope
+     *
      * @return mixed
      */
     public function createAccessToken(AccessTokenFactory $accessTokenFactory, $client_id, $user_id, $scope)
@@ -232,7 +234,8 @@ class ThirdPartyGrantType implements GrantTypeInterface
     }
 
     /**
-     * @param  array|Traversable        $providers
+     * @param array|Traversable $providers
+     *
      * @throws InvalidArgumentException
      */
     public function setProviders($providers)

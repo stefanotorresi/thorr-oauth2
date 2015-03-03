@@ -21,7 +21,8 @@
     "require-dev": {
         "zendframework/zend-math": "~2.3",
         "zendframework/zend-servicemanager": "~2.3",
-        "zendframework/zend-modulemanager": "~2.3"
+        "zendframework/zend-modulemanager": "~2.3",
+        "fabpot/php-cs-fixer": "~1.5"
     },
     "suggest": {
         "zendframework/zend-servicemanager": "",

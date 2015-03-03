@@ -24,18 +24,18 @@ class Module implements Feature\ConfigProviderInterface
                 //        'third_party_grant_type_enabled' => false,
                 'third_party_providers' => [
                     'facebook' => [
-                        'class' => GrantType\ThirdParty\Provider\FacebookProvider::class,
+                        'class'   => GrantType\ThirdParty\Provider\FacebookProvider::class,
                         'options' => [
-                            'app_id' => null,
-                            'uri' => 'https://graph.facebook.com/v2.0',
+                            'app_id'          => null,
+                            'uri'             => 'https://graph.facebook.com/v2.0',
                             'endpoint_params' => [],
                         ],
                     ],
                     'instagram' => [
-                        'class' => GrantType\ThirdParty\Provider\InstagramProvider::class,
+                        'class'   => GrantType\ThirdParty\Provider\InstagramProvider::class,
                         'options' => [
                             'client_id' => null,
-                            'uri' => 'https://api.instagram.com/v1'
+                            'uri'       => 'https://api.instagram.com/v1',
                         ],
                     ],
                 ],

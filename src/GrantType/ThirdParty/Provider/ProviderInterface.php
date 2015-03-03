@@ -12,6 +12,7 @@ interface ProviderInterface
     /**
      * @param $userId
      * @param $accessToken
+     *
      * @return boolean
      */
     public function validate($userId, $accessToken);

@@ -14,7 +14,8 @@ use Thorr\Persistence\DataMapper\DataMapperInterface;
 interface ThirdPartyMapperInterface extends DataMapperInterface
 {
     /**
-     * @param  ProviderInterface $provider
+     * @param ProviderInterface $provider
+     *
      * @return ThirdParty|null
      */
     public function findByProvider(ProviderInterface $provider);

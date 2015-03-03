@@ -32,6 +32,7 @@ class InstagramProvider implements ProviderInterface
 
     /**
      * @param $options
+     *
      * @throws Exception\InvalidArgumentException
      */
     public function __construct($options)
@@ -65,12 +66,14 @@ class InstagramProvider implements ProviderInterface
      * @param $userId
      * @param $accessToken
      * @param $errorMessage
+     *
      * @throws Exception\ClientException
+     *
      * @return boolean
      */
     public function validate($userId, $accessToken, &$errorMessage = null)
     {
-        $client = new Client($this->uri.'/users/self', $this->clientOptions);
+        $client = new Client($this->uri . '/users/self', $this->clientOptions);
         $client->setMethod('GET');
         $client->setParameterGet(['access_token' => $accessToken]);
 
@@ -99,8 +102,10 @@ class InstagramProvider implements ProviderInterface
     }
 
     /**
-     * @param  Response                  $response
+     * @param Response $response
+     *
      * @return mixed
+     *
      * @throws Exception\ClientException
      */
     protected function decodeBody(Response $response)

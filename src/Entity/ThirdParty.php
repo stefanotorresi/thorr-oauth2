@@ -34,6 +34,7 @@ class ThirdParty extends AbstractEntity
 
     /**
      * {@inheritdoc}
+     *
      * @param mixed         $providerUserId
      * @param string        $provider
      * @param UserInterface $user

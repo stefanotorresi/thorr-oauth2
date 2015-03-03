@@ -24,6 +24,7 @@ class Scope extends AbstractEntity
 
     /**
      * {@inheritdoc}
+     *
      * @param string $name
      * @param $default
      */
