@@ -193,7 +193,7 @@ class ThirdPartyGrantType implements GrantTypeInterface
     }
 
     /**
-     * @return mixed|null
+     * @return null|string
      */
     public function getUserId()
     {

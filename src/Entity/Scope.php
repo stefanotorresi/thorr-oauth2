@@ -25,7 +25,7 @@ class Scope extends AbstractEntity
      * {@inheritdoc}
      *
      * @param string $name
-     * @param $default
+     * @param boolean $default
      */
     public function __construct($uuid = null, $name = null, $default = null)
     {
