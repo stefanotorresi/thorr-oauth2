@@ -15,7 +15,7 @@ class User extends AbstractEntity implements ThirdPartyAwareUserInterface
     use UserTrait;
     use ThirdPartyAwareTrait;
 
-    public function __construct(Uuid $uuid = null, $password = null)
+    public function __construct($uuid = null, $password = null)
     {
         parent::__construct($uuid);
 

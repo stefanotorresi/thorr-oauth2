@@ -44,7 +44,7 @@ abstract class AbstractToken extends AbstractEntity implements ScopesProviderInt
      * @param UserInterface    $user
      * @param array|Collection $scopes
      */
-    public function __construct(Uuid $uuid = null, $token, Client $client, UserInterface $user = null, $scopes = null)
+    public function __construct($uuid = null, $token, Client $client, UserInterface $user = null, $scopes = null)
     {
         parent::__construct($uuid);
 

@@ -39,7 +39,7 @@ class ThirdParty extends AbstractEntity
      * @param UserInterface $user
      * @param array         $data
      */
-    public function __construct(Uuid $uuid = null, $providerUserId, $provider, UserInterface $user, $data = [])
+    public function __construct($uuid = null, $providerUserId, $provider, UserInterface $user, $data = [])
     {
         parent::__construct($uuid);
 

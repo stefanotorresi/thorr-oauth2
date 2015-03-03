@@ -43,7 +43,7 @@ class Client extends AbstractEntity implements ScopesProviderInterface
      * @param string|null        $redirectUri
      * @param string|null        $description
      */
-    public function __construct(Uuid $uuid = null, $secret = null, $user = null, $grantTypes = null, $redirectUri = null, $description = null)
+    public function __construct($uuid = null, $secret = null, $user = null, $grantTypes = null, $redirectUri = null, $description = null)
     {
         parent::__construct($uuid);
 

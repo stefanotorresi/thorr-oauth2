@@ -503,9 +503,9 @@ class DataMapperAdapterTest extends TestCase
                 $client,
                 [
                     'redirect_uri' => $client->getRedirectUri(),
-                    'client_id'    => (string) $client->getUuid(),
+                    'client_id'    => $client->getUuid(),
                     'grant_types'  => $client->getGrantTypes(),
-                    'user_id'      => (string) $client->getUser()->getUuid(),
+                    'user_id'      => $client->getUser()->getUuid(),
                     'scope'        => $client->getScopesString(),
                 ],
             ],
@@ -966,8 +966,8 @@ class DataMapperAdapterTest extends TestCase
 
         return [
             //  $user               $expectedResult
-            [   $normalUser,        [ 'user_id' => (string) $normalUser->getUuid(), 'scope' => null ]    ],
-            [   $scopeAwareUser,    [ 'user_id' => (string) $scopeAwareUser->getUuid(), 'scope' => "foo bar" ]    ],
+            [   $normalUser,        [ 'user_id' => $normalUser->getUuid(), 'scope' => null ]    ],
+            [   $scopeAwareUser,    [ 'user_id' => $scopeAwareUser->getUuid(), 'scope' => "foo bar" ]    ],
             [   null,               false   ],
         ];
     }

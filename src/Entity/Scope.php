@@ -27,7 +27,7 @@ class Scope extends AbstractEntity
      * @param string $name
      * @param $default
      */
-    public function __construct(Uuid $uuid = null, $name = null, $default = null)
+    public function __construct($uuid = null, $name = null, $default = null)
     {
         parent::__construct($uuid);
 

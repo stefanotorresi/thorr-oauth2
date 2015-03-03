@@ -62,8 +62,8 @@ class DataMapperAdapter implements
 
         return [
             'expires'   => $token->getExpiryUTCTimestamp(),
-            'client_id' => (string) $token->getClient()->getUuid(),
-            'user_id'   => $token->getUser() ? (string) $token->getUser()->getUuid() : null,
+            'client_id' => $token->getClient()->getUuid(),
+            'user_id'   => $token->getUser() ? $token->getUser()->getUuid() : null,
             'scope'     => $token->getScopesString(),
         ];
     }
@@ -115,8 +115,8 @@ class DataMapperAdapter implements
 
         return [
             'expires'      => $authorizationCode->getExpiryUTCTimestamp(),
-            'client_id'    => (string) $authorizationCode->getClient()->getUuid(),
-            'user_id'      => (string) $authorizationCode->getUser()->getUuid(),
+            'client_id'    => $authorizationCode->getClient()->getUuid(),
+            'user_id'      => $authorizationCode->getUser()->getUuid(),
             'redirect_uri' => $authorizationCode->getRedirectUri(),
             'scope'        => $authorizationCode->getScopesString()
         ];
@@ -209,9 +209,9 @@ class DataMapperAdapter implements
 
         return [
             'redirect_uri' => $client->getRedirectUri(),
-            'client_id'    => (string) $client->getUuid(),
+            'client_id'    => $client->getUuid(),
             'grant_types'  => $client->getGrantTypes(),
-            'user_id'      => $client->getUser() ? (string) $client->getUser()->getUuid() : null,
+            'user_id'      => $client->getUser() ? $client->getUser()->getUuid() : null,
             'scope'        => $client->getScopesString(),
         ];
     }
@@ -267,8 +267,8 @@ class DataMapperAdapter implements
 
         return [
             'refresh_token' => $token->getToken(),
-            'client_id'     => (string) $token->getClient()->getUuid(),
-            'user_id'       => $token->getUser() ? (string) $token->getUser()->getUuid() : null,
+            'client_id'     => $token->getClient()->getUuid(),
+            'user_id'       => $token->getUser() ? $token->getUser()->getUuid() : null,
             'expires'       => $token->getExpiryUTCTimestamp(),
             'scope'         => $token->getScopesString(),
         ];
