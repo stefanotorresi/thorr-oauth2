@@ -8,7 +8,6 @@
 namespace Thorr\OAuth2\Entity;
 
 use Doctrine\Common\Collections\Collection;
-use Rhumsaa\Uuid\Uuid;
 use Thorr\Persistence\Entity\AbstractEntity;
 
 abstract class AbstractToken extends AbstractEntity implements ScopesProviderInterface

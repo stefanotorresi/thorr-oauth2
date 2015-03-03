@@ -7,7 +7,6 @@
 
 namespace Thorr\OAuth2\Entity;
 
-use Rhumsaa\Uuid\Uuid;
 use Thorr\Persistence\Entity\AbstractEntity;
 
 class Scope extends AbstractEntity

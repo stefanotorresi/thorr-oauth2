@@ -7,8 +7,6 @@
 
 namespace Thorr\OAuth2\Entity;
 
-use Rhumsaa\Uuid\Uuid;
-
 class AuthorizationCode extends AbstractToken
 {
     use RedirectUriProviderTrait;
