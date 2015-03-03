@@ -119,7 +119,7 @@ class Client extends AbstractEntity implements ScopesProviderInterface
     }
 
     /**
-     * @param array $grantTypes
+     * @param string[] $grantTypes
      */
     public function setGrantTypes(array $grantTypes)
     {
