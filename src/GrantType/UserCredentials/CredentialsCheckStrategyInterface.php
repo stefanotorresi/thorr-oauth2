@@ -7,7 +7,15 @@
 
 namespace Thorr\OAuth2\GrantType\UserCredentials;
 
+use Thorr\OAuth2\Entity\UserInterface;
+
 interface CredentialsCheckStrategyInterface
 {
-    public function isValid($user, $password);
+    /**
+     * @param UserInterface $user
+     * @param string        $password
+     *
+     * @return bool
+     */
+    public function isValid(UserInterface $user, $password);
 }
