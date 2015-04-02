@@ -72,7 +72,7 @@ class ModuleOptions extends AbstractOptions
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function isThirdPartyGrantTypeEnabled()
     {
@@ -80,7 +80,7 @@ class ModuleOptions extends AbstractOptions
     }
 
     /**
-     * @param boolean $thirdPartyProvidersEnabled
+     * @param bool $thirdPartyProvidersEnabled
      */
     public function setThirdPartyGrantTypeEnabled($thirdPartyProvidersEnabled)
     {

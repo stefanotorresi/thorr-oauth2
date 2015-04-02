@@ -86,7 +86,7 @@ class FacebookProvider implements
     {
         $client = new Client($this->uri . '/me', $this->clientOptions);
         $client->setMethod('GET');
-        $params = ArrayUtils::merge($this->endpointParams, [ 'access_token' => $accessToken ]);
+        $params = ArrayUtils::merge($this->endpointParams, ['access_token' => $accessToken]);
         $client->setParameterGet($params);
 
         $userData = $this->decodeBody($client->send());
@@ -96,7 +96,7 @@ class FacebookProvider implements
         }
 
         if (! isset($userData->id)) {
-            throw new Exception\ClientException("Invalid data returned by provider", 400);
+            throw new Exception\ClientException('Invalid data returned by provider', 400);
         }
 
         if ($userData->id !== $userId) {

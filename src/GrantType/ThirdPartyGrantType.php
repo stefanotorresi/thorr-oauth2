@@ -96,9 +96,9 @@ class ThirdPartyGrantType implements GrantTypeInterface
      */
     public function validateRequest(RequestInterface $request, ResponseInterface $response)
     {
-        $providerName        = $request->request("provider");
-        $providerUserId      = $request->request("provider_user_id");
-        $providerAccessToken = $request->request("provider_access_token");
+        $providerName        = $request->request('provider');
+        $providerUserId      = $request->request('provider_user_id');
+        $providerAccessToken = $request->request('provider_access_token');
 
         if (! $providerName || ! $providerUserId || ! $providerAccessToken) {
             $response->setError(
@@ -135,7 +135,7 @@ class ThirdPartyGrantType implements GrantTypeInterface
             return false;
         }
 
-        $token       = $request->request("access_token");
+        $token       = $request->request('access_token');
         $accessToken = $token ? $this->accessTokenMapper->findByToken($token) : null;
 
         if ($accessToken instanceof Entity\AccessToken && $accessToken->isExpired()) {

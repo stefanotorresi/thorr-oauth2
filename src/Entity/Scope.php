@@ -17,15 +17,15 @@ class Scope extends AbstractEntity
     protected $name;
 
     /**
-     * @var boolean
+     * @var bool
      */
     protected $defaultScope = false;
 
     /**
      * {@inheritdoc}
      *
-     * @param string  $name
-     * @param boolean $default
+     * @param string $name
+     * @param bool   $default
      */
     public function __construct($uuid = null, $name = null, $default = null)
     {
@@ -57,7 +57,7 @@ class Scope extends AbstractEntity
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function isDefaultScope()
     {
@@ -65,7 +65,7 @@ class Scope extends AbstractEntity
     }
 
     /**
-     * @param boolean $default
+     * @param bool $default
      */
     public function setDefaultScope($default)
     {

@@ -433,9 +433,9 @@ class DataMapperAdapterTest extends TestCase
     {
         return [
             //  $client                                     $secretToCheck  $expectedResult
-            [   new Entity\Client(null, 'clientSecret'),    'clientSecret', true    ],
-            [   new Entity\Client(null, 'clientSecret'),    'bogus',        false   ],
-            [   null,                                       null,           false   ],
+            [new Entity\Client(null, 'clientSecret'),    'clientSecret', true],
+            [new Entity\Client(null, 'clientSecret'),    'bogus',        false],
+            [null,                                       null,           false],
         ];
     }
 
@@ -467,9 +467,9 @@ class DataMapperAdapterTest extends TestCase
     {
         return [
             //  $client                                     $expectedResult
-            [   new Entity\Client(null, 'clientSecret'),    false   ],
-            [   new Entity\Client(),                        true    ],
-            [   null,                                       false   ],
+            [new Entity\Client(null, 'clientSecret'),    false],
+            [new Entity\Client(),                        true],
+            [null,                                       false],
         ];
     }
 
@@ -580,11 +580,11 @@ class DataMapperAdapterTest extends TestCase
     {
         return [
             //  $client                                                 $grantType  $expectedResult
-            [   new Entity\Client(null, null, null, ['foo', 'bar']),    'foo',      true,   ],
-            [   new Entity\Client(null, null, null, ['foo', 'bar']),    'bar',      true,   ],
-            [   new Entity\Client(null, null, null, ['foo', 'bar']),    'baz',      false,  ],
-            [   null,                                                   'bogus',    false,  ],
-            [   new Entity\Client(null, null, null),                    'anything', true,   ],
+            [new Entity\Client(null, null, null, ['foo', 'bar']),    'foo',      true,   ],
+            [new Entity\Client(null, null, null, ['foo', 'bar']),    'bar',      true,   ],
+            [new Entity\Client(null, null, null, ['foo', 'bar']),    'baz',      false,  ],
+            [null,                                                   'bogus',    false,  ],
+            [new Entity\Client(null, null, null),                    'anything', true,   ],
         ];
     }
 
@@ -816,12 +816,12 @@ class DataMapperAdapterTest extends TestCase
     {
         return [
             //  $scopeNames         $inputScopeString   $expectedResult
-            [   [ 'foo', 'bar'],    'foo',              true    ],
-            [   [ 'foo', 'bar'],    'bar',              true    ],
-            [   [ 'foo', 'bar'],    'baz',              false   ],
-            [   [ 'foo', 'bar'],    'baz bar',          false   ],
-            [   [ 'bar', 'bar'],    'baz bar',          false   ],
-            [   [],                 'any',              false   ],
+            [['foo', 'bar'],    'foo',              true],
+            [['foo', 'bar'],    'bar',              true],
+            [['foo', 'bar'],    'baz',              false],
+            [['foo', 'bar'],    'baz bar',          false],
+            [['bar', 'bar'],    'baz bar',          false],
+            [[],                 'any',              false],
         ];
     }
 
@@ -860,7 +860,7 @@ class DataMapperAdapterTest extends TestCase
                     new Entity\Scope(null, 'baz', false),
                 ],
                 // $expected result
-                "foo bar",
+                'foo bar',
             ],
             [
                 // $scopes
@@ -869,7 +869,7 @@ class DataMapperAdapterTest extends TestCase
                     new Entity\Scope(null, 'bar', false),
                 ],
                 // $expected result
-                "foo",
+                'foo',
             ],
             [
                 // $scopes
@@ -877,7 +877,7 @@ class DataMapperAdapterTest extends TestCase
                     new Entity\Scope(null, 'foo', true),
                 ],
                 // $expected result
-                "foo",
+                'foo',
             ],
             [
                 // $scopes
@@ -931,9 +931,9 @@ class DataMapperAdapterTest extends TestCase
     {
         return [
             //  $client                               $secretToCheck    $expectedResult
-            [   new Entity\User(null, 'password'),    'password',       true    ],
-            [   new Entity\User(null, 'password'),    'bogus',          false   ],
-            [   null,                                 null,             false   ],
+            [new Entity\User(null, 'password'),    'password',       true],
+            [new Entity\User(null, 'password'),    'bogus',          false],
+            [null,                                 null,             false],
         ];
     }
 
@@ -967,9 +967,9 @@ class DataMapperAdapterTest extends TestCase
 
         return [
             //  $user               $expectedResult
-            [   $normalUser,        [ 'user_id' => $normalUser->getUuid(), 'scope' => null ]    ],
-            [   $scopeAwareUser,    [ 'user_id' => $scopeAwareUser->getUuid(), 'scope' => "foo bar" ]    ],
-            [   null,               false   ],
+            [$normalUser,        ['user_id' => $normalUser->getUuid(), 'scope' => null]],
+            [$scopeAwareUser,    ['user_id' => $scopeAwareUser->getUuid(), 'scope' => 'foo bar']],
+            [null,               false],
         ];
     }
 

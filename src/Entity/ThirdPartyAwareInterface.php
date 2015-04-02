@@ -24,7 +24,7 @@ interface ThirdPartyAwareInterface
     /**
      * @param ThirdParty $thirdParty
      *
-     * @return boolean
+     * @return bool
      */
     public function addThirdParty(ThirdParty $thirdParty);
 

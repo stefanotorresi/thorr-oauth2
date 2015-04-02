@@ -69,7 +69,7 @@ class InstagramProvider implements ProviderInterface
      *
      * @throws Exception\ClientException
      *
-     * @return boolean
+     * @return bool
      */
     public function validate($userId, $accessToken, &$errorMessage = null)
     {
@@ -84,7 +84,7 @@ class InstagramProvider implements ProviderInterface
         }
 
         if (! isset($userData->id)) {
-            throw new Exception\ClientException("Invalid data returned by provider", 400);
+            throw new Exception\ClientException('Invalid data returned by provider', 400);
         }
 
         if ($userData->id !== $userId) {

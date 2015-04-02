@@ -306,11 +306,11 @@ class DataMapperAdapter implements
     /**
      * {@inheritdoc}
      *
-     * @param string       $token
-     * @param string       $clientId
-     * @param string|null  $userId
-     * @param integer|null $expiryTimestamp
-     * @param string       $scope
+     * @param string      $token
+     * @param string      $clientId
+     * @param string|null $userId
+     * @param int|null    $expiryTimestamp
+     * @param string      $scope
      */
     public function setRefreshToken($token, $clientId, $userId, $expiryTimestamp, $scope = null)
     {
