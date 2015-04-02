@@ -14,6 +14,7 @@ use PHPUnit_Framework_MockObject_MockObject as MockObject;
 use PHPUnit_Framework_TestCase as TestCase;
 use Thorr\OAuth2\DataMapper;
 use Thorr\OAuth2\Entity;
+use Thorr\OAuth2\GrantType\UserCredentials\CredentialsCheckStrategyInterface;
 use Thorr\OAuth2\Storage\DataMapperAdapter;
 use Thorr\OAuth2\Test\Asset\ScopeAwareUser;
 use Thorr\Persistence\DataMapper\DataMapperInterface;
@@ -1001,6 +1002,59 @@ class DataMapperAdapterTest extends TestCase
 
         $this->setExpectedException(InvalidArgumentException::class, 'Invalid user class');
         $dataMapperAdapter->setUserClass(\stdClass::class);
+    }
+
+    public function testCheckUserCredentialsWillUseStrategyIfAvailable()
+    {
+        $dataMapperAdapter  = new DataMapperAdapter($this->dataMapperManager, $this->password);
+        $userDataMapper     = $this->getMock(DataMapper\UserMapperInterface::class);
+        $user               = new Entity\User();
+        $testPassword       = 'foobar';
+        $returnValue        = true;
+        $userDataMapper->expects($this->any())
+                       ->method('findByCredential')
+                       ->willReturn($user);
+
+        $this->setDataMapperMock(Entity\UserInterface::class, $userDataMapper);
+
+        $userCredentialStrategy = $this->getMock(CredentialsCheckStrategyInterface::class);
+        $userCredentialStrategy
+            ->expects($this->atLeastOnce())
+            ->method('isValid')
+            ->with($user, $testPassword)
+            ->willReturn($returnValue)
+        ;
+
+        $dataMapperAdapter->setUserCredentialsStrategy($userCredentialStrategy);
+        $result = $dataMapperAdapter->checkUserCredentials('foo', $testPassword);
+        $this->assertSame($returnValue, $result);
+    }
+
+    public function testCheckUserCredentialsWillUseStrategyCallableIfAvailable()
+    {
+        $dataMapperAdapter  = new DataMapperAdapter($this->dataMapperManager, $this->password);
+        $userDataMapper     = $this->getMock(DataMapper\UserMapperInterface::class);
+        $user               = new Entity\User();
+        $testPassword       = 'foobar';
+        $returnValue        = true;
+        $userDataMapper->expects($this->any())
+                       ->method('findByCredential')
+                       ->willReturn($user);
+
+        $this->setDataMapperMock(Entity\UserInterface::class, $userDataMapper);
+
+        $args                   = [];
+        $userCredentialStrategy = function ($user, $password) use (&$args, $returnValue) {
+            $args = func_get_args();
+
+            return $returnValue;
+        };
+
+        $dataMapperAdapter->setUserCredentialsStrategy($userCredentialStrategy);
+        $result = $dataMapperAdapter->checkUserCredentials('foo', $testPassword);
+        $this->assertSame($args[0], $user);
+        $this->assertSame($args[1], $testPassword);
+        $this->assertSame($returnValue, $result);
     }
 
     protected function setDataMapperMock($entityClassName, DataMapperInterface $dataMapper)

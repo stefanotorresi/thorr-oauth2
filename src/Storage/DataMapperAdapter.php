@@ -12,6 +12,7 @@ use InvalidArgumentException;
 use OAuth2\Storage;
 use Thorr\OAuth2\DataMapper;
 use Thorr\OAuth2\Entity;
+use Thorr\OAuth2\GrantType\UserCredentials\CredentialsCheckStrategyInterface;
 use Thorr\Persistence\DataMapper\DataMapperInterface;
 use Thorr\Persistence\DataMapper\Manager\DataMapperManager;
 use Thorr\Persistence\DataMapper\Manager\DataMapperManagerAwareInterface;
@@ -38,6 +39,11 @@ class DataMapperAdapter implements
      * @var string
      */
     protected $userClass = Entity\UserInterface::class;
+
+    /**
+     * @var callable|CredentialsCheckStrategyInterface
+     */
+    protected $userCredentialsStrategy;
 
     /**
      * @param DataMapperManager $dataMapperManager
@@ -409,8 +415,18 @@ class DataMapperAdapter implements
     {
         $user = $this->getUserDataMapper()->findByCredential($credential);
 
-        if (! $user instanceof $this->userClass) {
+        $userClass = $this->userClass;
+
+        if (! $user instanceof $userClass) {
             return false;
+        }
+
+        if (is_callable($this->userCredentialsStrategy)) {
+            return call_user_func($this->userCredentialsStrategy, $user, $password);
+        }
+
+        if ($this->userCredentialsStrategy instanceof CredentialsCheckStrategyInterface) {
+            return $this->userCredentialsStrategy->isValid($user, $password);
         }
 
         return $this->password->verify($password, $user->getPassword());
@@ -506,5 +522,29 @@ class DataMapperAdapter implements
     protected function getUserDataMapper()
     {
         return $this->getDataMapperManager()->getDataMapperForEntity($this->userClass);
+    }
+
+    /**
+     * @return callable|CredentialsCheckStrategyInterface
+     */
+    public function getUserCredentialsStrategy()
+    {
+        return $this->userCredentialsStrategy;
+    }
+
+    /**
+     * @param callable|CredentialsCheckStrategyInterface $userCredentialsStrategy
+     */
+    public function setUserCredentialsStrategy($userCredentialsStrategy)
+    {
+        if (! is_callable($userCredentialsStrategy)
+            && ! $userCredentialsStrategy instanceof CredentialsCheckStrategyInterface) {
+            throw new InvalidArgumentException(sprintf(
+                "User credential strategy must be a callable or implement '%s'",
+                CredentialsCheckStrategyInterface::class
+            ));
+        }
+
+        $this->userCredentialsStrategy = $userCredentialsStrategy;
     }
 }
