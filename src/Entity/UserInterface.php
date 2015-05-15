@@ -12,14 +12,14 @@ use Thorr\Persistence\Entity\UuidProviderInterface;
 interface UserInterface extends UuidProviderInterface
 {
     /**
-     * Get password.
+     * Get password hash
      *
      * @return string password
      */
     public function getPassword();
 
     /**
-     * Set password.
+     * Set password hash
      *
      * @param string $password
      */
