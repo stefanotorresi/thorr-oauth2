@@ -29,8 +29,13 @@ class ServerInitializer implements DelegatorFactoryInterface
      */
     public function createDelegatorWithName(ServiceLocatorInterface $serviceLocator, $name, $requestedName, $callback)
     {
-        /** @var OAuth2Server $oauth2Server */
+        /** @var OAuth2Server|callable $oauth2Server */
         $oauth2Server = $callback();
+
+        /** ensure compatibility with https://github.com/zfcampus/zf-oauth2/pull/93 */
+        if (is_callable($oauth2Server)) {
+            $oauth2Server = $oauth2Server();
+        }
 
         /** @var ModuleOptions $moduleOptions */
         $moduleOptions = $serviceLocator->get(ModuleOptions::class);
