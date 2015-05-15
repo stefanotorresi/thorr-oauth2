@@ -104,9 +104,9 @@ class InstagramProvider implements ProviderInterface
     /**
      * @param Response $response
      *
-     * @return mixed
-     *
      * @throws Exception\ClientException
+     *
+     * @return mixed
      */
     protected function decodeBody(Response $response)
     {

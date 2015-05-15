@@ -116,9 +116,9 @@ class FacebookProvider implements
     /**
      * @param Response $response
      *
-     * @return mixed
-     *
      * @throws Exception\ClientException
+     *
+     * @return mixed
      */
     protected function decodeBody(Response $response)
     {
