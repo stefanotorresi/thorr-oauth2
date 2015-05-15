@@ -68,7 +68,7 @@ class Module implements Feature\ConfigProviderInterface
             ],
 
             'zf-oauth2' => [
-                'storage' => Storage\DataMapperAdapter::class,
+                'storage'     => Storage\DataMapperAdapter::class,
                 'grant_types' => [
                     'jwt' => false,
                 ],

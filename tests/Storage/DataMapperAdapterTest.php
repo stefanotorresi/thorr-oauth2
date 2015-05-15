@@ -14,8 +14,8 @@ use PHPUnit_Framework_MockObject_MockObject as MockObject;
 use PHPUnit_Framework_TestCase as TestCase;
 use Thorr\OAuth2\DataMapper;
 use Thorr\OAuth2\Entity;
-use Thorr\OAuth2\GrantType\UserCredentials\UserCredentialsStrategyInterface;
 use Thorr\OAuth2\GrantType\UserCredentials\PasswordStrategy;
+use Thorr\OAuth2\GrantType\UserCredentials\UserCredentialsStrategyInterface;
 use Thorr\OAuth2\Storage\DataMapperAdapter;
 use Thorr\OAuth2\Test\Asset\ScopeAwareUser;
 use Thorr\Persistence\DataMapper\DataMapperInterface;
@@ -1008,7 +1008,7 @@ class DataMapperAdapterTest extends TestCase
     public function testHasDefaultUserCredentialsStrategy()
     {
         $dataMapperAdapter = new DataMapperAdapter($this->dataMapperManager, $this->password);
-        $strategies = $dataMapperAdapter->getUserCredentialsStrategies();
+        $strategies        = $dataMapperAdapter->getUserCredentialsStrategies();
         $this->assertNotEmpty($strategies);
         $this->assertArrayHasKey('default', $strategies);
         $this->assertInstanceOf(PasswordStrategy::class, $strategies['default']);
@@ -1022,7 +1022,7 @@ class DataMapperAdapterTest extends TestCase
 
     /**
      * @param callable|UserCredentialsStrategyInterface $strategy
-     * @param bool                                       $expectException
+     * @param bool                                      $expectException
      *
      * @dataProvider strategyProvider
      */
@@ -1041,7 +1041,7 @@ class DataMapperAdapterTest extends TestCase
     public function strategyProvider()
     {
         return [
-            [ function(){} ],
+            [ function () {} ],
             [ $this->getMock(UserCredentialsStrategyInterface::class) ],
             [ new \stdClass(), true ],
         ];

@@ -21,7 +21,7 @@ class ServerInitializerTest extends TestCase
         $serviceManager
             ->expects($this->any())
             ->method('get')
-            ->willReturnCallback(function($name) {
+            ->willReturnCallback(function ($name) {
                 switch ($name) {
                     case ModuleOptions::class :
                         return new ModuleOptions();
@@ -29,8 +29,8 @@ class ServerInitializerTest extends TestCase
             })
         ;
         $oauth2Server = $this->getMockBuilder(OAuth2Server::class)->disableOriginalConstructor()->getMock();
-        $callback = function() use ($oauth2Server) {
-            return function() use ($oauth2Server) {
+        $callback     = function () use ($oauth2Server) {
+            return function () use ($oauth2Server) {
                 return $oauth2Server;
             };
         };

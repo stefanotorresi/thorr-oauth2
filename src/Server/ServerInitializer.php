@@ -32,7 +32,7 @@ class ServerInitializer implements DelegatorFactoryInterface
         /** @var OAuth2Server|callable $oauth2Server */
         $oauth2Server = $callback();
 
-        /** ensure compatibility with https://github.com/zfcampus/zf-oauth2/pull/93 */
+        /* ensure compatibility with https://github.com/zfcampus/zf-oauth2/pull/93 */
         if (is_callable($oauth2Server)) {
             $oauth2Server = $oauth2Server();
         }

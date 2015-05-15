@@ -19,6 +19,7 @@ $config = Symfony\CS\Config\Config::create()
         '-concat_without_spaces',
         '-no_empty_lines_after_phpdocs',
         '-blankline_after_open_tag',
+        '-trim_array_spaces',
         'concat_with_spaces',
         'align_equals',
         'align_double_arrow',

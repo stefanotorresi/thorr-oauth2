@@ -12,8 +12,8 @@ use InvalidArgumentException;
 use OAuth2\Storage;
 use Thorr\OAuth2\DataMapper;
 use Thorr\OAuth2\Entity;
-use Thorr\OAuth2\GrantType\UserCredentials\UserCredentialsStrategyInterface;
 use Thorr\OAuth2\GrantType\UserCredentials\PasswordStrategy;
+use Thorr\OAuth2\GrantType\UserCredentials\UserCredentialsStrategyInterface;
 use Thorr\Persistence\DataMapper\DataMapperInterface;
 use Thorr\Persistence\DataMapper\Manager\DataMapperManager;
 use Thorr\Persistence\DataMapper\Manager\DataMapperManagerAwareInterface;
@@ -429,7 +429,7 @@ class DataMapperAdapter implements
             return false;
         }
 
-        foreach($this->userCredentialsStrategies as $strategy) {
+        foreach ($this->userCredentialsStrategies as $strategy) {
             $result = $strategy instanceof UserCredentialsStrategyInterface
                 ? $strategy->isValid($user, $password)
                 : call_user_func($strategy, $user, $password);
@@ -546,7 +546,7 @@ class DataMapperAdapter implements
 
     /**
      * @param callable|UserCredentialsStrategyInterface $strategy
-     * @param string                                     $name
+     * @param string                                    $name
      */
     public function addUserCredentialsStrategy($strategy, $name, $priority = 0)
     {
