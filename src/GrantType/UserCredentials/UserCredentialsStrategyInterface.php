@@ -9,7 +9,7 @@ namespace Thorr\OAuth2\GrantType\UserCredentials;
 
 use Thorr\OAuth2\Entity\UserInterface;
 
-interface CredentialsCheckStrategyInterface
+interface UserCredentialsStrategyInterface
 {
     /**
      * @param UserInterface $user

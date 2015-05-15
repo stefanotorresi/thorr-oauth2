@@ -11,6 +11,8 @@ use Zend\ModuleManager\Feature;
 
 class Module implements Feature\ConfigProviderInterface
 {
+    const DEFAULT_PASSWORD_SERVICE = 'Thorr\OAuth2\DefaultPasswordInterface';
+
     /**
      * {@inheritdoc}
      */
@@ -43,10 +45,10 @@ class Module implements Feature\ConfigProviderInterface
 
             'service_manager' => [
                 'factories' => [
-                    Options\ModuleOptions::class            => Factory\ModuleOptionsFactory::class,
-                    Storage\DataMapperAdapter::class        => Factory\DataMapperAdapterFactory::class,
-                    GrantType\ThirdPartyGrantType::class    => Factory\ThirdPartyGrantTypeFactory::class,
-                    'Thorr\OAuth2\DefaultPasswordInterface' => Factory\BcryptFactory::class,
+                    Options\ModuleOptions::class         => Factory\ModuleOptionsFactory::class,
+                    Storage\DataMapperAdapter::class     => Factory\DataMapperAdapterFactory::class,
+                    GrantType\ThirdPartyGrantType::class => Factory\ThirdPartyGrantTypeFactory::class,
+                    static::DEFAULT_PASSWORD_SERVICE     => Factory\BcryptFactory::class,
                 ],
                 'delegators' => [
                     'ZF\OAuth2\Service\OAuth2Server' => [

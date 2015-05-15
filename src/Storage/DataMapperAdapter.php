@@ -12,12 +12,14 @@ use InvalidArgumentException;
 use OAuth2\Storage;
 use Thorr\OAuth2\DataMapper;
 use Thorr\OAuth2\Entity;
-use Thorr\OAuth2\GrantType\UserCredentials\CredentialsCheckStrategyInterface;
+use Thorr\OAuth2\GrantType\UserCredentials\UserCredentialsStrategyInterface;
+use Thorr\OAuth2\GrantType\UserCredentials\PasswordStrategy;
 use Thorr\Persistence\DataMapper\DataMapperInterface;
 use Thorr\Persistence\DataMapper\Manager\DataMapperManager;
 use Thorr\Persistence\DataMapper\Manager\DataMapperManagerAwareInterface;
 use Thorr\Persistence\DataMapper\Manager\DataMapperManagerAwareTrait;
 use Zend\Crypt\Password\PasswordInterface;
+use Zend\Stdlib\PriorityList;
 
 class DataMapperAdapter implements
     Storage\AuthorizationCodeInterface,
@@ -41,18 +43,24 @@ class DataMapperAdapter implements
     protected $userClass = Entity\UserInterface::class;
 
     /**
-     * @var callable|CredentialsCheckStrategyInterface
+     * @var PriorityList
      */
-    protected $userCredentialsStrategy;
+    protected $userCredentialsStrategies;
 
     /**
      * @param DataMapperManager $dataMapperManager
      * @param PasswordInterface $password
      */
-    public function __construct(DataMapperManager $dataMapperManager, PasswordInterface $password)
+    public function __construct(DataMapperManager $dataMapperManager, PasswordInterface $password, $addDefaultUserCredentialsStrategy = true)
     {
         $this->setDataMapperManager($dataMapperManager);
         $this->setPassword($password);
+        $this->userCredentialsStrategies = new PriorityList();
+        $this->userCredentialsStrategies->isLIFO(false);
+
+        if ($addDefaultUserCredentialsStrategy) {
+            $this->addUserCredentialsStrategy(new PasswordStrategy($password), 'default');
+        }
     }
 
     /**
@@ -421,15 +429,17 @@ class DataMapperAdapter implements
             return false;
         }
 
-        if (is_callable($this->userCredentialsStrategy)) {
-            return call_user_func($this->userCredentialsStrategy, $user, $password);
+        foreach($this->userCredentialsStrategies as $strategy) {
+            $result = $strategy instanceof UserCredentialsStrategyInterface
+                ? $strategy->isValid($user, $password)
+                : call_user_func($strategy, $user, $password);
+
+            if (! $result) {
+                break;
+            }
         }
 
-        if ($this->userCredentialsStrategy instanceof CredentialsCheckStrategyInterface) {
-            return $this->userCredentialsStrategy->isValid($user, $password);
-        }
-
-        return $this->password->verify($password, $user->getPassword());
+        return isset($result) ? $result : false;
     }
 
     /**
@@ -525,26 +535,37 @@ class DataMapperAdapter implements
     }
 
     /**
-     * @return callable|CredentialsCheckStrategyInterface
+     * @param int $flag extraction flag @see PriorityList
+     *
+     * @return array
      */
-    public function getUserCredentialsStrategy()
+    public function getUserCredentialsStrategies($flag = PriorityList::EXTR_DATA)
     {
-        return $this->userCredentialsStrategy;
+        return $this->userCredentialsStrategies->toArray($flag);
     }
 
     /**
-     * @param callable|CredentialsCheckStrategyInterface $userCredentialsStrategy
+     * @param callable|UserCredentialsStrategyInterface $strategy
+     * @param string                                     $name
      */
-    public function setUserCredentialsStrategy($userCredentialsStrategy)
+    public function addUserCredentialsStrategy($strategy, $name, $priority = 0)
     {
-        if (! is_callable($userCredentialsStrategy)
-            && ! $userCredentialsStrategy instanceof CredentialsCheckStrategyInterface) {
+        if (! is_callable($strategy)
+            && ! $strategy instanceof UserCredentialsStrategyInterface) {
             throw new InvalidArgumentException(sprintf(
                 "User credential strategy must be a callable or implement '%s'",
-                CredentialsCheckStrategyInterface::class
+                UserCredentialsStrategyInterface::class
             ));
         }
 
-        $this->userCredentialsStrategy = $userCredentialsStrategy;
+        $this->userCredentialsStrategies->insert($name, $strategy, $priority);
+    }
+
+    /**
+     * @param string $name
+     */
+    public function removeUserCredentialsStrategy($name)
+    {
+        $this->userCredentialsStrategies->remove($name);
     }
 }

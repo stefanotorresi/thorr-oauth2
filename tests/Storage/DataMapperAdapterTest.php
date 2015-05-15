@@ -14,7 +14,8 @@ use PHPUnit_Framework_MockObject_MockObject as MockObject;
 use PHPUnit_Framework_TestCase as TestCase;
 use Thorr\OAuth2\DataMapper;
 use Thorr\OAuth2\Entity;
-use Thorr\OAuth2\GrantType\UserCredentials\CredentialsCheckStrategyInterface;
+use Thorr\OAuth2\GrantType\UserCredentials\UserCredentialsStrategyInterface;
+use Thorr\OAuth2\GrantType\UserCredentials\PasswordStrategy;
 use Thorr\OAuth2\Storage\DataMapperAdapter;
 use Thorr\OAuth2\Test\Asset\ScopeAwareUser;
 use Thorr\Persistence\DataMapper\DataMapperInterface;
@@ -1004,9 +1005,58 @@ class DataMapperAdapterTest extends TestCase
         $dataMapperAdapter->setUserClass(\stdClass::class);
     }
 
+    public function testHasDefaultUserCredentialsStrategy()
+    {
+        $dataMapperAdapter = new DataMapperAdapter($this->dataMapperManager, $this->password);
+        $strategies = $dataMapperAdapter->getUserCredentialsStrategies();
+        $this->assertNotEmpty($strategies);
+        $this->assertArrayHasKey('default', $strategies);
+        $this->assertInstanceOf(PasswordStrategy::class, $strategies['default']);
+    }
+
+    public function testCanDisableDefaultUserCredentialsStrategyViaConstructor()
+    {
+        $dataMapperAdapter = new DataMapperAdapter($this->dataMapperManager, $this->password, false);
+        $this->assertEmpty($dataMapperAdapter->getUserCredentialsStrategies());
+    }
+
+    /**
+     * @param callable|UserCredentialsStrategyInterface $strategy
+     * @param bool                                       $expectException
+     *
+     * @dataProvider strategyProvider
+     */
+    public function testAddUserCredentialsStrategy($strategy, $expectException = false)
+    {
+        $dataMapperAdapter = new DataMapperAdapter($this->dataMapperManager, $this->password, false);
+
+        if ($expectException) {
+            $this->setExpectedException(InvalidArgumentException::class, 'User credential strategy must be a callable or implement');
+        }
+
+        $dataMapperAdapter->addUserCredentialsStrategy($strategy, 'test');
+        $this->assertContains($strategy, $dataMapperAdapter->getUserCredentialsStrategies());
+    }
+
+    public function strategyProvider()
+    {
+        return [
+            [ function(){} ],
+            [ $this->getMock(UserCredentialsStrategyInterface::class) ],
+            [ new \stdClass(), true ],
+        ];
+    }
+
+    public function testRemoveUserCredentialsStrategy()
+    {
+        $dataMapperAdapter = new DataMapperAdapter($this->dataMapperManager, $this->password);
+        $dataMapperAdapter->removeUserCredentialsStrategy('default');
+        $this->assertEmpty($dataMapperAdapter->getUserCredentialsStrategies());
+    }
+
     public function testCheckUserCredentialsWillUseStrategyIfAvailable()
     {
-        $dataMapperAdapter  = new DataMapperAdapter($this->dataMapperManager, $this->password);
+        $dataMapperAdapter  = new DataMapperAdapter($this->dataMapperManager, $this->password, false);
         $userDataMapper     = $this->getMock(DataMapper\UserMapperInterface::class);
         $user               = new Entity\User();
         $testPassword       = 'foobar';
@@ -1017,7 +1067,7 @@ class DataMapperAdapterTest extends TestCase
 
         $this->setDataMapperMock(Entity\UserInterface::class, $userDataMapper);
 
-        $userCredentialStrategy = $this->getMock(CredentialsCheckStrategyInterface::class);
+        $userCredentialStrategy = $this->getMock(UserCredentialsStrategyInterface::class);
         $userCredentialStrategy
             ->expects($this->atLeastOnce())
             ->method('isValid')
@@ -1025,14 +1075,14 @@ class DataMapperAdapterTest extends TestCase
             ->willReturn($returnValue)
         ;
 
-        $dataMapperAdapter->setUserCredentialsStrategy($userCredentialStrategy);
+        $dataMapperAdapter->addUserCredentialsStrategy($userCredentialStrategy, 'test');
         $result = $dataMapperAdapter->checkUserCredentials('foo', $testPassword);
         $this->assertSame($returnValue, $result);
     }
 
     public function testCheckUserCredentialsWillUseStrategyCallableIfAvailable()
     {
-        $dataMapperAdapter  = new DataMapperAdapter($this->dataMapperManager, $this->password);
+        $dataMapperAdapter  = new DataMapperAdapter($this->dataMapperManager, $this->password, false);
         $userDataMapper     = $this->getMock(DataMapper\UserMapperInterface::class);
         $user               = new Entity\User();
         $testPassword       = 'foobar';
@@ -1050,8 +1100,9 @@ class DataMapperAdapterTest extends TestCase
             return $returnValue;
         };
 
-        $dataMapperAdapter->setUserCredentialsStrategy($userCredentialStrategy);
+        $dataMapperAdapter->addUserCredentialsStrategy($userCredentialStrategy, 'test');
         $result = $dataMapperAdapter->checkUserCredentials('foo', $testPassword);
+        $this->assertNotEmpty($args);
         $this->assertSame($args[0], $user);
         $this->assertSame($args[1], $testPassword);
         $this->assertSame($returnValue, $result);
