@@ -38,7 +38,8 @@ class ServerInitializerTest extends TestCase
 
         $result = $initializer->createDelegatorWithName($serviceManager, '', '', $callback);
 
-        $this->assertEquals($result, $callback);
+        $this->assertInternalType('callable', $result);
+        $this->assertSame($result(), $oauth2Server);
     }
 
     public function testReturnsInstanceIfCallbackReturnedInstance()
