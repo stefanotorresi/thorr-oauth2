@@ -34,7 +34,8 @@ class ServerInitializer implements DelegatorFactoryInterface
 
         /* ensure compatibility with https://github.com/zfcampus/zf-oauth2/pull/93 */
         if (is_callable($oauth2Server)) {
-            $oauth2Server = $oauth2Server();
+            $oauth2ServerFactory = $oauth2Server;
+            $oauth2Server        = $oauth2ServerFactory();
         }
 
         /** @var ModuleOptions $moduleOptions */
@@ -49,6 +50,6 @@ class ServerInitializer implements DelegatorFactoryInterface
             $oauth2Server->addGrantType($thirdPartyGrant);
         }
 
-        return $oauth2Server;
+        return isset($oauth2ServerFactory) ? $oauth2ServerFactory : $oauth2Server;
     }
 }

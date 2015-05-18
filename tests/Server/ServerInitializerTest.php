@@ -15,7 +15,7 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 
 class ServerInitializerTest extends TestCase
 {
-    public function testInitializationWhenCallbackReturnsCallable()
+    public function testReturnsCallableIfCallbackReturnedCallable()
     {
         $serviceManager = $this->getMock(ServiceLocatorInterface::class);
         $serviceManager
@@ -33,6 +33,30 @@ class ServerInitializerTest extends TestCase
             return function () use ($oauth2Server) {
                 return $oauth2Server;
             };
+        };
+        $initializer = new ServerInitializer();
+
+        $result = $initializer->createDelegatorWithName($serviceManager, '', '', $callback);
+
+        $this->assertEquals($result, $callback);
+    }
+
+    public function testReturnsInstanceIfCallbackReturnedInstance()
+    {
+        $serviceManager = $this->getMock(ServiceLocatorInterface::class);
+        $serviceManager
+            ->expects($this->any())
+            ->method('get')
+            ->willReturnCallback(function ($name) {
+                switch ($name) {
+                    case ModuleOptions::class :
+                        return new ModuleOptions();
+                }
+            })
+        ;
+        $oauth2Server = $this->getMockBuilder(OAuth2Server::class)->disableOriginalConstructor()->getMock();
+        $callback     = function () use ($oauth2Server) {
+            return $oauth2Server;
         };
         $initializer = new ServerInitializer();
 
