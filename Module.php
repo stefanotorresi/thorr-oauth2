@@ -57,16 +57,6 @@ class Module implements Feature\ConfigProviderInterface
                 ],
             ],
 
-            'router' => [
-                'routes' => [
-                    'oauth' => [
-                        'options' => [
-                            'route' => '/api/oauth',
-                        ],
-                    ],
-                ],
-            ],
-
             'zf-oauth2' => [
                 'storage'     => Storage\DataMapperAdapter::class,
                 'grant_types' => [
