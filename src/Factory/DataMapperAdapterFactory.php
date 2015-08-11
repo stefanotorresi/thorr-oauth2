@@ -7,6 +7,7 @@
 
 namespace Thorr\OAuth2\Factory;
 
+use Thorr\OAuth2\Options\ModuleOptions;
 use Thorr\OAuth2\Storage\DataMapperAdapter;
 use Thorr\Persistence\DataMapper\Manager\DataMapperManager;
 use Zend\ServiceManager\FactoryInterface;
@@ -28,7 +29,11 @@ class DataMapperAdapterFactory implements FactoryInterface
 
         $password = $serviceLocator->get('Thorr\OAuth2\DefaultPasswordInterface');
 
+        /** @var ModuleOptions $moduleOptions */
+        $moduleOptions = $serviceLocator->get(ModuleOptions::class);
+
         $adapter = new DataMapperAdapter($dataMapperManager, $password);
+        $adapter->setUserClass($moduleOptions->getUserEntityClassName());
 
         return $adapter;
     }
