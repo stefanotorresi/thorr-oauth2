@@ -1108,6 +1108,16 @@ class DataMapperAdapterTest extends TestCase
         $this->assertSame($returnValue, $result);
     }
 
+    public function testCheckUserCredentialsThrowsIfInvalidDataMapperIsUsed()
+    {
+        $dataMapper = $this->getMock(DataMapperInterface::class);
+        $this->setDataMapperMock(Entity\UserInterface::class, $dataMapper);
+        $this->setExpectedException(\Assert\InvalidArgumentException::class, 'was expected to be instanceof of "Thorr\OAuth2\DataMapper\UserMapperInterface" but is not.');
+
+        $dataMapperAdapter = new DataMapperAdapter($this->dataMapperManager, $this->password);
+        $dataMapperAdapter->checkUserCredentials('foo', 'bar');
+    }
+
     protected function setDataMapperMock($entityClassName, DataMapperInterface $dataMapper)
     {
         $this->dataMapperMocks[$entityClassName] = $dataMapper;

@@ -18,7 +18,8 @@
         "zendframework/zend-crypt": "~2.3",
         "zendframework/zend-http": "~2.3",
         "zendframework/zend-json": "~2.3",
-        "doctrine/collections": "~1.2"
+        "doctrine/collections": "~1.2",
+        "beberlei/assert": "@stable"
     },
     "require-dev": {
         "zendframework/zend-math": "~2.3",

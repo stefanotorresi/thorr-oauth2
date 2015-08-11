@@ -7,6 +7,7 @@
 
 namespace Thorr\OAuth2\Storage;
 
+use Assert\Assertion;
 use DateTime;
 use InvalidArgumentException;
 use OAuth2\Storage;
@@ -531,7 +532,11 @@ class DataMapperAdapter implements
      */
     protected function getUserDataMapper()
     {
-        return $this->getDataMapperManager()->getDataMapperForEntity($this->userClass);
+        $userDataMapper = $this->getDataMapperManager()->getDataMapperForEntity($this->userClass);
+
+        Assertion::isInstanceOf($userDataMapper, DataMapper\UserMapperInterface::class);
+
+        return $userDataMapper;
     }
 
     /**
