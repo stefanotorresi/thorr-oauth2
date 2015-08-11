@@ -22,7 +22,6 @@ class Module implements Feature\ConfigProviderInterface
             'thorr_oauth' => [
                 //        'user_entity_class_name' => Entity\User::class,
                 //        'bcrypt_cost' => 10,
-                //        'default_user_mapping_enabled' => true,
                 //        'third_party_grant_type_enabled' => false,
                 'third_party_providers' => [
                     'facebook' => [
