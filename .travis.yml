@@ -1,19 +1,37 @@
 sudo: false
 language: php
-php:
- - "5.5"
- - "5.6"
- - "hhvm"
+
+matrix:
+  fast_finish: true
+  include:
+  - php: 5.5
+    env:
+      - CHECK_CS=true
+  - php: 5.6
+    env:
+      - TEST_COVERAGE=true
+  - php: 7
+  - php: hhvm
+  allow_failures:
+  - php: hhvm
+
+cache:
+ directories:
+ - $HOME/.composer/cache
+ - vendor
 
 before_install:
- - composer self-update
- - composer install --dev --prefer-source
+ - travis_retry composer self-update
+ - if [[ $TRAVIS_PHP_VERSION != "hhvm" && $TEST_COVERAGE != 'true' ]]; then phpenv config-rm xdebug.ini ; fi
+ - if [[ $TEST_COVERAGE == 'true' ]]; then composer require --dev --no-update scrutinizer/ocular ; fi
+
+install:
+ - travis_retry composer install --no-interaction
+ - composer info -i
 
 script:
- - ./vendor/bin/php-cs-fixer --version
- - ./vendor/bin/php-cs-fixer fix -v --dry-run
- - phpunit --coverage-clover ./build/coverage/clover.xml
+ - if [[ $TEST_COVERAGE == 'true' ]]; then composer test-coverage ; else composer test ; fi
+ - if [[ $CHECK_CS == 'true' ]]; then composer cs-check ; fi
 
 after_script:
- - wget https://scrutinizer-ci.com/ocular.phar
- - php ocular.phar code-coverage:upload --format=php-clover ./build/coverage/clover.xml
+ - if [[ $TEST_COVERAGE == 'true' ]]; then ./vendor/bin/ocular code-coverage:upload --format=php-clover ./build/coverage/clover.xml ; fi
