@@ -19,6 +19,7 @@ use Thorr\OAuth2\GrantType\UserCredentials\UserCredentialsStrategyInterface;
 use Thorr\OAuth2\Storage\DataMapperAdapter;
 use Thorr\OAuth2\Test\Asset\ScopeAwareUser;
 use Thorr\Persistence\DataMapper\DataMapperInterface;
+use Thorr\Persistence\DataMapper\EntityFinderInterface;
 use Thorr\Persistence\DataMapper\Manager\DataMapperManager;
 use Zend\Crypt\Password\PasswordInterface;
 use Zend\Math\Rand;
@@ -153,7 +154,7 @@ class DataMapperAdapterTest extends TestCase
         $scopeString        = implode(' ', $scopeNames);
         $scopes             = [new Entity\Scope(null, $scopeNames[0]), new Entity\Scope(null, $scopeNames[1])];
 
-        $clientDataMapper = $this->getMock(DataMapperInterface::class);
+        $clientDataMapper = $this->getMock(EntityFinderInterface::class);
         $clientDataMapper->expects($this->any())
             ->method('findByUuid')
             ->with($client->getUuid())
@@ -203,7 +204,7 @@ class DataMapperAdapterTest extends TestCase
         $newClient         = new Entity\Client();
         $accessToken       = new Entity\AccessToken(null, $token, $client);
 
-        $clientDataMapper = $this->getMock(DataMapperInterface::class);
+        $clientDataMapper = $this->getMock(EntityFinderInterface::class);
         $clientDataMapper->expects($this->any())
             ->method('findByUuid')
             ->with($newClient->getUuid())
@@ -283,7 +284,7 @@ class DataMapperAdapterTest extends TestCase
         $scopeString        = implode(' ', $scopeNames);
         $scopes             = [new Entity\Scope(null, $scopeNames[0]), new Entity\Scope(null, $scopeNames[1])];
 
-        $clientDataMapper = $this->getMock(DataMapperInterface::class);
+        $clientDataMapper = $this->getMock(EntityFinderInterface::class);
         $clientDataMapper->expects($this->any())
             ->method('findByUuid')
             ->with($client->getUuid())
@@ -342,7 +343,7 @@ class DataMapperAdapterTest extends TestCase
         $newClient         = new Entity\Client();
         $authCode          = new Entity\AuthorizationCode(null, $token, $client, $user, null, 'someUri');
 
-        $clientDataMapper = $this->getMock(DataMapperInterface::class);
+        $clientDataMapper = $this->getMock(EntityFinderInterface::class);
         $clientDataMapper->expects($this->any())
             ->method('findByUuid')
             ->with($newClient->getUuid())
@@ -409,7 +410,7 @@ class DataMapperAdapterTest extends TestCase
     {
         $dataMapperAdapter = new DataMapperAdapter($this->dataMapperManager, $this->password);
 
-        $clientDataMapper = $this->getMock(DataMapperInterface::class);
+        $clientDataMapper = $this->getMock(EntityFinderInterface::class);
         $clientDataMapper->expects($this->any())
             ->method('findByUuid')
             ->with($this->callback(function ($arg) use ($client) {
@@ -450,7 +451,7 @@ class DataMapperAdapterTest extends TestCase
     {
         $dataMapperAdapter = new DataMapperAdapter($this->dataMapperManager, $this->password);
 
-        $clientDataMapper = $this->getMock(DataMapperInterface::class);
+        $clientDataMapper = $this->getMock(EntityFinderInterface::class);
         $clientDataMapper->expects($this->any())
             ->method('findByUuid')
             ->with($this->callback(function ($arg) use ($client) {
@@ -485,7 +486,7 @@ class DataMapperAdapterTest extends TestCase
         $dataMapperAdapter = new DataMapperAdapter($this->dataMapperManager, $this->password);
         $clientUuid        = $client ? $client->getUuid() : 'invalid';
 
-        $clientDataMapper = $this->getMock(DataMapperInterface::class);
+        $clientDataMapper = $this->getMock(EntityFinderInterface::class);
         $clientDataMapper->expects($this->any())
             ->method('findByUuid')
             ->with($clientUuid)
@@ -524,7 +525,7 @@ class DataMapperAdapterTest extends TestCase
         $scopes            = [new Entity\Scope(null, 'someScope'), new Entity\Scope(null, 'someOtherScope')];
         $client->setScopes($scopes);
 
-        $clientDataMapper = $this->getMock(DataMapperInterface::class);
+        $clientDataMapper = $this->getMock(EntityFinderInterface::class);
         $clientDataMapper->expects($this->any())
             ->method('findByUuid')
             ->with($client->getUuid())
@@ -540,7 +541,7 @@ class DataMapperAdapterTest extends TestCase
         $dataMapperAdapter   = new DataMapperAdapter($this->dataMapperManager, $this->password);
         $bogusClientUuid     = 'invalid';
 
-        $clientDataMapper = $this->getMock(DataMapperInterface::class);
+        $clientDataMapper = $this->getMock(EntityFinderInterface::class);
         $clientDataMapper->expects($this->any())
             ->method('findByUuid')
             ->with($bogusClientUuid)
@@ -564,7 +565,7 @@ class DataMapperAdapterTest extends TestCase
         $dataMapperAdapter = new DataMapperAdapter($this->dataMapperManager, $this->password);
         $clientUuid        = $client ? $client->getUuid() : 'invalid';
 
-        $clientDataMapper = $this->getMock(DataMapperInterface::class);
+        $clientDataMapper = $this->getMock(EntityFinderInterface::class);
         $clientDataMapper->expects($this->any())
             ->method('findByUuid')
             ->with($clientUuid)
@@ -665,7 +666,7 @@ class DataMapperAdapterTest extends TestCase
         $scopeString        = implode(' ', $scopeNames);
         $scopes             = [new Entity\Scope(null, $scopeNames[0]), new Entity\Scope(null, $scopeNames[1])];
 
-        $clientDataMapper = $this->getMock(DataMapperInterface::class);
+        $clientDataMapper = $this->getMock(EntityFinderInterface::class);
         $clientDataMapper->expects($this->any())
             ->method('findByUuid')
             ->with($client->getUuid())
@@ -715,7 +716,7 @@ class DataMapperAdapterTest extends TestCase
         $newClient         = new Entity\Client();
         $refreshToken      = new Entity\RefreshToken(null, $token, $client);
 
-        $clientDataMapper = $this->getMock(DataMapperInterface::class);
+        $clientDataMapper = $this->getMock(EntityFinderInterface::class);
         $clientDataMapper->expects($this->any())
             ->method('findByUuid')
             ->with($newClient->getUuid())

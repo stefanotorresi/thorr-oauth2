@@ -8,9 +8,9 @@
 namespace Thorr\OAuth2\DataMapper;
 
 use Thorr\OAuth2\Entity\UserInterface;
-use Thorr\Persistence\DataMapper\DataMapperInterface;
+use Thorr\Persistence\DataMapper\SimpleDataMapperInterface;
 
-interface UserMapperInterface extends DataMapperInterface
+interface UserMapperInterface extends SimpleDataMapperInterface
 {
     /**
      * @param string $credential may be any unique field value allowed as a login name

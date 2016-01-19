@@ -15,7 +15,7 @@ use Thorr\OAuth2\DataMapper;
 use Thorr\OAuth2\Entity;
 use Thorr\OAuth2\GrantType\UserCredentials\PasswordStrategy;
 use Thorr\OAuth2\GrantType\UserCredentials\UserCredentialsStrategyInterface;
-use Thorr\Persistence\DataMapper\DataMapperInterface;
+use Thorr\Persistence\DataMapper\EntityFinderInterface;
 use Thorr\Persistence\DataMapper\Manager\DataMapperManager;
 use Thorr\Persistence\DataMapper\Manager\DataMapperManagerAwareInterface;
 use Thorr\Persistence\DataMapper\Manager\DataMapperManagerAwareTrait;
@@ -520,7 +520,7 @@ class DataMapperAdapter implements
     }
 
     /**
-     * @return DataMapperInterface
+     * @return EntityFinderInterface
      */
     protected function getClientDataMapper()
     {
