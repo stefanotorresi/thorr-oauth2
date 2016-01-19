@@ -12,20 +12,21 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "require": {
-        "php": "~5.5",
-        "stefanotorresi/thorr-persistence": "~2.0",
-        "bshaffer/oauth2-server-php": "~1.5",
-        "zendframework/zend-crypt": "~2.3",
-        "zendframework/zend-http": "~2.3",
-        "zendframework/zend-json": "~2.3",
-        "doctrine/collections": "~1.2",
-        "beberlei/assert": "@stable"
+        "php": ">=5.5",
+        "stefanotorresi/thorr-persistence": "^2.0",
+        "bshaffer/oauth2-server-php": "^1.5",
+        "zendframework/zend-crypt": "^2.5",
+        "zendframework/zend-http": "^2.5",
+        "zendframework/zend-json": "^2.5",
+        "doctrine/collections": "^1.2",
+        "beberlei/assert": "^2.4"
     },
     "require-dev": {
-        "zendframework/zend-math": "~2.3",
-        "zendframework/zend-servicemanager": "~2.3",
-        "zendframework/zend-modulemanager": "~2.3",
-        "fabpot/php-cs-fixer": "~1.5"
+        "zendframework/zend-math": "^2.5",
+        "zendframework/zend-servicemanager": "^2.5",
+        "zendframework/zend-modulemanager": "^2.5",
+        "fabpot/php-cs-fixer": "^1.5",
+        "phpunit/phpunit": "^4.6"
     },
     "suggest": {
         "zendframework/zend-servicemanager": "",
@@ -37,9 +38,6 @@
         }
     },
     "autoload" : {
-        "classmap": [
-            "Module.php"
-        ],
         "psr-4": {
             "Thorr\\OAuth2\\": "src/"
         }
@@ -48,5 +46,15 @@
         "psr-4": {
             "Thorr\\OAuth2\\Test\\": "tests/"
         }
+    },
+    "scripts": {
+        "check": [
+            "@cs-check",
+            "@test"
+        ],
+        "cs-check": "php-cs-fixer --version && php-cs-fixer fix -v --dry-run",
+        "cs-fix": "php-cs-fixer fix -v",
+        "test": "phpunit",
+        "test-coverage": "phpunit --coverage-clover ./build/coverage/clover.xml"
     }
 }
